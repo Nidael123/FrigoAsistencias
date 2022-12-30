@@ -45,9 +45,10 @@ import java.util.Map;
 public class RegistroAsistencia extends AppCompatActivity implements View.OnClickListener {
 
     Button btn_escanear,btn_asistencia,btn_anadir,btn_guardar;
-    TextView txt_fecha;
+    TextView txt_fecha,txt_error;
     String api_asistencias, fechadia;;
     private SharedPreferences preferences;
+    SharedPreferences.Editor editor;
     Spinner departamentos;
     ArrayList<String> listadepartamentos;
     ArrayList<String> cedulas,cedulaserror;
@@ -55,7 +56,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
     SQLiteDatabase bdcache;
     RequestQueue n_requerimiento;
     JSONObject jsonObject;
-    boolean avanzartransaccion = false;  //true avanza
+    boolean avanzartransaccion = false,bandera = true;  //true avanza  bandera f = hay error en las alguna cedula
     ListView listacedulas;
     ArrayAdapter adapter;
 
@@ -69,7 +70,9 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         btn_anadir = (Button)findViewById(R.id.txt_cancelar);
         btn_guardar = (Button)findViewById(R.id.btn_guardarregistroerror);
         txt_fecha = (TextView)findViewById(R.id.txt_fecha);
+        txt_error = (TextView)findViewById(R.id.txt_error_cedula2);
         preferences = getSharedPreferences("infousuario",MODE_PRIVATE);
+        editor=preferences.edit();
         listadepartamentos = new ArrayList<String>();
         cedulas = new ArrayList<String>();
         cedulaserror = new ArrayList<String>();
@@ -84,7 +87,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             listadepartamentos.add(preferences.getString("depa"+i,"mal"));
         }
         departamentos.setAdapter(new ArrayAdapter<String>(getBaseContext(),android.R.layout.simple_spinner_dropdown_item,listadepartamentos));
-        listacedulas = (ListView) findViewById(R.id.list_itemcedulas);
+        listacedulas = (ListView) findViewById(R.id.list_itemcedulaserror);
 
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
@@ -105,7 +108,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 escanear();
                 break;
             case R.id.btn_asistencias:
-                startActivity(new Intent(RegistroAsistencia.this, datosDiarios.class));
+                startActivity(new Intent(RegistroAsistencia.this, CedulaError.class));
                 break;
             case R.id.txt_cancelar:
                 escanear();
@@ -115,6 +118,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                     Log.d("spiner",""+departamentos.getSelectedItem().toString());
                     subirsistema();
                     Log.d("Boton guardar","si termina en le boton: "+cedulaserror.size() );
+                    /*
                     if(cedulaserror.size() > 0)
                     {
                         startActivity(new Intent(RegistroAsistencia.this,CedulaError.class));
@@ -123,7 +127,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                         //finalizo
                         Toast.makeText(this,"Guardado Completo",Toast.LENGTH_LONG);
                         Log.d("TERMINO","ALFIN");
-                    }
+                    }*/
                 }
                 break;
         }
@@ -223,7 +227,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         {
             Log.d("cedulas",cedulaserror.get(i));
         }
-
+        Log.d("bandera",""+bandera);
     }
     public void guardarcabecera()
     {
@@ -257,10 +261,12 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             }
         };
         n_requerimiento = Volley.newRequestQueue(this);
+        requerimiento.setShouldCache(false);
         n_requerimiento.add(requerimiento);
     }
     public void buscarcabecera()
     {
+        //AppController.getInstance().getRequestQueue().getCache().get(url).serverDate
         Log.d("buscarcabecera",""+preferences.getInt("id_usuario",0));
         JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_asistencias +"?v_usuario="+preferences.getInt("id_usuario",0)+"&v_fecha="+fechadia+"&v_estado=1", null, new Response.Listener<JSONObject>() {
             @Override
@@ -269,16 +275,19 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                     JSONArray jsonArray = response.getJSONArray("data");
                     jsonObject = new JSONObject(jsonArray.get(0).toString());
                     Log.d("id_cabecera",""+jsonObject.getInt("id_cabecera"));
-
+                    editor.putInt("id_cabecera",jsonObject.getInt("id_cabecera"));
+                    editor.commit();
                     if(jsonObject.getInt("id_cabecera") != 0)
                     {
                         Log.d("guardar detalle","usuario no valido" );
                         Log.d("guardar detalle",cedulas.size()-1+"" );
+
                         for (int i = 0 ;i<= cedulas.size()-1;i++)
                         {
                             Log.d("guardar detalle","usuario no valido" );
                             validarcedula(cedulas.get(i),jsonObject.getInt("id_cabecera"),buscarusuarioxhora(cedulas.get(i)));
                             //guardardetalle(jsonObject.getInt("id_cabecera"),cedulas.get(i),buscarusuarioxhora(cedulas.get(i)));
+                            Log.d("guardar detalle","numero cedula" );
                         }
                     }
                     else
@@ -300,21 +309,16 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             }
         });
         n_requerimiento = Volley.newRequestQueue(this);
+        json.setShouldCache(false);
         n_requerimiento.add(json);
     }
     public  void guardardetalle(Integer id_cabecera1,String cedula1,String fecha1){
         Log.d("Gurdardetalle",""+cedula1+":"+id_cabecera1);
-        boolean avanzar;
-
-        //avanzar = validarcedula(cedula1);
-        //Log.d("avanzar",avanzar+"");
-        //if(validarcedula(cedula1))
-        //{
             StringRequest requerimiento = new StringRequest(Request.Method.POST, api_asistencias, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
                     Toast.makeText(RegistroAsistencia.this,"Todo bien Todo bonito",Toast.LENGTH_LONG).show();
-                    actualizar(cedula1);
+                    actualizar(cedula1,"S");
                 }
             }, new Response.ErrorListener() {
                 @Override
@@ -325,7 +329,6 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 @Override
                 protected Map<String, String> getParams() throws AuthFailureError {
                     Map<String, String> parametros = new HashMap<>();
-
                     parametros.put("v_numerocedula", cedula1);
                     parametros.put("v_fechaingreso", fecha1);
                     parametros.put("v_id_cabecera",String.valueOf(id_cabecera1) );
@@ -344,12 +347,11 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         }*/
     }
 
-    public boolean validarcedula(String cedula,Integer id_cabecera,String fecha)
+    public void validarcedula(String cedula,Integer id_cabecera,String fecha)
     {
         //validarcedula(cedulas.get(i),jsonObject.getInt("id_cabecera"),buscarusuarioxhora(cedulas.get(i)));
         Log.d("",avanzartransaccion+"");
         final int[] estado = new int[1];
-        final boolean[] help = new boolean[1];
         JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_asistencias +"?v_usuario="+cedula+"&v_fecha="+fechadia+"&v_estado=0", null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -358,7 +360,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
 
                     jsonObject = new JSONObject(jsonArray.get(0).toString());
                     estado[0] = jsonObject.getInt("estado");
-                    Log.d("revisar", estado[0]+"");
+                    Log.d("revisar", estado[0]+"dato");
                     if(estado[0] == 1)
                     {
                         Log.d("VALIDAR USUARIO","SI MARCO" );
@@ -366,15 +368,14 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                         {
                             Log.d("VALIDAR USUARIO","ESTA LIBRE" );
                             guardardetalle(id_cabecera,cedula,fecha);
-                            avanzartransaccion = true;
                         }else{
                             Log.d("VALIDAR USUARIO","no ESTA LIBRE" );
-                            avanzartransaccion = false;
                             guardar_error(cedula);
+                            txt_error.setText("Error en una o varias cedulas por favor verifique en asistencia");
                         }
                     }else {
-                        avanzartransaccion = false;
                         guardar_error(cedula);
+                        txt_error.setText("Error en una o varias cedulas por favor verifique en asistencia");
                     }
                 }catch (JSONException e)
                 {
@@ -391,8 +392,6 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         });
         n_requerimiento = Volley.newRequestQueue(this);
         n_requerimiento.add(json);
-        Log.d("Registroactividad",""+help[0]);
-        return avanzartransaccion;
     }
 
     public void llenarlist_view()
@@ -401,19 +400,17 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         listacedulas.setAdapter(adapter);
     }
 
-    public void actualizar(String v_cedula)
+    public void actualizar(String v_cedula,String estado)
     {
         bdcache = bd.getWritableDatabase();
-        bdcache.execSQL("update t_registro set estadosubido = 'S' where cedula ='"+v_cedula+"'" );
+        bdcache.execSQL("update t_registro set estadosubido = '"+estado+"' where cedula ='"+v_cedula+"'" );
     }
 
     public void guardar_error(String cedulas)
     {
         Log.d("cedulas error", "estoy en la funcion");
-        cedulaserror.add(cedulas);
-        for(int i =0 ;i <= cedulaserror.size()-1;i++)
-        {
-            Log.d("cedulas error",cedulaserror.get(i));
-        }
+        actualizar(cedulas,"E");
+        bandera = false;
+        Log.d("bandera",""+bandera);
     }
 }
