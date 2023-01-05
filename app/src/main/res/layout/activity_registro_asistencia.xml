@@ -20,19 +20,40 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/txt_fecha"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="74dp"
-                android:text="TextView"
-                android:textAlignment="center"
-                android:textSize="24sp"
-                android:textStyle="bold" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/imageView3"
+                    android:layout_width="178dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    app:srcCompat="@drawable/logo" />
+
+                <TextView
+                    android:id="@+id/txt_fecha"
+                    android:layout_width="230dp"
+                    android:layout_height="74dp"
+                    android:text="TextView"
+                    android:paddingTop="20dp"
+                    android:textAlignment="center"
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
+            </LinearLayout>
 
             <Spinner
                 android:id="@+id/spi_departamentos"
                 android:layout_width="match_parent"
-                android:layout_height="58dp" />
+                android:layout_height="58dp"
+                android:dropDownSelector="@color/teal_200" />
+
+            <Spinner
+                android:id="@+id/spi_turno"
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:dropDownSelector="@color/teal_200" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -58,6 +79,7 @@
             <ListView
                 android:id="@+id/list_itemcedulaserror"
                 android:layout_width="match_parent"
+                android:listSelector="@color/gray"
                 android:layout_height="238dp">
 
             </ListView>
@@ -72,11 +94,11 @@
                 android:orientation="horizontal">
 
                 <TextView
+                    android:listSelector="@color/gray"
                     android:id="@+id/txt_error_cedula2"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:text="TextView"
                     android:textAlignment="center"
                     android:textColor="@color/red"
                     android:textSize="20sp"
@@ -84,7 +106,7 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/txt_cancelar"
+                android:id="@+id/btn_salir"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="AÑADIR" />
@@ -94,6 +116,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="GUARDAR" />
+
+            <Button
+                android:id="@+id/btn_nuevo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Nuevo" />
 
         </LinearLayout>
     </ScrollView>

@@ -77,7 +77,7 @@ public class ListadoAsistencia extends AppCompatActivity {
         preferences = getSharedPreferences("datosapp",MODE_PRIVATE);
         bandera=bandera2=false;
         txt_estadoguardar = (TextView) findViewById(R.id.txt_estadoguardar);
-        txt_nombreusuario = (TextView) findViewById(R.id.txt_fechaL);
+        txt_nombreusuario = (TextView) findViewById(R.id.txt_fecha);
         btn_anadir = (Button) findViewById(R.id.btn_anadir);
         btn_guardar = (Button)findViewById(R.id.btn_guardar);
         bd = new Managerbd(this,"Registro",null,1);

@@ -15,14 +15,28 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <TextView
-            android:id="@+id/txt_fechaL"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="66dp"
-            android:text="TextView"
-            android:textAlignment="center"
-            android:textSize="24sp"
-            android:textStyle="bold|italic" />
+            android:layout_height="76dp"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/imageView3"
+                android:layout_width="178dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/logo" />
+
+            <TextView
+                android:id="@+id/txt_fecha"
+                android:layout_width="230dp"
+                android:layout_height="74dp"
+                android:paddingTop="20dp"
+                android:text="TextView"
+                android:textAlignment="center"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+        </LinearLayout>
 
         <ScrollView
             android:layout_width="match_parent"
@@ -36,14 +50,15 @@
                 <ListView
                     android:id="@+id/lista_cedulas"
                     android:layout_width="match_parent"
-                    android:layout_height="306dp" />
+                    android:layout_height="306dp"
+                    android:listSelector="@color/gray" />
             </LinearLayout>
         </ScrollView>
 
         <TextView
             android:id="@+id/txt_estadoguardar"
             android:layout_width="match_parent"
-            android:layout_height="116dp"
+            android:layout_height="93dp"
             android:text="TextView"
             android:textSize="16sp"
             android:textStyle="bold" />

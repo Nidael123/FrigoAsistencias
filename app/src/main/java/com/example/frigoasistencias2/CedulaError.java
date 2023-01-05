@@ -1,8 +1,11 @@
 package com.example.frigoasistencias2;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -10,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Adapter;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,9 +27,14 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.frigoasistencias2.bd.Managerbd;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -40,12 +49,13 @@ public class CedulaError extends AppCompatActivity {
     SQLiteDatabase bdcache;
     ArrayList<String> cedulas;
     ListView listacedulas;
-    Adapter adapter;
-    Button btn_guardar;
+    ArrayAdapter adapter;
+    Button btn_guardar,btn_salir;
     String api_asistencias,api_usuario;
     RequestQueue n_requerimiento;
     SharedPreferences preferences;
     EditText txt_usuario,txt_pass;
+    JSONObject jsonObject;
     //TextView txt_error;
 
     @SuppressLint("MissingInflatedId")
@@ -60,15 +70,17 @@ public class CedulaError extends AppCompatActivity {
         //txt_error = (TextView) findViewById(R.id.txt_error_cedula2);
         adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_dropdown_item_1line,cedulas);
         btn_guardar = (Button) findViewById(R.id.btn_guardarregistroerror);
+        btn_salir = (Button)findViewById(R.id.btn_salir);
         txt_usuario = (EditText)findViewById(R.id.txt_usuario_error);
         txt_pass = (EditText)findViewById(R.id.txt_pass_error);
-        listacedulas.setAdapter((ListAdapter) adapter);
+        listacedulas.setAdapter(adapter);
         preferences = getSharedPreferences("infousuario",MODE_PRIVATE);
         api_asistencias = getString(R.string.api_aistencias);
         api_usuario = getString(R.string.api_usuario);
         llenarlista();
 
         Log.d("Cedula",preferences.getInt("id_cabecera",1)+"");
+
         btn_guardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -78,14 +90,65 @@ public class CedulaError extends AppCompatActivity {
                     for(int i =0;i<=cedulas.size()-1;i++)
                     {
                         Log.d("Cedula","Guardando");
-                        guardar(cedulas.get(i));
+                        validar_pass(api_usuario+ "?usuario=" + txt_usuario.getText().toString()+"&contrasena="+txt_pass.getText().toString(),cedulas.get(i));
                     }
+
                     //logear(apisusario + "?usuario=" + txt_user.getText().toString()+"&contrasena="+txt_password.getText().toString());
                 }
                 else
                     Toast.makeText(CedulaError.this,"No se admiten campos en blanco",Toast.LENGTH_LONG);
+            }
+        });
 
+        btn_salir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(cedulas.size()<= 0)
+                {
+                    finish();
+                }
+                else
+                {
+                    AlertDialog.Builder dialogo1 = new AlertDialog.Builder(CedulaError.this);
+                    dialogo1.setTitle("Importante"); dialogo1.setMessage("¿ Desea borrar todas las cedulas con errores ?");
+                    dialogo1.setCancelable(false);
+                    dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener()
+                    { public void onClick(DialogInterface dialogo1, int id)
+                    {
+                        for(int i = 0; i<= cedulas.size()-1 ;i++)
+                        {
+                            actualizar(cedulas.get(i),"EA");
+                        }
+                        startActivity(new Intent(CedulaError.this, RegistroAsistencia.class));
+                    }
+                    });
+                    dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
+                    { public void onClick(DialogInterface dialogo1, int id) { } });
+                    dialogo1.show();
+                }
 
+            }
+        });
+
+        listacedulas.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+                final int posicion=i;
+                AlertDialog.Builder dialogo1 = new AlertDialog.Builder(CedulaError.this);
+                dialogo1.setTitle("Importante"); dialogo1.setMessage("¿ Elimina este Poducto ?");
+                dialogo1.setCancelable(false);
+                dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener()
+                { public void onClick(DialogInterface dialogo1, int id)
+                {
+                    actualizar(cedulas.get(posicion),"N");
+                    cedulas.remove(posicion);
+                    adapter.notifyDataSetChanged();
+                }
+                });
+                dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
+                { public void onClick(DialogInterface dialogo1, int id) { } });
+                dialogo1.show();
+                return false;
             }
         });
     }
@@ -151,8 +214,38 @@ public class CedulaError extends AppCompatActivity {
         }
         return hora;
     }
-    public void validar_pass(String urlusuario)
+    public void validar_pass(String url,String cedula1)
     {
-
+        final int[] help = {-1};
+        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONArray jsonArray = response.getJSONArray("data");
+                    jsonObject = new JSONObject(jsonArray.get(0).toString());
+                    if(jsonObject.getInt("id_usuario") == 0)
+                    {
+                        Toast.makeText( CedulaError.this,"Error en usuario o contraseña",Toast.LENGTH_SHORT).show();
+                        Log.d("error","usuario no valido" );
+                    }
+                    else
+                    {
+                        guardar(cedula1);
+                    }
+                }catch (JSONException e)
+                {
+                    Log.d("logeo","entro3"+e.toString());
+                    Toast.makeText(CedulaError.this,"Error de base consulte con sistemas",Toast.LENGTH_SHORT);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("logeo","entro4"+error.toString());
+                Toast.makeText(CedulaError.this,"Error de coneccion consulte con sistemas"+error.toString(),Toast.LENGTH_SHORT);
+            }
+        });
+        n_requerimiento = Volley.newRequestQueue(this);
+        n_requerimiento.add(json);
     }
 }

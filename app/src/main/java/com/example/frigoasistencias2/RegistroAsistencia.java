@@ -1,10 +1,12 @@
 package com.example.frigoasistencias2;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -44,7 +46,7 @@ import java.util.Map;
 
 public class RegistroAsistencia extends AppCompatActivity implements View.OnClickListener {
 
-    Button btn_escanear,btn_asistencia,btn_anadir,btn_guardar;
+    Button btn_escanear,btn_asistencia,btn_anadir,btn_guardar,btn_nuevo;
     TextView txt_fecha,txt_error;
     String api_asistencias, fechadia;;
     private SharedPreferences preferences;
@@ -67,8 +69,9 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_registro_asistencia);
         btn_escanear = (Button) findViewById(R.id.btn_escanear);
         btn_asistencia =(Button) findViewById(R.id.btn_asistencias);
-        btn_anadir = (Button)findViewById(R.id.txt_cancelar);
+        btn_anadir = (Button)findViewById(R.id.btn_salir);
         btn_guardar = (Button)findViewById(R.id.btn_guardarregistroerror);
+        btn_nuevo= (Button)findViewById(R.id.btn_nuevo);
         txt_fecha = (TextView)findViewById(R.id.txt_fecha);
         txt_error = (TextView)findViewById(R.id.txt_error_cedula2);
         preferences = getSharedPreferences("infousuario",MODE_PRIVATE);
@@ -77,6 +80,8 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         cedulas = new ArrayList<String>();
         cedulaserror = new ArrayList<String>();
         departamentos = findViewById(R.id.spi_departamentos);
+        btn_asistencia.setEnabled(false);
+        btn_nuevo.setEnabled(false);
         bd = new Managerbd(this,"Registro",null,1);
         api_asistencias = getString(R.string.api_aistencias);
         Log.d("registros",""+preferences.getInt("cant_depart",0));
@@ -99,6 +104,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         btn_asistencia.setOnClickListener(this);
         btn_anadir.setOnClickListener(this);
         btn_guardar.setOnClickListener(this);
+        btn_nuevo.setOnClickListener(this);
     }
 
     @Override
@@ -109,26 +115,26 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.btn_asistencias:
                 startActivity(new Intent(RegistroAsistencia.this, CedulaError.class));
+                finish();
                 break;
-            case R.id.txt_cancelar:
+            case R.id.btn_salir:
                 escanear();
                 break;
             case R.id.btn_guardarregistroerror:
                 if(departamentos.getSelectedItemPosition() != 0) {
                     Log.d("spiner",""+departamentos.getSelectedItem().toString());
-                    subirsistema();
-                    Log.d("Boton guardar","si termina en le boton: "+cedulaserror.size() );
-                    /*
-                    if(cedulaserror.size() > 0)
+                    btn_guardar.setEnabled(true);
+                    if(cedulas.size() > 0)
                     {
-                        startActivity(new Intent(RegistroAsistencia.this,CedulaError.class));
+                        subirsistema();
                     }
-                    else{
-                        //finalizo
-                        Toast.makeText(this,"Guardado Completo",Toast.LENGTH_LONG);
-                        Log.d("TERMINO","ALFIN");
-                    }*/
+                    else
+                        Log.d("Boton guardar","si termina en le boton: "+cedulas.size() );
                 }
+                break;
+            case R.id.btn_nuevo:
+                startActivity(new Intent(RegistroAsistencia.this,RegistroAsistencia.class));
+                finish();
                 break;
         }
     }
@@ -160,7 +166,14 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             intentIntegrator.initiateScan();
             Log.d("registros","escaneando");
         }else{
-            Toast.makeText(RegistroAsistencia.this,"Por favor escoja un departamento",Toast.LENGTH_SHORT);
+            AlertDialog.Builder dialogo1 = new AlertDialog.Builder(RegistroAsistencia.this);
+            dialogo1.setTitle("Importante"); dialogo1.setMessage("Escoja una opcion primero");
+            dialogo1.setCancelable(false);
+            dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener()
+            { public void onClick(DialogInterface dialogo1, int id)
+            {  }
+            });
+            dialogo1.show();
         }
     }
     public void subirbase(String v_cedula)
@@ -222,6 +235,10 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
     }
     public void subirsistema()
     {
+        btn_guardar.setEnabled(false);
+        btn_escanear.setEnabled(false);
+        btn_anadir.setEnabled(false);
+
         guardarcabecera();
         for (int i =0;i<=cedulaserror.size()-1;i++)
         {
@@ -261,7 +278,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             }
         };
         n_requerimiento = Volley.newRequestQueue(this);
-        requerimiento.setShouldCache(false);
+        requerimiento.setShouldCache(true);
         n_requerimiento.add(requerimiento);
     }
     public void buscarcabecera()
@@ -309,7 +326,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             }
         });
         n_requerimiento = Volley.newRequestQueue(this);
-        json.setShouldCache(false);
+        json.setShouldCache(true);
         n_requerimiento.add(json);
     }
     public  void guardardetalle(Integer id_cabecera1,String cedula1,String fecha1){
@@ -337,6 +354,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 }
             };
             n_requerimiento = Volley.newRequestQueue(this);
+            requerimiento.setShouldCache(true);
             n_requerimiento.add(requerimiento);
         /*}
         else
@@ -372,10 +390,12 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                             Log.d("VALIDAR USUARIO","no ESTA LIBRE" );
                             guardar_error(cedula);
                             txt_error.setText("Error en una o varias cedulas por favor verifique en asistencia");
+                            btn_asistencia.setEnabled(true);
                         }
                     }else {
                         guardar_error(cedula);
                         txt_error.setText("Error en una o varias cedulas por favor verifique en asistencia");
+                        btn_asistencia.setEnabled(true);
                     }
                 }catch (JSONException e)
                 {

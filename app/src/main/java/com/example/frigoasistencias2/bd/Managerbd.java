@@ -12,7 +12,7 @@ public class Managerbd extends SQLiteOpenHelper {
 
     //estado: si el usuario esta en otra area o no ha marcado
     //estadoeliminar : si se elimina el usuario de la list   'E' = eliminado 'A'= activo
-    //estadosubido: si la informacion fue subida al sistema principal 'P' = pendiente 'S' = subido 'E' error
+    //estadosubido: si la informacion fue subida al sistema principal 'P' = pendiente 'S' = subido 'E' error 'N' =NO CUMPLE 'EA' error autorizado
 
     public Managerbd(@Nullable Context context, @Nullable String name, @Nullable SQLiteDatabase.CursorFactory factory, int version) {
         super(context, name, factory, version);

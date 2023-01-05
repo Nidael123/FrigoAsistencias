@@ -1,10 +1,16 @@
 package com.example.frigoasistencias2;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 
+import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -35,6 +41,8 @@ public class Login extends AppCompatActivity {
     private SharedPreferences preferences;
     private SharedPreferences.Editor editor;
     ArrayList<String> departamentos;
+    boolean isWifiConn = false;
+    boolean isMobileConn = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,17 +58,44 @@ public class Login extends AppCompatActivity {
         preferences = getSharedPreferences("infousuario", MODE_PRIVATE);
         editor = preferences.edit();
 
+
+
+        AlertDialog.Builder dialogo1 = new AlertDialog.Builder(Login.this);
+        dialogo1.setTitle("Importante"); dialogo1.setMessage("Conectarse a la red de Frigopesca");
+        dialogo1.setCancelable(false);
+        dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener()
+        { public void onClick(DialogInterface dialogo1, int id)
+        {  }
+        });
+
+
+
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(txt_user.getText().toString() != "" && txt_password.getText().toString() != "" )
+                validar_red();
+                if(isWifiConn)
                 {
-                    Toast.makeText(Login.this, "click", Toast.LENGTH_SHORT);
-                    logear(apisusario + "?usuario=" + txt_user.getText().toString()+"&contrasena="+txt_password.getText().toString());
+                    if(txt_user.getText().toString() != "" && txt_password.getText().toString() != "" )
+                    {
+                        Toast.makeText(Login.this, "Ingreso", Toast.LENGTH_LONG);
+                        logear(apisusario + "?usuario=" + txt_user.getText().toString()+"&contrasena="+txt_password.getText().toString());
+
+                    }
+                    else
+                        Toast.makeText(Login.this,"No se admiten campos en blanco",Toast.LENGTH_LONG);
                 }
                 else
-                    Toast.makeText(Login.this,"No se admiten campos en blanco",Toast.LENGTH_LONG);
+                {
+                    Toast.makeText(Login.this, "Acceda a la red de Frigopesca e Intente de nuevo", Toast.LENGTH_SHORT);
+                }
+
+                if(isMobileConn && isWifiConn == false)
+                {
+                    dialogo1.show();
+                }
             }
+
         });
     }
     public void logear(String url)
@@ -108,5 +143,20 @@ public class Login extends AppCompatActivity {
         });
         n_requerimiento = Volley.newRequestQueue(this);
         n_requerimiento.add(json);
+    }
+
+
+    public void validar_red()
+    {
+        ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        for (Network network : connMgr.getAllNetworks()) {
+            NetworkInfo networkInfo = connMgr.getNetworkInfo(network);
+            if (networkInfo.getType() == ConnectivityManager.TYPE_WIFI) {
+                isWifiConn |= networkInfo.isConnected();
+            }
+            if (networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
+                isMobileConn |= networkInfo.isConnected();
+            }
+        }
     }
 }
