@@ -39,6 +39,7 @@ import org.json.JSONObject;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
@@ -47,8 +48,8 @@ import java.util.Map;
 public class RegistroAsistencia extends AppCompatActivity implements View.OnClickListener {
 
     Button btn_escanear,btn_asistencia,btn_anadir,btn_guardar,btn_nuevo;
-    TextView txt_fecha,txt_error;
-    String api_asistencias, fechadia;;
+    TextView txt_fecha,txt_error,txt_turno;
+    String api_asistencias, fechadia,fechaturno,jornada;
     private SharedPreferences preferences;
     SharedPreferences.Editor editor;
     Spinner departamentos;
@@ -61,6 +62,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
     boolean avanzartransaccion = false,bandera = true;  //true avanza  bandera f = hay error en las alguna cedula
     ListView listacedulas;
     ArrayAdapter adapter;
+    Integer turno;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -68,38 +70,69 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro_asistencia);
         btn_escanear = (Button) findViewById(R.id.btn_escanear);
-        btn_asistencia =(Button) findViewById(R.id.btn_asistencias);
-        btn_anadir = (Button)findViewById(R.id.btn_salir);
-        btn_guardar = (Button)findViewById(R.id.btn_guardarregistroerror);
-        btn_nuevo= (Button)findViewById(R.id.btn_nuevo);
-        txt_fecha = (TextView)findViewById(R.id.txt_fecha);
-        txt_error = (TextView)findViewById(R.id.txt_error_cedula2);
-        preferences = getSharedPreferences("infousuario",MODE_PRIVATE);
-        editor=preferences.edit();
+        btn_asistencia = (Button) findViewById(R.id.btn_asistencias);
+        btn_anadir = (Button) findViewById(R.id.btn_salir);
+        btn_guardar = (Button) findViewById(R.id.btn_guardarregistroerror);
+        btn_nuevo = (Button) findViewById(R.id.btn_nuevo);
+        txt_fecha = (TextView) findViewById(R.id.txt_fecha);
+        txt_error = (TextView) findViewById(R.id.txt_error_cedula2);
+        txt_turno = (TextView)findViewById(R.id.txt_turno);
+        preferences = getSharedPreferences("infousuario", MODE_PRIVATE);
+        editor = preferences.edit();
+
         listadepartamentos = new ArrayList<String>();
         cedulas = new ArrayList<String>();
         cedulaserror = new ArrayList<String>();
         departamentos = findViewById(R.id.spi_departamentos);
         btn_asistencia.setEnabled(false);
         btn_nuevo.setEnabled(false);
-        bd = new Managerbd(this,"Registro",null,1);
+        bd = new Managerbd(this, "Registro", null, 1);
         api_asistencias = getString(R.string.api_aistencias);
-        Log.d("registros",""+preferences.getInt("cant_depart",0));
+        Log.d("registros", "" + preferences.getInt("cant_depart", 0));
         listadepartamentos.add("Escoja una opcion");
-        for(int i = 0;i<=preferences.getInt("cant_depart",0);i++)
-        {
-            Log.d("registros",preferences.getString("depa"+i,"mal"));
-            listadepartamentos.add(preferences.getString("depa"+i,"mal"));
+        for (int i = 0; i <= preferences.getInt("cant_depart", 0); i++) {
+            Log.d("registros", preferences.getString("depa" + i, "mal"));
+            listadepartamentos.add(preferences.getString("depa" + i, "mal"));
         }
-        departamentos.setAdapter(new ArrayAdapter<String>(getBaseContext(),android.R.layout.simple_spinner_dropdown_item,listadepartamentos));
+        departamentos.setAdapter(new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_spinner_dropdown_item, listadepartamentos));
         listacedulas = (ListView) findViewById(R.id.list_itemcedulaserror);
 
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
         fechadia = dateFormat.format(date);
-        txt_fecha.setText(preferences.getString("nombre_usuario","mal"));
+        txt_fecha.setText(preferences.getString("nombre_usuario", "mal"));
 
+        final int OPEN_HOUR = 07; /* 0 - 23*/
+        final int OPEN_MINUTE = 0; /* 0 - 59*/
+        final int OPEN_SECOND = 0; /* 0 - 59*/
+
+        /* 07:00 PM */
+        final int CLOSED_HOUR = 19;
+        final int CLOSED_MINUTE = 0;
+        final int CLOSED_SECOND = 0;
+
+        Calendar openHour = Calendar.getInstance();
+        openHour.set(Calendar.HOUR_OF_DAY, OPEN_HOUR);
+        openHour.set(Calendar.MINUTE, OPEN_MINUTE);
+        openHour.set(Calendar.SECOND, OPEN_SECOND);
+
+        Calendar closedHour = Calendar.getInstance();
+        closedHour.set(Calendar.HOUR_OF_DAY, CLOSED_HOUR);
+        closedHour.set(Calendar.MINUTE, CLOSED_MINUTE);
+        closedHour.set(Calendar.SECOND, CLOSED_SECOND);
+
+        Calendar now = Calendar.getInstance();
+
+        if(now.after(openHour) && now.before(closedHour))
+        {
+            txt_turno.setText("Turno Dia");
+            Log.d("tturno","dia");
+            turno = 1;
+        }else{
+            txt_turno.setText("Turno Noche");
+            turno = 2;
+        }
         btn_escanear.setOnClickListener(this);
         btn_asistencia.setOnClickListener(this);
         btn_anadir.setOnClickListener(this);
@@ -256,7 +289,6 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         StringRequest requerimiento = new StringRequest(Request.Method.POST, api_asistencias, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Toast.makeText(RegistroAsistencia.this,"Todo bien Todo bonito",Toast.LENGTH_LONG).show();
                 //buscar la cabecera
                 buscarcabecera();
             }
@@ -274,6 +306,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 parametros.put("v_departamento",departamentos.getSelectedItem().toString());
                 parametros.put("v_fechaingreso", fechadiacabe);
                 parametros.put("v_estado", String.valueOf(0));
+                parametros.put("v_turno",String.valueOf(turno));
                 return parametros;
             }
         };
@@ -433,4 +466,45 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         bandera = false;
         Log.d("bandera",""+bandera);
     }
+    /*
+    public void buscarusuario(String cedula)
+    {
+        final int[] estado = new int[1];
+        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_asistencias +"?v_usuario="+cedula+"&v_fecha="+fechadia+"&v_estado=0", null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONArray jsonArray = response.getJSONArray("data");
+
+                    jsonObject = new JSONObject(jsonArray.get(0).toString());
+
+
+
+
+
+                    estado[0] = jsonObject.getInt("estado");
+
+
+
+
+
+
+
+
+                }catch (JSONException e)
+                {
+                    Log.d("logeo","entro3"+e.toString());
+                    Toast.makeText(RegistroAsistencia.this,"Error de base consulte con sistemas",Toast.LENGTH_SHORT);
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("logeo","entro4"+error.toString());
+                Toast.makeText(RegistroAsistencia.this,"Error de coneccion consulte con sistemas"+error.toString(),Toast.LENGTH_SHORT);
+            }
+        });
+        n_requerimiento = Volley.newRequestQueue(this);
+        n_requerimiento.add(json);
+    }*/
 }

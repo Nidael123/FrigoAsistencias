@@ -92,7 +92,8 @@ public class CedulaError extends AppCompatActivity {
                         Log.d("Cedula","Guardando");
                         validar_pass(api_usuario+ "?usuario=" + txt_usuario.getText().toString()+"&contrasena="+txt_pass.getText().toString(),cedulas.get(i));
                     }
-
+                    startActivity(new Intent(CedulaError.this,RegistroAsistencia.class));
+                    finish();
                     //logear(apisusario + "?usuario=" + txt_user.getText().toString()+"&contrasena="+txt_password.getText().toString());
                 }
                 else
