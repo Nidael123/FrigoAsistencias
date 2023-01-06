@@ -48,12 +48,12 @@ import java.util.Map;
 public class RegistroAsistencia extends AppCompatActivity implements View.OnClickListener {
 
     Button btn_escanear,btn_asistencia,btn_anadir,btn_guardar,btn_nuevo;
-    TextView txt_fecha,txt_error,txt_turno;
+    TextView txt_fecha,txt_error,txt_turno,txt_cantidad;
     String api_asistencias, fechadia,fechaturno,jornada;
     private SharedPreferences preferences;
     SharedPreferences.Editor editor;
     Spinner departamentos;
-    ArrayList<String> listadepartamentos;
+    ArrayList<String> listadepartamentos,listanombres;
     ArrayList<String> cedulas,cedulaserror;
     Managerbd bd;
     SQLiteDatabase bdcache;
@@ -77,11 +77,13 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         txt_fecha = (TextView) findViewById(R.id.txt_fecha);
         txt_error = (TextView) findViewById(R.id.txt_error_cedula2);
         txt_turno = (TextView)findViewById(R.id.txt_turno);
+        txt_cantidad = (TextView )findViewById(R.id.txt_cantidad);
         preferences = getSharedPreferences("infousuario", MODE_PRIVATE);
         editor = preferences.edit();
-
+        txt_cantidad.setText("0");
         listadepartamentos = new ArrayList<String>();
         cedulas = new ArrayList<String>();
+        listanombres = new ArrayList<String>();
         cedulaserror = new ArrayList<String>();
         departamentos = findViewById(R.id.spi_departamentos);
         btn_asistencia.setEnabled(false);
@@ -179,6 +181,8 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             subirbase(intentResult.getContents());
             if (intentResult.getContents() == null) {
                 llenarlist_view();
+                Log.d("cantidad de cedulas:",""+cedulas.size());
+                txt_cantidad.setText(cedulas.size()+"");
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             } else {
                 escanear();
@@ -229,6 +233,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 bdcache.insert("t_registro", null, content);
                 Toast.makeText(getBaseContext(), "Insertado", Toast.LENGTH_SHORT).show();
                 cedulas.add(v_cedula);
+                llenarusuario(v_cedula);
             }
             else
                 Toast.makeText(getBaseContext(), "Usuario ya ingresado", Toast.LENGTH_SHORT).show();
@@ -279,6 +284,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         }
         Log.d("bandera",""+bandera);
     }
+
     public void guardarcabecera()
     {
         String fechadiacabe;
@@ -295,6 +301,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+                Log.d("Error al guardar cabecera",""+error.toString());
                 Toast.makeText(RegistroAsistencia.this,"error guardado",Toast.LENGTH_LONG).show();
             }
         }) {
@@ -311,7 +318,6 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             }
         };
         n_requerimiento = Volley.newRequestQueue(this);
-        requerimiento.setShouldCache(true);
         n_requerimiento.add(requerimiento);
     }
     public void buscarcabecera()
@@ -336,7 +342,6 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                         {
                             Log.d("guardar detalle","usuario no valido" );
                             validarcedula(cedulas.get(i),jsonObject.getInt("id_cabecera"),buscarusuarioxhora(cedulas.get(i)));
-                            //guardardetalle(jsonObject.getInt("id_cabecera"),cedulas.get(i),buscarusuarioxhora(cedulas.get(i)));
                             Log.d("guardar detalle","numero cedula" );
                         }
                     }
@@ -389,18 +394,10 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             n_requerimiento = Volley.newRequestQueue(this);
             requerimiento.setShouldCache(true);
             n_requerimiento.add(requerimiento);
-        /*}
-        else
-        {
-            cedulaserror.add(cedula1);
-            Log.d("cedulas error",""+cedulaserror.size());
-            //for(int i = 0;i<=cedulaserror.size()-1)
-        }*/
     }
 
     public void validarcedula(String cedula,Integer id_cabecera,String fecha)
     {
-        //validarcedula(cedulas.get(i),jsonObject.getInt("id_cabecera"),buscarusuarioxhora(cedulas.get(i)));
         Log.d("",avanzartransaccion+"");
         final int[] estado = new int[1];
         JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_asistencias +"?v_usuario="+cedula+"&v_fecha="+fechadia+"&v_estado=0", null, new Response.Listener<JSONObject>() {
@@ -449,7 +446,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
 
     public void llenarlist_view()
     {
-        adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_dropdown_item_1line,cedulas);
+        adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_dropdown_item_1line,listanombres);
         listacedulas.setAdapter(adapter);
     }
 
@@ -466,10 +463,10 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         bandera = false;
         Log.d("bandera",""+bandera);
     }
-    /*
-    public void buscarusuario(String cedula)
+
+    public void llenarusuario(String cedula)
     {
-        final int[] estado = new int[1];
+        final String[] estado = new String[1];
         JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_asistencias +"?v_usuario="+cedula+"&v_fecha="+fechadia+"&v_estado=0", null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -478,18 +475,8 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
 
                     jsonObject = new JSONObject(jsonArray.get(0).toString());
 
-
-
-
-
-                    estado[0] = jsonObject.getInt("estado");
-
-
-
-
-
-
-
+                    estado[0] = jsonObject.getString("nombre");
+                    listanombres.add(cedula +"  :   "+jsonObject.getString("nombre"));
 
                 }catch (JSONException e)
                 {
@@ -506,5 +493,5 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         });
         n_requerimiento = Volley.newRequestQueue(this);
         n_requerimiento.add(json);
-    }*/
+    }
 }

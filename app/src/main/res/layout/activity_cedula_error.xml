@@ -40,13 +40,13 @@
             <ListView
                 android:id="@+id/list_itemcedulaserror"
                 android:layout_width="match_parent"
-                android:layout_height="346dp">
+                android:layout_height="351dp">
 
             </ListView>
 
             <Space
                 android:layout_width="match_parent"
-                android:layout_height="27dp" />
+                android:layout_height="21dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -57,7 +57,11 @@
                     android:id="@+id/txt_error_cedula2"
                     android:layout_width="wrap_content"
                     android:layout_height="63dp"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:textAlignment="center"
+                    android:textColor="@color/red"
+                    android:textSize="20sp"
+                    android:textStyle="bold"/>
             </LinearLayout>
 
             <LinearLayout
