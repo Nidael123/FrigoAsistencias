@@ -103,19 +103,16 @@
 
             </ListView>
 
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="42dp" />
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="51dp"
+                android:layout_height="75dp"
                 android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/txt_error_cedula2"
                     android:layout_width="wrap_content"
-                    android:layout_height="42dp"
+                    android:layout_height="72dp"
                     android:layout_weight="1"
                     android:listSelector="@color/gray"
                     android:textAlignment="center"

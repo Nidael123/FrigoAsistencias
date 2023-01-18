@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
@@ -48,17 +50,16 @@ public class Login extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         apisusario = getString(R.string.api_usuario);
-        btn_login = (Button) findViewById(R.id.btn_login);
+        btn_login = (Button) findViewById(R.id.btn_login1);
         txt_password = (EditText) findViewById(R.id.txt_password);
         txt_user = (EditText) findViewById(R.id.txt_user);
 
         preferences = getSharedPreferences("infousuario", MODE_PRIVATE);
         editor = preferences.edit();
 
-
+        verificarversion();
 
         AlertDialog.Builder dialogo1 = new AlertDialog.Builder(Login.this);
         dialogo1.setTitle("Importante"); dialogo1.setMessage("Conectarse a la red de Frigopesca");
@@ -144,8 +145,6 @@ public class Login extends AppCompatActivity {
         n_requerimiento = Volley.newRequestQueue(this);
         n_requerimiento.add(json);
     }
-
-
     public void validar_red()
     {
         ConnectivityManager connMgr = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -157,6 +156,18 @@ public class Login extends AppCompatActivity {
             if (networkInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
                 isMobileConn |= networkInfo.isConnected();
             }
+        }
+    }
+
+    public void verificarversion()
+    {
+        String version;
+        try {
+            PackageInfo pInfo = this.getPackageManager().getPackageInfo(getPackageName(), 0);
+            version = pInfo.versionName;
+            Log.d("VERSION",""+version);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
         }
     }
 }

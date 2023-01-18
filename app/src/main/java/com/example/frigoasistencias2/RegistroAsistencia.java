@@ -13,6 +13,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -173,6 +174,43 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 break;
         }
     }
+
+    @Override
+    public void onBackPressed() {
+        if(cedulas.size() > 0)
+        {
+            AlertDialog.Builder dialogo1 = new AlertDialog.Builder(RegistroAsistencia.this);
+            dialogo1.setTitle("Importante"); dialogo1.setMessage("¿ Desea salir sin procesar los datos ?");
+            dialogo1.setCancelable(false);
+            dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener()
+            { public void onClick(DialogInterface dialogo1, int id)
+            {
+                cancelar_cedulas();
+                finish();   }
+            });
+            dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
+            { public void onClick(DialogInterface dialogo1, int id) { } });
+            dialogo1.show();
+        }
+        else
+            finish();
+    }
+/*
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        AlertDialog.Builder dialogo1 = new AlertDialog.Builder(RegistroAsistencia.this);
+        dialogo1.setTitle("Importante"); dialogo1.setMessage("¿ Desea borrar todas las cedulas con errores ?");
+        dialogo1.setCancelable(false);
+        dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener()
+        { public void onClick(DialogInterface dialogo1, int id)
+        {        }
+        });
+        dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
+        { public void onClick(DialogInterface dialogo1, int id) { } });
+        dialogo1.show();
+        return super.onKeyDown(keyCode, event);
+    }*/
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -184,6 +222,10 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 Log.d("cantidad de cedulas:",""+cedulas.size());
                 txt_cantidad.setText(cedulas.size()+"");
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
+                for (int i = 0;i<=listanombres.size()-1;i++)
+                {
+                    Log.d("recorrido",listanombres.get(i)+"");
+                }
             } else {
                 escanear();
             }
@@ -247,9 +289,14 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         Date date = new Date();
         fechadia = dateFormat.format(date);
         bdcache = bd.getReadableDatabase();
-        Cursor cursor = bdcache.rawQuery("Select cedula from t_registro where cedula like " + "'%" + v_cedula + "%'" + " and fechaingreso like " + "'%" + fechadia + "%'", null);
-        if (cursor.getCount() > 0) {
+        Cursor cursor = bdcache.rawQuery("Select cedula from t_registro where cedula like " + "'%" + v_cedula + "%'" + " and fechaingreso like " + "'%" + fechadia + "%'"+"and estado in "+"('A')", null);
+
+        if (cursor.getCount() >= 0) {
             ingresar = false;
+            for (int i = 0;i<=cursor.getCount();i++ )
+            {
+                Log.d("estadocedula",cursor.getString(0)+"");
+            }
         } else {
             ingresar = true;
         }
@@ -276,7 +323,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         btn_guardar.setEnabled(false);
         btn_escanear.setEnabled(false);
         btn_anadir.setEnabled(false);
-
+        btn_nuevo.setEnabled(true);
         guardarcabecera();
         for (int i =0;i<=cedulaserror.size()-1;i++)
         {
@@ -353,14 +400,14 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 }catch (JSONException e)
                 {
                     Log.d("logeo","entro3"+e.toString());
-                    Toast.makeText(RegistroAsistencia.this,"Error de base consulte con sistemas",Toast.LENGTH_SHORT);
+                    Toast.makeText(RegistroAsistencia.this,"Error de base consulte con sistemas",Toast.LENGTH_SHORT).show();
                 }
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("logeo","entro4"+error.toString());
-                Toast.makeText(RegistroAsistencia.this,"Error de coneccion consulte con sistemas"+error.toString(),Toast.LENGTH_SHORT);
+                Toast.makeText(RegistroAsistencia.this,"Error de coneccion consulte con sistemas"+error.toString(),Toast.LENGTH_SHORT).show();
             }
         });
         n_requerimiento = Volley.newRequestQueue(this);
@@ -448,6 +495,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
     {
         adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_dropdown_item_1line,listanombres);
         listacedulas.setAdapter(adapter);
+        Log.d("Registro Asistencia","si carga");
     }
 
     public void actualizar(String v_cedula,String estado)
@@ -476,7 +524,9 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                     jsonObject = new JSONObject(jsonArray.get(0).toString());
 
                     estado[0] = jsonObject.getString("nombre");
+                    Log.d("Lista nombre",jsonObject.getString("nombre"));
                     listanombres.add(cedula +"  :   "+jsonObject.getString("nombre"));
+                    Log.d("Lista nombre",cedula +"  :   "+jsonObject.getString("nombre"));
 
                 }catch (JSONException e)
                 {
@@ -493,5 +543,19 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         });
         n_requerimiento = Volley.newRequestQueue(this);
         n_requerimiento.add(json);
+    }
+
+    public void cancelar_cedulas()
+    {
+        for (int i =0;i<=cedulas.size()-1;i++)
+        {
+            actualizar(cedulas.get(i),"C");
+            actualizar2(cedulas.get(i),"C");
+        }
+    }
+    public void actualizar2(String v_cedula,String estado)
+    {
+        bdcache = bd.getWritableDatabase();
+        bdcache.execSQL("update t_registro set estadoeliminar = '"+estado+"' where cedula ='"+v_cedula+"'" );
     }
 }

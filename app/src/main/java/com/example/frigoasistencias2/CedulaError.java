@@ -11,6 +11,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Adapter;
 import android.widget.AdapterView;
@@ -58,6 +59,7 @@ public class CedulaError extends AppCompatActivity {
     JSONObject jsonObject;
     TextView txt_error;
 
+
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -104,7 +106,6 @@ public class CedulaError extends AppCompatActivity {
                     Toast.makeText(CedulaError.this,"No se admiten campos en blanco",Toast.LENGTH_LONG);
             }
         });
-
         btn_salir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -116,6 +117,7 @@ public class CedulaError extends AppCompatActivity {
                 else if(txt_error.getText() == "Datos guardados con exito!")
                 {
                     startActivity(new Intent(CedulaError.this, RegistroAsistencia.class));
+                    finish();
                 }
                 else{
                     AlertDialog.Builder dialogo1 = new AlertDialog.Builder(CedulaError.this);
@@ -138,7 +140,6 @@ public class CedulaError extends AppCompatActivity {
 
             }
         });
-
         listacedulas.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -149,12 +150,10 @@ public class CedulaError extends AppCompatActivity {
                 dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener()
                 { public void onClick(DialogInterface dialogo1, int id)
                 {
-
                     actualizar(cedulas.get(posicion),"N");
                     cedulas.remove(posicion);
                     lista_nombres.remove(posicion);
                     adapter.notifyDataSetChanged();
-
                 }
                 });
                 dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
@@ -165,22 +164,102 @@ public class CedulaError extends AppCompatActivity {
         });
     }
 
+    @Override
+    public void onBackPressed() {
+        if(cedulas.size() > 0)
+        {
+            AlertDialog.Builder dialogo1 = new AlertDialog.Builder(CedulaError.this);
+            dialogo1.setTitle("Importante"); dialogo1.setMessage("¿ Desea salir sin procesar los datos ?");
+            dialogo1.setCancelable(false);
+            dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener()
+            { public void onClick(DialogInterface dialogo1, int id)
+            {
+                cancelar_cedulas();
+                startActivity(new Intent(CedulaError.this, RegistroAsistencia.class));
+                finish();
+            }
+            });
+            dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
+            { public void onClick(DialogInterface dialogo1, int id) { } });
+            dialogo1.show();
+        }
+        else
+            finish();
+    }
+/*
+    @Override
+    public void onBackPressed() {
+        Log.d("banck1","presiona el back");
+        AlertDialog.Builder dialogo1 = new AlertDialog.Builder(CedulaError.this);
+        dialogo1.setTitle("Importante"); dialogo1.setMessage("¿ Desea borrar todas las cedulas con errores ?");
+        dialogo1.setCancelable(false);
+        dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener()
+        { public void onClick(DialogInterface dialogo1, int id)
+        {
+            for(int i = 0; i<= cedulas.size()-1 ;i++)
+            {
+                actualizar(cedulas.get(i),"EA");
+            }
+            startActivity(new Intent(CedulaError.this, RegistroAsistencia.class));
+        }
+        });
+        dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
+        { public void onClick(DialogInterface dialogo1, int id) { } });
+        dialogo1.show();
+
+
+
+
+
+
+        if(cedulas.size()<= 0)
+        {
+            Log.d("banck3","presiona el back");
+            startActivity(new Intent(CedulaError.this, RegistroAsistencia.class));
+            finish();
+        }
+        else if(txt_error.getText() == "Datos guardados con exito!")
+        {
+            Log.d("banck2","presiona el back");
+            startActivity(new Intent(CedulaError.this, RegistroAsistencia.class));
+        }
+        else{
+            Log.d("banck1","presiona el back");
+            AlertDialog.Builder dialogo1 = new AlertDialog.Builder(CedulaError.this);
+            dialogo1.setTitle("Importante"); dialogo1.setMessage("¿ Desea borrar todas las cedulas con errores ?");
+            dialogo1.setCancelable(false);
+            dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener()
+            { public void onClick(DialogInterface dialogo1, int id)
+            {
+                for(int i = 0; i<= cedulas.size()-1 ;i++)
+                {
+                    actualizar(cedulas.get(i),"EA");
+                }
+                startActivity(new Intent(CedulaError.this, RegistroAsistencia.class));
+            }
+            });
+            dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
+            { public void onClick(DialogInterface dialogo1, int id) { } });
+            dialogo1.show();
+        }
+        Log.d("banck","presiona el back");
+        super.onBackPressed();
+    }*/
+
     public void llenarlista() {
         String fechadia;
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
         fechadia = dateFormat.format(date);
         bdcache = bd.getReadableDatabase();
-        Cursor cursor = bdcache.rawQuery("Select cedula from t_registro where fechaingreso like " + "'%" + fechadia + "%' and estadosubido ='E'", null);
+        Cursor cursor = bdcache.rawQuery("Select cedula,estadoeliminar,estado from t_registro where fechaingreso like " + "'%" + fechadia + "%' and estadosubido ='E' and estadoeliminar <> 'C'", null);
         cursor.moveToFirst();
         do{
             cedulas.add(cursor.getString(0));
             llenarusuario(cursor.getString(0));
             adapter.notifyDataSetChanged();
+            Log.d("cedulasllenar",cursor.getString(1)+cursor.getString(2));
         }while(cursor.moveToNext());
-
-
-
     }
     public void guardar(String cedula)
     {
@@ -246,7 +325,6 @@ public class CedulaError extends AppCompatActivity {
                         Log.d("error","usuario no valido" );
                         btn_guardar.setEnabled(true);
                         txt_error.setText("Error de usuario o contraseña! Vuelva a intentar :v");
-
                     }
                     else
                     {
@@ -300,4 +378,21 @@ public class CedulaError extends AppCompatActivity {
         n_requerimiento = Volley.newRequestQueue(this);
         n_requerimiento.add(json);
     }
+    public void cancelar_cedulas()
+    {
+        Log.d("cancelar error","cedula:"+cedulas.size());
+        for (int i =0;i<=cedulas.size()-1;i++)
+        {
+            Log.d("cancelar error","cedula:"+cedulas.get(i));
+            actualizar(cedulas.get(i),"C");
+            actualizar2(cedulas.get(i),"C");
+        }
+    }
+
+    public void actualizar2(String v_cedula,String estado)
+    {
+        bdcache = bd.getWritableDatabase();
+        bdcache.execSQL("update t_registro set estadoeliminar = '"+estado+"' where cedula ='"+v_cedula+"'" );
+    }
+    
 }

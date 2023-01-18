@@ -42,7 +42,7 @@
         <activity
             android:name=".RegistroAsistencia"
             android:exported="false"
-            android:screenOrientation="portrait">z
+            android:screenOrientation="portrait">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
