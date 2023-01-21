@@ -64,6 +64,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
     ListView listacedulas;
     ArrayAdapter adapter;
     Integer turno;
+    Boolean bandera1;//true no presento  -- false  presento
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -89,6 +90,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         departamentos = findViewById(R.id.spi_departamentos);
         btn_asistencia.setEnabled(false);
         btn_nuevo.setEnabled(false);
+        bandera1 = false;
         bd = new Managerbd(this, "Registro", null, 1);
         api_asistencias = getString(R.string.api_aistencias);
         Log.d("registros", "" + preferences.getInt("cant_depart", 0));
@@ -177,7 +179,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onBackPressed() {
-        if(cedulas.size() > 0)
+        if(cedulas.size() > 0 || cedulaserror.size() > 0)
         {
             AlertDialog.Builder dialogo1 = new AlertDialog.Builder(RegistroAsistencia.this);
             dialogo1.setTitle("Importante"); dialogo1.setMessage("¿ Desea salir sin procesar los datos ?");
@@ -289,14 +291,10 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         Date date = new Date();
         fechadia = dateFormat.format(date);
         bdcache = bd.getReadableDatabase();
-        Cursor cursor = bdcache.rawQuery("Select cedula from t_registro where cedula like " + "'%" + v_cedula + "%'" + " and fechaingreso like " + "'%" + fechadia + "%'"+"and estado in "+"('A')", null);
-
-        if (cursor.getCount() >= 0) {
+        Cursor cursor = bdcache.rawQuery("Select cedula from t_registro where cedula like " + "'%" + v_cedula + "%'" + " and fechaingreso like " + "'%" + fechadia + "%'"+"and estadoeliminar in ('A') and  estadosubido <> 'C'", null);
+        Log.d("estadoeliminar23",cursor.getCount()+"");
+        if (cursor.getCount() > 0) {
             ingresar = false;
-            for (int i = 0;i<=cursor.getCount();i++ )
-            {
-                Log.d("estadocedula",cursor.getString(0)+"");
-            }
         } else {
             ingresar = true;
         }
@@ -371,7 +369,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
     {
         //AppController.getInstance().getRequestQueue().getCache().get(url).serverDate
         Log.d("buscarcabecera",""+preferences.getInt("id_usuario",0));
-        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_asistencias +"?v_usuario="+preferences.getInt("id_usuario",0)+"&v_fecha="+fechadia+"&v_estado=1", null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_asistencias +"?v_usuario="+preferences.getInt("id_usuario",0)+"&v_fecha="+fechadia+"&v_estado=1&v_departamento="+departamentos.getSelectedItem().toString(), null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -391,6 +389,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                             validarcedula(cedulas.get(i),jsonObject.getInt("id_cabecera"),buscarusuarioxhora(cedulas.get(i)));
                             Log.d("guardar detalle","numero cedula" );
                         }
+
                     }
                     else
                     {
@@ -406,7 +405,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("logeo","entro4"+error.toString());
+                Log.d("buscarerror","dd"+error.toString());
                 Toast.makeText(RegistroAsistencia.this,"Error de coneccion consulte con sistemas"+error.toString(),Toast.LENGTH_SHORT).show();
             }
         });
@@ -415,7 +414,6 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         n_requerimiento.add(json);
     }
     public  void guardardetalle(Integer id_cabecera1,String cedula1,String fecha1){
-        Log.d("Gurdardetalle",""+cedula1+":"+id_cabecera1);
             StringRequest requerimiento = new StringRequest(Request.Method.POST, api_asistencias, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
@@ -426,6 +424,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Toast.makeText(RegistroAsistencia.this,"error guardado",Toast.LENGTH_LONG).show();
+                    Log.d("detalleerror",error.toString());
                 }
             }) {
                 @Override
@@ -465,8 +464,8 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                             guardardetalle(id_cabecera,cedula,fecha);
                         }else{
                             Log.d("VALIDAR USUARIO","no ESTA LIBRE" );
-                            guardar_error(cedula);
-                            txt_error.setText("Error en una o varias cedulas por favor verifique en asistencia");
+                            Toast.makeText(RegistroAsistencia.this,"Este usuario esta asignado en otra Area",Toast.LENGTH_SHORT).show();
+                            actualizar(cedula,"C");
                             btn_asistencia.setEnabled(true);
                         }
                     }else {
@@ -477,7 +476,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 }catch (JSONException e)
                 {
                     Log.d("logeo","entro3"+e.toString());
-                    Toast.makeText(RegistroAsistencia.this,"Error de base consulte con sistemas",Toast.LENGTH_SHORT);
+                    Toast.makeText(RegistroAsistencia.this,"Error de base consulte con sistemas",Toast.LENGTH_SHORT).show();
                 }
             }
         }, new Response.ErrorListener() {
