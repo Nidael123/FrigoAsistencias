@@ -468,7 +468,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                             cedulaserror.add(cedula);
                             //Toast.makeText(RegistroAsistencia.this,"Este usuario esta asignado en otra Area",Toast.LENGTH_SHORT).show();
                             //actualizar(cedula,"C");
-
+                            actualizar(cedula,"N");
                             //eliminarcedula(cedula);
                             btn_asistencia.setEnabled(true);
                         }

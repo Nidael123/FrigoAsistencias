@@ -96,7 +96,6 @@ public class Login extends AppCompatActivity {
                     dialogo1.show();
                 }
             }
-
         });
     }
     public void logear(String url)
@@ -158,7 +157,6 @@ public class Login extends AppCompatActivity {
             }
         }
     }
-
     public void verificarversion()
     {
         String version;
