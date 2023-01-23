@@ -252,13 +252,13 @@ public class CedulaError extends AppCompatActivity {
         Date date = new Date();
         fechadia = dateFormat.format(date);
         bdcache = bd.getReadableDatabase();
-        Cursor cursor = bdcache.rawQuery("Select cedula,estadoeliminar,estado from t_registro where fechaingreso like " + "'%" + fechadia + "%' and estadosubido ='E' and estadoeliminar <> 'C'", null);
+        Cursor cursor = bdcache.rawQuery("Select cedula from t_registro where fechaingreso like " + "'%" + fechadia + "%' and estadosubido ='E' and estadoeliminar <> 'C'", null);
         cursor.moveToFirst();
         do{
             cedulas.add(cursor.getString(0));
             llenarusuario(cursor.getString(0));
             adapter.notifyDataSetChanged();
-            Log.d("cedulasllenar",cursor.getString(1)+cursor.getString(2));
+            //Log.d("cedulasllenar",cursor.getString(1)+cursor.getString(2));
         }while(cursor.moveToNext());
     }
     public void guardar(String cedula)

@@ -444,6 +444,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
 
     public void validarcedula(String cedula,Integer id_cabecera,String fecha)
     {
+
         Log.d("",avanzartransaccion+"");
         final int[] estado = new int[1];
         JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_asistencias +"?v_usuario="+cedula+"&v_fecha="+fechadia+"&v_estado=0", null, new Response.Listener<JSONObject>() {
@@ -464,12 +465,16 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                             guardardetalle(id_cabecera,cedula,fecha);
                         }else{
                             Log.d("VALIDAR USUARIO","no ESTA LIBRE" );
-                            Toast.makeText(RegistroAsistencia.this,"Este usuario esta asignado en otra Area",Toast.LENGTH_SHORT).show();
-                            actualizar(cedula,"C");
+                            cedulaserror.add(cedula);
+                            //Toast.makeText(RegistroAsistencia.this,"Este usuario esta asignado en otra Area",Toast.LENGTH_SHORT).show();
+                            //actualizar(cedula,"C");
+
+                            //eliminarcedula(cedula);
                             btn_asistencia.setEnabled(true);
                         }
                     }else {
                         guardar_error(cedula);
+                        cedulaserror.add(cedula);
                         txt_error.setText("Error en una o varias cedulas por favor verifique en asistencia");
                         btn_asistencia.setEnabled(true);
                     }
@@ -557,4 +562,23 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         bdcache = bd.getWritableDatabase();
         bdcache.execSQL("update t_registro set estadoeliminar = '"+estado+"' where cedula ='"+v_cedula+"'" );
     }
+/*
+    public void eliminarcedula(String v_cedula)
+    {
+        for(int i = 0;i<=cedulaserror.size()-1;i++)
+        {
+            if(cedulaserror.get(i)==v_cedula)
+            {
+                cedulaserror.remove(i);
+            }
+        }
+        for(int i = 0;i<=cedulas.size()-1;i++)
+        {
+            if(cedulas.get(i)==v_cedula)
+            {
+                cedulas.remove(i);
+            }
+            adapter.notifyDataSetChanged();
+        }
+    }*/
 }
