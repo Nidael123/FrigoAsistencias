@@ -107,13 +107,13 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="75dp"
+                android:layout_height="53dp"
                 android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/txt_error_cedula2"
                     android:layout_width="wrap_content"
-                    android:layout_height="72dp"
+                    android:layout_height="58dp"
                     android:layout_weight="1"
                     android:listSelector="@color/gray"
                     android:textAlignment="center"
@@ -139,6 +139,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Nuevo" />
+
+            <Button
+                android:id="@+id/btn_listado"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Listado Diario" />
 
         </LinearLayout>
     </ScrollView>

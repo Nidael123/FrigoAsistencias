@@ -403,5 +403,4 @@ public class CedulaError extends AppCompatActivity {
         bdcache = bd.getWritableDatabase();
         bdcache.execSQL("update t_registro set estadoeliminar = '"+estado+"' where cedula ='"+v_cedula+"'" );
     }
-    
 }

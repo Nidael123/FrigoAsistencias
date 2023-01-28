@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -48,7 +49,7 @@ import java.util.Map;
 
 public class RegistroAsistencia extends AppCompatActivity implements View.OnClickListener {
 
-    Button btn_escanear,btn_asistencia,btn_anadir,btn_guardar,btn_nuevo;
+    Button btn_escanear,btn_asistencia,btn_anadir,btn_guardar,btn_nuevo,btn_listado;
     TextView txt_fecha,txt_error,txt_turno,txt_cantidad;
     String api_asistencias, fechadia,fechaturno,jornada;
     private SharedPreferences preferences;
@@ -75,6 +76,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         btn_asistencia = (Button) findViewById(R.id.btn_asistencias);
         btn_anadir = (Button) findViewById(R.id.btn_salir);
         btn_guardar = (Button) findViewById(R.id.btn_guardarregistroerror);
+        btn_listado =(Button) findViewById(R.id.btn_listado);
         btn_nuevo = (Button) findViewById(R.id.btn_nuevo);
         txt_fecha = (TextView) findViewById(R.id.txt_fecha);
         txt_error = (TextView) findViewById(R.id.txt_error_cedula2);
@@ -138,11 +140,35 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             txt_turno.setText("Turno Noche");
             turno = 2;
         }
+
+        listacedulas.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int i, long id) {
+                final int posicion=i;
+                AlertDialog.Builder dialogo1 = new AlertDialog.Builder(RegistroAsistencia.this);
+                dialogo1.setTitle("Importante"); dialogo1.setMessage("¿ Elimina este Poducto ?");
+                dialogo1.setCancelable(false);
+                dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener()
+                { public void onClick(DialogInterface dialogo1, int id)
+                {
+                    actualizar(cedulas.get(posicion),"N");
+                    cedulas.remove(posicion);
+                    listanombres.remove(posicion);
+                    adapter.notifyDataSetChanged();
+                }
+                });
+                dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
+                { public void onClick(DialogInterface dialogo1, int id) { } });
+                dialogo1.show();
+                return false;
+            }
+        });
         btn_escanear.setOnClickListener(this);
         btn_asistencia.setOnClickListener(this);
         btn_anadir.setOnClickListener(this);
         btn_guardar.setOnClickListener(this);
         btn_nuevo.setOnClickListener(this);
+        btn_listado.setOnClickListener(this);
     }
 
     @Override
@@ -173,6 +199,10 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             case R.id.btn_nuevo:
                 startActivity(new Intent(RegistroAsistencia.this,RegistroAsistencia.class));
                 finish();
+                break;
+            case R.id.btn_listado:
+
+                startActivity(new Intent(RegistroAsistencia.this,ListadoDiario.class));
                 break;
         }
     }
@@ -300,6 +330,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         }
         return ingresar;
     }
+
     public String buscarusuarioxhora(String v_cedula) {
         String hora;
         String fechadia;
@@ -444,7 +475,6 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
 
     public void validarcedula(String cedula,Integer id_cabecera,String fecha)
     {
-
         Log.d("",avanzartransaccion+"");
         final int[] estado = new int[1];
         JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_asistencias +"?v_usuario="+cedula+"&v_fecha="+fechadia+"&v_estado=0", null, new Response.Listener<JSONObject>() {

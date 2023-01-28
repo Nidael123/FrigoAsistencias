@@ -2,5 +2,7 @@
     <string name="app_name">FrigoAsistencias2</string>
     <string name="api_usuario">http://192.168.0.219:8080/Api_asistencia/Puente/api_usuarios.php</string>
     <string name="api_aistencias">http://192.168.0.219:8080/Api_asistencia/Puente/api_asistencia.php</string>
+    <string name="api_areas">http://192.168.0.219:8080/Api_asistencia/Puente/api_areas.php</string>
+
     <string name="versionbase">1</string>
 </resources>
