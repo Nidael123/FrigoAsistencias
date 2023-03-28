@@ -186,7 +186,6 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 break;
             case R.id.btn_guardarregistroerror:
                 if(departamentos.getSelectedItemPosition() != 0) {
-                    Log.d("spiner",""+departamentos.getSelectedItem().toString());
                     btn_guardar.setEnabled(true);
                     if(cedulas.size() > 0)
                     {
@@ -201,8 +200,21 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 finish();
                 break;
             case R.id.btn_listado:
-
-                startActivity(new Intent(RegistroAsistencia.this,ListadoDiario.class));
+                if(departamentos.getSelectedItemPosition() != 0)
+                {
+                    editor.putString("departamento",departamentos.getSelectedItem().toString());
+                    editor.commit();
+                    startActivity(new Intent(RegistroAsistencia.this,ListadoDiario.class));
+                }else{
+                    AlertDialog.Builder dialogo1 = new AlertDialog.Builder(RegistroAsistencia.this);
+                    dialogo1.setTitle("Importante"); dialogo1.setMessage("Escoja una opcion primero");
+                    dialogo1.setCancelable(false);
+                    dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener()
+                    { public void onClick(DialogInterface dialogo1, int id)
+                    {  }
+                    });
+                    dialogo1.show();
+                }
                 break;
         }
     }
@@ -367,7 +379,6 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
         fechadiacabe = dateFormat.format(date);
-
         StringRequest requerimiento = new StringRequest(Request.Method.POST, api_asistencias, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
