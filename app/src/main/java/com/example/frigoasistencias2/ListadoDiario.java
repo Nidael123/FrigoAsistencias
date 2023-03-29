@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +24,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.frigoasistencias2.bd.Managerbd;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +39,8 @@ import java.util.Map;
 
 public class ListadoDiario extends AppCompatActivity {
 
+    Managerbd bd;
+    SQLiteDatabase bdcache;
     ListView listViewdiaria;
     TextView txt_fecha;
     String api_areas,fechadia;
@@ -58,7 +62,7 @@ public class ListadoDiario extends AppCompatActivity {
         api_areas = getString(R.string.api_areas);
         listanombres = new ArrayList<String>();
         listacedulas = new ArrayList<String>();
-
+        bd = new Managerbd(this, "Registro", null, 1);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
         fechadia = dateFormat.format(date);
@@ -139,6 +143,7 @@ public class ListadoDiario extends AppCompatActivity {
                     Log.d("estado",jsonObject.getString("estado" ));
                     if(jsonObject.getString("estado" ) != "bien")
                     {
+                        actualizar(cedula,"C");
                         Toast.makeText(ListadoDiario.this,"usuario liberado",Toast.LENGTH_SHORT).show();
                     }
                     else
@@ -162,5 +167,9 @@ public class ListadoDiario extends AppCompatActivity {
         json.setShouldCache(true);
         n_requerimiento.add(json);
     }
-
+    public void actualizar(String v_cedula,String estado)
+    {
+        bdcache = bd.getWritableDatabase();
+        bdcache.execSQL("update t_registro set estadosubido = '"+estado+"' where cedula ='"+v_cedula+"'" );
+    }
 }
