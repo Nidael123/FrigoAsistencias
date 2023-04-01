@@ -126,7 +126,7 @@ public class Login extends AppCompatActivity {
                         editor.commit();
                         Toast.makeText(Login.this,"Ingreso con Exitoso",Toast.LENGTH_SHORT);
                         Log.d("logeo",""+help.length);
-                        startActivity(new Intent(Login.this,RegistroAsistencia.class));
+                        startActivity(new Intent(Login.this,Menu.class));
                     }
                 }catch (JSONException e)
                 {

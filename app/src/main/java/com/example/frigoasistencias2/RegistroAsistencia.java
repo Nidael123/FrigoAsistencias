@@ -155,6 +155,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                     cedulas.remove(posicion);
                     listanombres.remove(posicion);
                     adapter.notifyDataSetChanged();
+                    txt_cantidad.setText(cedulas.size()+"");
                 }
                 });
                 dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
