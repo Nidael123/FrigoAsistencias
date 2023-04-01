@@ -74,7 +74,8 @@ public class Login extends AppCompatActivity {
         btn_login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                validar_red();
+                startActivity(new Intent(Login.this,RegistroAsistencia.class));
+                /*validar_red();
                 if(isWifiConn)
                 {
                     if(txt_user.getText().toString() != "" && txt_password.getText().toString() != "" )
@@ -94,7 +95,7 @@ public class Login extends AppCompatActivity {
                 if(isMobileConn && isWifiConn == false)
                 {
                     dialogo1.show();
-                }
+                }*/
             }
         });
     }
