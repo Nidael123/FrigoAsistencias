@@ -337,8 +337,9 @@ public class CedulaError extends AppCompatActivity {
                     }
                     else
                     {
-                        guardar(cedula1);
                         txt_error.setText("Datos guardados con exito!");
+                        guardar(cedula1);
+
                     }
                 }catch (JSONException e)
                 {
