@@ -51,7 +51,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
 
     Button btn_escanear,btn_asistencia,btn_anadir,btn_guardar,btn_nuevo,btn_listado;
     TextView txt_fecha,txt_error,txt_turno,txt_cantidad;
-    String api_asistencias, fechadia,fechaturno,jornada;
+    String api_asistencias, fechadia,fechaturno,jornada,api_descanso;
     private SharedPreferences preferences;
     SharedPreferences.Editor editor;
     Spinner departamentos;
@@ -72,16 +72,16 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro_asistencia);
-        btn_escanear = (Button) findViewById(R.id.btn_escanear);
-        btn_asistencia = (Button) findViewById(R.id.btn_asistencias);
-        btn_anadir = (Button) findViewById(R.id.btn_salir);
-        btn_guardar = (Button) findViewById(R.id.btn_guardarregistroerror);
-        btn_listado =(Button) findViewById(R.id.btn_listado);
-        btn_nuevo = (Button) findViewById(R.id.btn_nuevo);
-        txt_fecha = (TextView) findViewById(R.id.txt_fecha);
-        txt_error = (TextView) findViewById(R.id.txt_error_cedula2);
-        txt_turno = (TextView)findViewById(R.id.txt_turno);
-        txt_cantidad = (TextView )findViewById(R.id.txt_cantidad);
+        btn_escanear =  findViewById(R.id.btn_escanear);
+        btn_asistencia =  findViewById(R.id.btn_asistencias);
+        btn_anadir =  findViewById(R.id.btn_salir);
+        btn_guardar =  findViewById(R.id.btn_guardarregistroerror);
+        btn_listado = findViewById(R.id.btn_listado);
+        btn_nuevo =  findViewById(R.id.btn_nuevo);
+        txt_fecha =  findViewById(R.id.txt_fecha);
+        txt_error =  findViewById(R.id.txt_error_cedula2);
+        txt_turno = findViewById(R.id.txt_turno);
+        txt_cantidad = findViewById(R.id.txt_cantidad);
         preferences = getSharedPreferences("infousuario", MODE_PRIVATE);
         editor = preferences.edit();
         txt_cantidad.setText("0");
@@ -93,8 +93,9 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         btn_asistencia.setEnabled(false);
         btn_nuevo.setEnabled(false);
         bandera1 = false;
-        bd = new Managerbd(this, "Registro", null, 1);
+        bd = new Managerbd(this, "Registro", null, R.string.versionbase);
         api_asistencias = getString(R.string.api_aistencias);
+        api_descanso = getString(R.string.api_descansos);
         Log.d("registros", "" + preferences.getInt("cant_depart", 0));
         listadepartamentos.add("Escoja una opcion");
         for (int i = 0; i <= preferences.getInt("cant_depart", 0); i++) {
@@ -151,11 +152,12 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener()
                 { public void onClick(DialogInterface dialogo1, int id)
                 {
-                    actualizar(cedulas.get(posicion),"N");
+
                     cedulas.remove(posicion);
                     listanombres.remove(posicion);
                     adapter.notifyDataSetChanged();
                     txt_cantidad.setText(cedulas.size()+"");
+                    actualizar(cedulas.get(posicion),"C");
                 }
                 });
                 dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
@@ -539,9 +541,9 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
 
     public void llenarlist_view()
     {
+        Log.d("Registro Asistencia","si carga");
         adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_dropdown_item_1line,listanombres);
         listacedulas.setAdapter(adapter);
-        Log.d("Registro Asistencia","si carga");
     }
 
     public void actualizar(String v_cedula,String estado)

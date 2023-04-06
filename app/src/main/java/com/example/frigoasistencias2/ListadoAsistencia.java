@@ -80,7 +80,7 @@ public class ListadoAsistencia extends AppCompatActivity {
         txt_nombreusuario = (TextView) findViewById(R.id.txt_fecha);
         btn_anadir = (Button) findViewById(R.id.btn_anadir);
         btn_guardar = (Button)findViewById(R.id.btn_guardar);
-        bd = new Managerbd(this,"Registro",null,1);
+        bd = new Managerbd(this,"Registro",null,R.string.versionbase);
         bdcache = bd.getReadableDatabase();
         listacedulas = (ListView) findViewById(R.id.lista_cedulas);
         //recycler = (RecyclerView)findViewById(R.id.recicler_cedulas);
