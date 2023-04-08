@@ -322,6 +322,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 bdcache.insert("t_registro", null, content);
                 Toast.makeText(getBaseContext(), "Insertado", Toast.LENGTH_SHORT).show();
                 cedulas.add(v_cedula);
+                Toast.makeText(getBaseContext(), "Usuario ingresado", Toast.LENGTH_SHORT).show();
                 llenarusuario(v_cedula);
             }
             else

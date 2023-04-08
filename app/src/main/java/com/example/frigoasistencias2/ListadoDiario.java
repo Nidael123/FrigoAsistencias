@@ -82,7 +82,7 @@ public class ListadoDiario extends AppCompatActivity {
         fechadia = dateFormat.format(date);
         cargardatos();
         txt_fecha.setText(fechadia);
-        contador = 1;
+        contador = 0;
         listViewdiaria.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int i, long id) {
@@ -137,12 +137,11 @@ public class ListadoDiario extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (intentResult != null) {
-            /*entradabanio(intentResult.getContents());*/
-            llenarcedulasbanio(intentResult.getContents());
+            /*entradabanio(intentResult.getContents());
+            llenarcedulasbanio(intentResult.getContents());*/
+            procesarbanio(intentResult.getContents());
             if (intentResult.getContents() == null) {
-                procesarbanio();
-            } else {
-                escanear();
+
             }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
@@ -302,6 +301,7 @@ public class ListadoDiario extends AppCompatActivity {
             public void onResponse(JSONObject response) {
                 try {
                     JSONArray jsonArray = response.getJSONArray("data");
+                    Toast.makeText(getBaseContext(), "Usuario ingresado de regreso", Toast.LENGTH_SHORT).show();
 
                 }catch (JSONException e)
                 {
@@ -334,15 +334,9 @@ public class ListadoDiario extends AppCompatActivity {
         }
 
     }
-    public  void procesarbanio()
+    public  void procesarbanio(String v_cedula)
     {
-        for(int i =0;i<=listacedulasbanio.size()-1;i++)
-        {
-            if(listacedulasbanio.get(i)!=null)
-            {
-                subirbase(listacedulasbanio.get(i));
-            }
-        }
+        ingresarusuariobanio(v_cedula);
     }
     public void actualizarbanio(String v_cedula,String estado)
     {
@@ -351,13 +345,14 @@ public class ListadoDiario extends AppCompatActivity {
     }
 
     public boolean buscarusuario(String v_cedula) {
+
         boolean ingresar;
         String fechadia;
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
         fechadia = dateFormat.format(date);
         bdcache = bd.getReadableDatabase();
-        Cursor cursor = bdcache.rawQuery("Select cedula from t_descansos where cedula like " + "'%" + v_cedula + "%'" + " and fechaingreso like " + "'%" + fechadia + "%'"+"and estadobanio in ('N') ", null);
+        Cursor cursor = bdcache.rawQuery("Select cedula from t_descansos where cedula like " + "'%" + v_cedula + "%'" + " and fechaingreso like " + "'%" + fechadia + "%'"+"and estadobanio in ('S') ", null);
         Log.d("estadoeliminar23",cursor.getCount()+"");
         if (cursor.getCount() > 0) {
             ingresar = true;
@@ -384,10 +379,33 @@ public class ListadoDiario extends AppCompatActivity {
                 content.put("estadobanio", "S");
                 bdcache.insert("t_descansos", null, content);
                 Toast.makeText(getBaseContext(), "Permiso de salida", Toast.LENGTH_SHORT).show();
-                //entradabanio(v_cedula); si vale
+                banio(v_cedula,7);
             }
             else
                 Toast.makeText(getBaseContext(), "Usuario ya salio", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    public void ingresarusuariobanio(String v_cedula)
+    {
+        boolean ingresar; //true si false no
+        ContentValues content = new ContentValues();
+        if(v_cedula != null)
+        {
+            String fechadia;
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());//seteo la fecha actual
+            Date date = new Date();
+            fechadia = dateFormat.format(date);
+
+            ingresar =buscarusuario(v_cedula);
+            if(ingresar) {
+                bdcache = bd.getWritableDatabase();
+                bdcache.execSQL("update t_descansos set estadobanio = 'N' where cedula ='"+v_cedula+"' AND fechaingreso LIKE  " + "'%" + fechadia + "%'" + "   " );
+                banio(v_cedula,8);
+                Toast.makeText(getBaseContext(), "Usuario ingresado de regreso", Toast.LENGTH_SHORT).show();
+            }
+            else
+                Toast.makeText(getBaseContext(), "Usuario no ha salido, dar primero permiso al baño", Toast.LENGTH_SHORT).show();
         }
     }
 }
