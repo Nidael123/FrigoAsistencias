@@ -46,7 +46,6 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ListadoDiario extends AppCompatActivity {
-
     Managerbd bd;
     SQLiteDatabase bdcache;
     ListView listViewdiaria;
@@ -58,7 +57,7 @@ public class ListadoDiario extends AppCompatActivity {
     RequestQueue n_requerimiento;
     SharedPreferences preferences;
     int contador;
-    Button btn_regresarbanio;
+    Button btn_regresarbanio,btn_ircomer;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -76,6 +75,7 @@ public class ListadoDiario extends AppCompatActivity {
         listacedulasbanio = new ArrayList<>();
         txt_total = findViewById(R.id.txt_l_total);
         btn_regresarbanio = findViewById(R.id.btn_a_regresar);
+        btn_ircomer = findViewById(R.id.btn_a_comer);
         bd = new Managerbd(this, "Registro", null, R.string.versionbase);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
@@ -100,7 +100,7 @@ public class ListadoDiario extends AppCompatActivity {
                 { public void onClick(DialogInterface dialogo1, int id)
                 {
                     Log.d("soltar usuario",listacedulas.get(posicion));
-                    //soltarusuario(listacedulas.get(posicion));
+                    soltarusuario(listacedulas.get(posicion));
                     contador--;
                     txt_total.setText(""+contador);
                 }
@@ -124,6 +124,28 @@ public class ListadoDiario extends AppCompatActivity {
                 escanear();
             }
         });
+
+        btn_ircomer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder dialogo1 = new AlertDialog.Builder(ListadoDiario.this);
+                dialogo1.setTitle("Importante"); dialogo1.setMessage("¿Seguro va a enviar a comer?");
+                dialogo1.setCancelable(false);
+                dialogo1.setNeutralButton("NO", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                });
+                dialogo1.setPositiveButton("SI", new DialogInterface.OnClickListener()
+                { public void onClick(DialogInterface dialogo1, int id)
+                {
+                    mandar_comer();
+                }
+                });
+                dialogo1.show();
+            }
+        });
     }
     public void  escanear(){
         IntentIntegrator intentIntegrator = new IntentIntegrator(this);
@@ -131,7 +153,6 @@ public class ListadoDiario extends AppCompatActivity {
         intentIntegrator.setOrientationLocked(false);
         intentIntegrator.initiateScan();
     }
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -147,7 +168,6 @@ public class ListadoDiario extends AppCompatActivity {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
-
     public void cargardatos()
     {
         Log.d("listado",preferences.getString("departamento","mal"));
@@ -393,7 +413,7 @@ public class ListadoDiario extends AppCompatActivity {
         if(v_cedula != null)
         {
             String fechadia;
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());//seteo la fecha actual
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
             Date date = new Date();
             fechadia = dateFormat.format(date);
 
@@ -407,5 +427,16 @@ public class ListadoDiario extends AppCompatActivity {
             else
                 Toast.makeText(getBaseContext(), "Usuario no ha salido, dar primero permiso al baño", Toast.LENGTH_SHORT).show();
         }
+
+    }
+    public void mandar_comer()
+    {
+        Log.d("listadodiario123",listacedulas.size()+"");
+        for (int z =0; z <= listacedulas.size()-1;z++)
+        {
+            Log.d("listadodiario123",listacedulas.get(z));
+            banio(listacedulas.get(z),9);
+        }
+        Toast.makeText(ListadoDiario.this,"USUARIOS ENVIADOS A COMER",Toast.LENGTH_SHORT).show();
     }
 }

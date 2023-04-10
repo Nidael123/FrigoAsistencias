@@ -29,27 +29,37 @@
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:layout_weight="1"
-                    android:text="TextView" />
+                    android:text="FECHA"
+                    android:textAlignment="center"
+                    android:textColor="@color/purple_700" />
 
                 <TextView
                     android:id="@+id/txt_l_total"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:layout_weight="1"
-                    android:text="TextView" />
+                    android:text="0"
+                    android:textAlignment="center"
+                    android:textColor="@color/purple_700" />
 
             </LinearLayout>
 
             <ListView
                 android:id="@+id/list_diaria"
                 android:layout_width="match_parent"
-                android:layout_height="618dp" />
+                android:layout_height="583dp" />
 
             <Button
                 android:id="@+id/btn_a_regresar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="REGRESAR DE BAÑO" />
+
+            <Button
+                android:id="@+id/btn_a_comer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="SALIR A COMER" />
 
         </LinearLayout>
     </ScrollView>
