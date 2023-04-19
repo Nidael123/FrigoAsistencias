@@ -50,14 +50,14 @@ public class ListadoDiario extends AppCompatActivity {
     SQLiteDatabase bdcache;
     ListView listViewdiaria;
     TextView txt_fecha,txt_total;
-    String api_areas,fechadia,api_descanso;
+    String api_areas,fechadia,api_descanso,api_faltas;
     ArrayList <String> listanombres,listacedulas,listacedulasbanio;
     ArrayAdapter adapter;
     JSONObject jsonObject;
     RequestQueue n_requerimiento;
     SharedPreferences preferences;
     int contador;
-    Button btn_regresarbanio,btn_ircomer;
+    Button btn_regresarbanio,btn_ircomer,btn_faltas;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -70,12 +70,14 @@ public class ListadoDiario extends AppCompatActivity {
         txt_fecha = findViewById(R.id.txt_fechadiaria);
         api_areas = getString(R.string.api_areas);
         api_descanso = getString(R.string.api_descansos);
+        api_faltas = getString(R.string.api_faltas);
         listanombres = new ArrayList<String>();
         listacedulas = new ArrayList<String>();
         listacedulasbanio = new ArrayList<>();
         txt_total = findViewById(R.id.txt_l_total);
         btn_regresarbanio = findViewById(R.id.btn_a_regresar);
         btn_ircomer = findViewById(R.id.btn_a_comer);
+        btn_faltas = findViewById(R.id.btn_a_falta);
         bd = new Managerbd(this, "Registro", null, R.string.versionbase);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
@@ -146,6 +148,15 @@ public class ListadoDiario extends AppCompatActivity {
                 dialogo1.show();
             }
         });
+
+        btn_faltas.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //revisar lo de super usuario para ingresar y habilitarlo al inicio del activity
+                //pendiente
+                startActivity(new Intent(ListadoDiario.this,GenerarRegistro.class));
+            }
+        });
     }
     public void  escanear(){
         IntentIntegrator intentIntegrator = new IntentIntegrator(this);
@@ -180,7 +191,7 @@ public class ListadoDiario extends AppCompatActivity {
 
                     for(int i = 0;i<=jsonArray.length()-1;i++)
                     {
-                        jsonObject = new JSONObject(jsonArray.get(i).toString());
+                        jsonObject = new JSONObject(jsonArray.get(i).toString());//new JSONObject(jsonArray.get(i).toString());
                         Log.d("lISTADO DIARIO",jsonObject.getString("departamento"));
                         listanombres.add(jsonObject.getString("nombre")+":"+jsonObject.getString("departamento"));
                         listacedulas.add(jsonObject.getString("cedula"));
@@ -439,4 +450,5 @@ public class ListadoDiario extends AppCompatActivity {
         }
         Toast.makeText(ListadoDiario.this,"USUARIOS ENVIADOS A COMER",Toast.LENGTH_SHORT).show();
     }
+
 }

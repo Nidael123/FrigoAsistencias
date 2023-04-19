@@ -47,7 +47,7 @@
             <ListView
                 android:id="@+id/list_diaria"
                 android:layout_width="match_parent"
-                android:layout_height="583dp" />
+                android:layout_height="571dp" />
 
             <Button
                 android:id="@+id/btn_a_regresar"
@@ -60,6 +60,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="SALIR A COMER" />
+
+            <Button
+                android:id="@+id/btn_a_falta"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="ASISTENCIA" />
 
         </LinearLayout>
     </ScrollView>

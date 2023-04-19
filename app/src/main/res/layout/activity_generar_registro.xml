@@ -15,22 +15,35 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/textView6"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="44dp"
-                android:text="USUARIO FALTANTES" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
-            <ListView
-                android:id="@+id/listview_m_faltantes"
+                <TextView
+                    android:id="@+id/textView6"
+                    android:layout_width="333dp"
+                    android:layout_height="44dp"
+                    android:text="USUARIO FALTANTES"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:id="@+id/txt_g_total"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="0" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_g_cedulas"
                 android:layout_width="match_parent"
-                android:layout_height="453dp" />
+                android:layout_height="326dp" />
 
             <Button
-                android:id="@+id/button"
+                android:id="@+id/btn_g_guardar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="GENERAR PDF" />
+                android:text="GUARDAR" />
 
             <Button
                 android:id="@+id/button2"

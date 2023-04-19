@@ -82,7 +82,7 @@
 
                 <Button
                     android:id="@+id/btn_escanear"
-                    android:layout_width="wrap_content"
+                    android:layout_width="91dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Escanear" />
@@ -92,7 +92,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Asistencia" />
+                    android:text="ERRORES" />
 
             </LinearLayout>
 
@@ -145,6 +145,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="Listado Diario" />
+
+            <Button
+                android:id="@+id/btn_ra_faltas"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="FALTAS" />
 
         </LinearLayout>
     </ScrollView>
