@@ -540,7 +540,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                     }else {
                         guardar_error(cedula);
                         cedulaserror.add(cedula);
-                        txt_error.setText("Error en una o varias cedulas por favor verifique en asistencia");
+                        txt_error.setText("Error en una o varias cedulas por favor verifiqu e en asistencia");
                         btn_asistencia.setEnabled(true);
                     }
                 }catch (JSONException e)

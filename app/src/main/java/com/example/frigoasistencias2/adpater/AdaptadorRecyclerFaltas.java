@@ -82,7 +82,6 @@ public class AdaptadorRecyclerFaltas extends RecyclerView.Adapter<AdaptadorRecyc
 
                 }
             });
-
         }
         public void asignar_datos(String cedula)
         {
