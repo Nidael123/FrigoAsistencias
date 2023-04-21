@@ -44,10 +44,17 @@
 
             </LinearLayout>
 
+            <EditText
+                android:id="@+id/edit_l_ingresos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:inputType="textPersonName" />
+
             <ListView
                 android:id="@+id/list_diaria"
                 android:layout_width="match_parent"
-                android:layout_height="571dp" />
+                android:layout_height="501dp" />
 
             <Button
                 android:id="@+id/btn_a_regresar"

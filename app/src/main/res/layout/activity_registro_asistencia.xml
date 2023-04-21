@@ -146,12 +146,6 @@
                 android:layout_height="wrap_content"
                 android:text="Listado Diario" />
 
-            <Button
-                android:id="@+id/btn_ra_faltas"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="FALTAS" />
-
         </LinearLayout>
     </ScrollView>
 

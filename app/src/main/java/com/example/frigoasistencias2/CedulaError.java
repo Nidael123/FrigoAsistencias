@@ -66,7 +66,7 @@ public class CedulaError extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_cedula_error);
 
-        bd = new Managerbd(this,"Registro",null,1);
+        bd = new Managerbd(this,"Registro",null,R.string.versionbase);
         cedulas = new ArrayList<String>();
         listacedulas = (ListView)findViewById(R.id.list_itemcedulaserror);
         lista_nombres = new ArrayList<>();

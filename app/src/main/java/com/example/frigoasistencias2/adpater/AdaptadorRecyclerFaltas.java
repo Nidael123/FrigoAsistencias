@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.frigoasistencias2.R;
+import com.example.frigoasistencias2.clases.Personas;
 
 import java.util.ArrayList;
 
@@ -20,15 +21,22 @@ public class AdaptadorRecyclerFaltas extends RecyclerView.Adapter<AdaptadorRecyc
 
     ArrayList<String> cedulas,nombres,estados;
 
+    ArrayList<Personas> persona;
     public AdaptadorRecyclerFaltas(ArrayList<String>v_cedulas,ArrayList<String>v_nombres)
     {
+        persona = new ArrayList<>();
         cedulas = v_cedulas;
         nombres=v_nombres;
         estados = new ArrayList<>();
         for (int i = 0;i<=nombres.size()-1;i++)
         {
+            Personas helppersonas = new Personas();
+            helppersonas.setCedulas(v_cedulas.get(i));
+            helppersonas.setNombre(v_nombres.get(i));
+            helppersonas.setEstado("FALTA");
+            persona.add(helppersonas);
             estados.add("FALTA");
-            Log.d("principal",estados.get(i).toString());
+            Log.d("principal",nombres.get(i));
         }
     }
 
@@ -70,13 +78,19 @@ public class AdaptadorRecyclerFaltas extends RecyclerView.Adapter<AdaptadorRecyc
             spin_estado.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                    Log.d("itembueno",i+spin_estado.getSelectedItem().toString()+estados.size());
+                    for (int y = 0; y <= persona.size()-1;y++ )
+                    {
+                        if(persona.get(y).getCedulas() == txt_cedula.getText() );
+                        {
+                            Log.d("saldra?",persona.get(y).getCedulas() + txt_cedula.getText()+spin_estado.getSelectedItem().toString());
+                            estados.set(y,spin_estado.getSelectedItem().toString());
+                        }
+                    }
+                    Log.d("itembueno",txt_cedula.getText()+  spin_estado.getSelectedItem().toString()+estados.size());
                     //estados.add(spin_estado.getSelectedItem().toString());
-                    estados.set(i,spin_estado.getSelectedItem().toString());
                     //procesarfaltantes(i,spin_estado.getSelectedItem().toString());
-                    Log.d("itembueno2",estados.get(i));
+                    //Log.d("itembueno2",estados.get(i));
                 }
-
                 @Override
                 public void onNothingSelected(AdapterView<?> adapterView) {
 
@@ -96,7 +110,6 @@ public class AdaptadorRecyclerFaltas extends RecyclerView.Adapter<AdaptadorRecyc
         }
         return estados;
     }
-
     public ArrayList<String>retornarcedulas()
     {
         return nombres;

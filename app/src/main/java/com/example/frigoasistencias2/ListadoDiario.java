@@ -13,11 +13,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.telephony.mbms.StreamingServiceInfo;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -58,6 +61,7 @@ public class ListadoDiario extends AppCompatActivity {
     SharedPreferences preferences;
     int contador;
     Button btn_regresarbanio,btn_ircomer,btn_faltas;
+    EditText edit_buscar;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -74,6 +78,7 @@ public class ListadoDiario extends AppCompatActivity {
         listanombres = new ArrayList<String>();
         listacedulas = new ArrayList<String>();
         listacedulasbanio = new ArrayList<>();
+        edit_buscar = findViewById(R.id.edit_l_ingresos);
         txt_total = findViewById(R.id.txt_l_total);
         btn_regresarbanio = findViewById(R.id.btn_a_regresar);
         btn_ircomer = findViewById(R.id.btn_a_comer);
@@ -155,6 +160,23 @@ public class ListadoDiario extends AppCompatActivity {
                 //revisar lo de super usuario para ingresar y habilitarlo al inicio del activity
                 //pendiente
                 startActivity(new Intent(ListadoDiario.this,GenerarRegistro.class));
+            }
+        });
+
+        edit_buscar.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                adapter.getFilter().filter(charSequence);
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
             }
         });
     }

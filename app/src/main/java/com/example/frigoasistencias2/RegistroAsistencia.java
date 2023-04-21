@@ -49,7 +49,7 @@ import java.util.Map;
 
 public class RegistroAsistencia extends AppCompatActivity implements View.OnClickListener {
 
-    Button btn_escanear,btn_asistencia,btn_anadir,btn_guardar,btn_nuevo,btn_listado,btn_faltas;
+    Button btn_escanear,btn_asistencia,btn_anadir,btn_guardar,btn_nuevo,btn_listado;
     TextView txt_fecha,txt_error,txt_turno,txt_cantidad;
     String api_asistencias, fechadia,fechaturno,jornada,api_descanso;
     private SharedPreferences preferences;
@@ -77,7 +77,6 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         btn_anadir =  findViewById(R.id.btn_salir);
         btn_guardar =  findViewById(R.id.btn_guardarregistroerror);
         btn_listado = findViewById(R.id.btn_listado);
-        btn_faltas = findViewById(R.id.btn_ra_faltas);
         btn_nuevo =  findViewById(R.id.btn_nuevo);
         txt_fecha =  findViewById(R.id.txt_fecha);
         txt_error =  findViewById(R.id.txt_error_cedula2);
@@ -173,7 +172,6 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         btn_guardar.setOnClickListener(this);
         btn_nuevo.setOnClickListener(this);
         btn_listado.setOnClickListener(this);
-        btn_faltas.setOnClickListener(this);
     }
 
     @Override
@@ -221,25 +219,6 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                     dialogo1.show();
                 }
                 break;
-            case R.id.btn_ra_faltas:
-                if(departamentos.getSelectedItemPosition() != 0)
-                {
-                    editor.putString("departamento",departamentos.getSelectedItem().toString());
-                    editor.commit();
-                    startActivity(new Intent(RegistroAsistencia.this,GenerarRegistro.class));
-                }else{
-                    AlertDialog.Builder dialogo1 = new AlertDialog.Builder(RegistroAsistencia.this);
-                    dialogo1.setTitle("Importante"); dialogo1.setMessage("Escoja una opcion primero");
-                    dialogo1.setCancelable(false);
-                    dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener()
-                    { public void onClick(DialogInterface dialogo1, int id)
-                    {  }
-                    });
-                    dialogo1.show();
-                }
-
-                break;
-
         }
     }
 
@@ -358,7 +337,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         Date date = new Date();
         fechadia = dateFormat.format(date);
         bdcache = bd.getReadableDatabase();
-        Cursor cursor = bdcache.rawQuery("Select cedula from t_registro where cedula like " + "'%" + v_cedula + "%'" + " and fechaingreso like " + "'%" + fechadia + "%'"+"and estadoeliminar in ('A') and  estadosubido <> 'C'", null);
+        Cursor cursor = bdcache.rawQuery("Select cedula from t_registro where cedula like " + "'%" + v_cedula + "%'" + " and fechaingreso like " + "'%" + fechadia + "%'"+"and estadoeliminar in ('A') and  estadosubido not in ('E','S')", null);
         Log.d("estadoeliminar23",cursor.getCount()+"");
         if (cursor.getCount() > 0) {
             ingresar = false;
@@ -490,6 +469,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 @Override
                 public void onErrorResponse(VolleyError error) {
                     Toast.makeText(RegistroAsistencia.this,"error guardado",Toast.LENGTH_LONG).show();
+                    actualizar(cedula1,"E");
                     Log.d("detalleerror",error.toString());
                 }
             }) {

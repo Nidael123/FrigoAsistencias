@@ -35,6 +35,7 @@ import java.util.Locale;
 
 public class GenerarRegistro extends AppCompatActivity {
 
+
     RecyclerView faltantes;
     ArrayList<String> listadofaltantes,listadofaltantecedulas;
     String api_faltas,api_areas,api_descanso;
@@ -89,7 +90,7 @@ public class GenerarRegistro extends AppCompatActivity {
                     for (int i = 0;i<=estado.size()-1;i++)
                     {
                         Log.d("cargado recycler",estado.get(i).toString()+":"+cedula.get(i));
-                        guardarfaltas(estado.get(i).toString(),cedula.get(i));
+                        //guardarfaltas(estado.get(i).toString(),cedula.get(i));
                     }
                 }
             }
