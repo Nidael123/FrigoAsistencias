@@ -5,6 +5,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
@@ -22,6 +23,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.frigoasistencias2.adpater.AdaptadorRecyclerFaltas;
+import com.example.frigoasistencias2.clases.Personas;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -35,7 +37,7 @@ import java.util.Locale;
 
 public class GenerarRegistro extends AppCompatActivity {
 
-
+    ArrayList<Personas> persona;
     RecyclerView faltantes;
     ArrayList<String> listadofaltantes,listadofaltantecedulas;
     String api_faltas,api_areas,api_descanso;
@@ -46,8 +48,6 @@ public class GenerarRegistro extends AppCompatActivity {
     Button btn_guardarfaltas;
     TextView total;
 
-
-
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +56,7 @@ public class GenerarRegistro extends AppCompatActivity {
 
         listadofaltantes = new ArrayList<>();
         listadofaltantecedulas = new ArrayList<>();
+        persona = new ArrayList<>();
         faltantes =findViewById(R.id.recycler_g_cedulas);
         preferences = getSharedPreferences("infousuario", MODE_PRIVATE);
         api_faltas = getString(R.string.api_faltas);
@@ -81,24 +82,22 @@ public class GenerarRegistro extends AppCompatActivity {
         btn_guardarfaltas.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                ArrayList<String> estado = new ArrayList<>();
-                ArrayList<String> cedula = new ArrayList<>();
-                estado = adapter.guardarcambios();
-                cedula = adapter.retornarcedulas();
-                if(estado.size() > 0)
+                //estado = adapter.guardarcambios();
+                persona = adapter.retornarcedulas();
+                if(persona.size() > 0)
                 {
-                    for (int i = 0;i<=estado.size()-1;i++)
+                    for (int i = 0;i<= persona.size()-1;i++)
                     {
-                        Log.d("cargado recycler",estado.get(i).toString()+":"+cedula.get(i));
+                        Log.d("botonguardar",persona.get(i).getNombre()+"-"+persona.get(i).getEstado());
                         //guardarfaltas(estado.get(i).toString(),cedula.get(i));
+                        //guardarfaltas(persona.get(i).getEstado(),persona.get(i).getNombre());
                     }
+                    Toast.makeText(GenerarRegistro.this,"Asistencia guardada",Toast.LENGTH_SHORT).show();
                 }
+                startActivity(new Intent(GenerarRegistro.this,RegistroAsistencia.class));
+                finish();
             }
         });
-
-
-
-
     }
 
     public void cargardatos()
@@ -119,9 +118,15 @@ public class GenerarRegistro extends AppCompatActivity {
                     for(int i = 0;i<=jsonArray.length()-1;i++)
                     {
                         jsonObject = new JSONObject(jsonArray.get(i).toString());
-                        listadofaltantes.add(jsonObject.getString("nombres")+":"+jsonObject.getString("cedula"));
-                        Log.d("generar",jsonObject.getString("nombres"));
-                        listadofaltantecedulas.add(jsonObject.getString("cedula"));
+                        if(jsonObject.getInt("estado") != 0)
+                        {
+                            listadofaltantes.add(jsonObject.getString("nombres")+":"+jsonObject.getString("cedula"));
+                            Log.d("generar",jsonObject.getString("nombres"));
+                            listadofaltantecedulas.add(jsonObject.getString("cedula"));
+                        }
+                        else {
+                            Toast.makeText(GenerarRegistro.this,"No hay datos",Toast.LENGTH_SHORT).show();
+                        }
                     }
                     adapter = new AdaptadorRecyclerFaltas(listadofaltantes,listadofaltantecedulas);
                     faltantes.setAdapter(adapter);

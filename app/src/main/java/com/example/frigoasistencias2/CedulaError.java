@@ -128,7 +128,7 @@ public class CedulaError extends AppCompatActivity {
                     {
                         for(int i = 0; i<= cedulas.size()-1 ;i++)
                         {
-                            actualizar(cedulas.get(i),"EA");
+                            actualizar(cedulas.get(i),"C");
                         }
                         startActivity(new Intent(CedulaError.this, RegistroAsistencia.class));
                     }
@@ -150,7 +150,7 @@ public class CedulaError extends AppCompatActivity {
                 dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener()
                 { public void onClick(DialogInterface dialogo1, int id)
                 {
-                    actualizar(cedulas.get(posicion),"N");
+                    actualizar(cedulas.get(posicion),"C");
                     cedulas.remove(posicion);
                     lista_nombres.remove(posicion);
                     adapter.notifyDataSetChanged();
@@ -252,20 +252,20 @@ public class CedulaError extends AppCompatActivity {
         Date date = new Date();
         fechadia = dateFormat.format(date);
         bdcache = bd.getReadableDatabase();
-        Cursor cursor = bdcache.rawQuery("Select cedula,estadosubido,estadoeliminar from t_registro where fechaingreso like " + "'%" + fechadia + "%' and estadosubido ='E' and estadoeliminar not in('C','E') ", null);
-        if(cursor.getCount() >0)
+        Cursor cursor = bdcache.rawQuery("Select cedula,estadosubido from t_registro where fechaingreso like " + "'%" + fechadia + "%' and  estadosubido in('E') ", null);
+        if(cursor.getCount() >=0)
         {
             cursor.moveToFirst();
             do{
                 cedulas.add(cursor.getString(0));
                 llenarusuario(cursor.getString(0));
                 adapter.notifyDataSetChanged();
-                Log.d("cedulasllenar",cursor.getString(1)+cursor.getString(2));
+                Log.d("cedulasllenar",cursor.getString(0)+cursor.getString(1));
             }while(cursor.moveToNext());
         }
         else
         {
-            txt_error.setText("Los usuarios con error ya estan en otra area");
+            txt_error.setText("Los usuarios con error ya estan registrados");
             Log.d("no hay datos ","no hay datos ");
         }
 
@@ -276,8 +276,8 @@ public class CedulaError extends AppCompatActivity {
         StringRequest requerimiento = new StringRequest(Request.Method.POST, api_asistencias, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Toast.makeText(CedulaError.this,"Todo bien Todo bonito",Toast.LENGTH_LONG).show();
                 actualizar(cedula,"S");
+                Toast.makeText(CedulaError.this,"Todo bien Todo bonito",Toast.LENGTH_LONG).show();
             }
         }, new Response.ErrorListener() {
             @Override
@@ -394,14 +394,8 @@ public class CedulaError extends AppCompatActivity {
         for (int i =0;i<=cedulas.size()-1;i++)
         {
             Log.d("cancelar error","cedula:"+cedulas.get(i));
-            actualizar(cedulas.get(i),"C");
-            actualizar2(cedulas.get(i),"C");
+            actualizar(cedulas.get(i),"E");
         }
     }
 
-    public void actualizar2(String v_cedula,String estado)
-    {
-        bdcache = bd.getWritableDatabase();
-        bdcache.execSQL("update t_registro set estadoeliminar = '"+estado+"' where cedula ='"+v_cedula+"'" );
-    }
 }

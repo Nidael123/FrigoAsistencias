@@ -49,7 +49,7 @@ import java.util.Map;
 
 public class RegistroAsistencia extends AppCompatActivity implements View.OnClickListener {
 
-    Button btn_escanear,btn_asistencia,btn_anadir,btn_guardar,btn_nuevo,btn_listado;
+    Button btn_escanear,btn_asistencia,btn_guardar,btn_nuevo,btn_listado;
     TextView txt_fecha,txt_error,txt_turno,txt_cantidad;
     String api_asistencias, fechadia,fechaturno,jornada,api_descanso;
     private SharedPreferences preferences;
@@ -74,7 +74,6 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_registro_asistencia);
         btn_escanear =  findViewById(R.id.btn_escanear);
         btn_asistencia =  findViewById(R.id.btn_asistencias);
-        btn_anadir =  findViewById(R.id.btn_salir);
         btn_guardar =  findViewById(R.id.btn_guardarregistroerror);
         btn_listado = findViewById(R.id.btn_listado);
         btn_nuevo =  findViewById(R.id.btn_nuevo);
@@ -135,7 +134,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         if(now.after(openHour) && now.before(closedHour))
         {
             txt_turno.setText("Turno Dia");
-            Log.d("tturno","dia");
+            Log.d("turno","dia");
             turno = 1;
         }else{
             txt_turno.setText("Turno Noche");
@@ -152,12 +151,11 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener()
                 { public void onClick(DialogInterface dialogo1, int id)
                 {
-
+                    actualizar(cedulas.get(posicion),"C");
                     cedulas.remove(posicion);
                     listanombres.remove(posicion);
                     adapter.notifyDataSetChanged();
                     txt_cantidad.setText(cedulas.size()+"");
-                    actualizar(cedulas.get(posicion),"C");
                 }
                 });
                 dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
@@ -168,7 +166,6 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         });
         btn_escanear.setOnClickListener(this);
         btn_asistencia.setOnClickListener(this);
-        btn_anadir.setOnClickListener(this);
         btn_guardar.setOnClickListener(this);
         btn_nuevo.setOnClickListener(this);
         btn_listado.setOnClickListener(this);
@@ -183,9 +180,6 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             case R.id.btn_asistencias:
                 startActivity(new Intent(RegistroAsistencia.this, CedulaError.class));
                 finish();
-                break;
-            case R.id.btn_salir:
-                escanear();
                 break;
             case R.id.btn_guardarregistroerror:
                 if(departamentos.getSelectedItemPosition() != 0) {
@@ -203,21 +197,24 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 finish();
                 break;
             case R.id.btn_listado:
-                if(departamentos.getSelectedItemPosition() != 0)
-                {
-                    editor.putString("departamento",departamentos.getSelectedItem().toString());
-                    editor.commit();
-                    startActivity(new Intent(RegistroAsistencia.this,ListadoDiario.class));
-                }else{
-                    AlertDialog.Builder dialogo1 = new AlertDialog.Builder(RegistroAsistencia.this);
-                    dialogo1.setTitle("Importante"); dialogo1.setMessage("Escoja una opcion primero");
-                    dialogo1.setCancelable(false);
-                    dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener()
-                    { public void onClick(DialogInterface dialogo1, int id)
-                    {  }
-                    });
-                    dialogo1.show();
-                }
+                //if(cedulas.size()-1 >= 0) {
+                    if (departamentos.getSelectedItemPosition() != 0) {
+                        editor.putString("departamento", departamentos.getSelectedItem().toString());
+                        editor.commit();
+                        startActivity(new Intent(RegistroAsistencia.this, ListadoDiario.class));
+                    } else {
+                        AlertDialog.Builder dialogo1 = new AlertDialog.Builder(RegistroAsistencia.this);
+                        dialogo1.setTitle("Importante");
+                        dialogo1.setMessage("Escoja una opcion primero");
+                        dialogo1.setCancelable(false);
+                        dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogo1, int id) {
+                            }
+                        });
+                        dialogo1.show();
+                    }
+                /*}else
+                    Toast.makeText(this, "Primero guarde la informacion", Toast.LENGTH_LONG).show();*/
                 break;
         }
     }
@@ -315,14 +312,11 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
 
             ingresar =buscarusuario(v_cedula);
             if(ingresar) {
-                content.put("id_libro", preferences.getInt("id_libro", 0));
                 content.put("cedula", v_cedula);
                 content.put("fechaingreso", fechadia);
-                content.put("estado", "OK");
                 bdcache.insert("t_registro", null, content);
-                Toast.makeText(getBaseContext(), "Insertado", Toast.LENGTH_SHORT).show();
                 cedulas.add(v_cedula);
-                Toast.makeText(getBaseContext(), "Usuario ingresado", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), "Usuario ingresado: "+cedulas.size(), Toast.LENGTH_SHORT).show();
                 llenarusuario(v_cedula);
             }
             else
@@ -337,7 +331,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         Date date = new Date();
         fechadia = dateFormat.format(date);
         bdcache = bd.getReadableDatabase();
-        Cursor cursor = bdcache.rawQuery("Select cedula from t_registro where cedula like " + "'%" + v_cedula + "%'" + " and fechaingreso like " + "'%" + fechadia + "%'"+"and estadoeliminar in ('A') and  estadosubido not in ('E','S')", null);
+        Cursor cursor = bdcache.rawQuery("Select cedula from t_registro where cedula like " + "'%" + v_cedula + "%'" + " and fechaingreso like " + "'%" + fechadia + "%'"+"and  estadosubido in ('E','P')", null);
         Log.d("estadoeliminar23",cursor.getCount()+"");
         if (cursor.getCount() > 0) {
             ingresar = false;
@@ -367,7 +361,6 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
     {
         btn_guardar.setEnabled(false);
         btn_escanear.setEnabled(false);
-        btn_anadir.setEnabled(false);
         btn_nuevo.setEnabled(true);
         guardarcabecera();
         for (int i =0;i<=cedulaserror.size()-1;i++)
@@ -468,7 +461,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(RegistroAsistencia.this,"error guardado",Toast.LENGTH_LONG).show();
+                    Toast.makeText(RegistroAsistencia.this,"Verifique que este conectado A la red e intente de nuevo",Toast.LENGTH_LONG).show();
                     actualizar(cedula1,"E");
                     Log.d("detalleerror",error.toString());
                 }
@@ -520,9 +513,12 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                     }else {
                         guardar_error(cedula);
                         cedulaserror.add(cedula);
-                        txt_error.setText("Error en una o varias cedulas por favor verifiqu e en asistencia");
                         btn_asistencia.setEnabled(true);
                     }
+                    if(cedulaserror.size()>= 0)
+                        txt_error.setText("Error en una o varias cedulas por favor verifiqu e en asistencia");
+                    else
+                        txt_error.setText("Todo correcto");
                 }catch (JSONException e)
                 {
                     Log.d("logeo","entro3"+e.toString());

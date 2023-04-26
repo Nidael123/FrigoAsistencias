@@ -106,8 +106,8 @@ public class ListadoDiario extends AppCompatActivity {
                 dialogo1.setPositiveButton("SOLTAR", new DialogInterface.OnClickListener()
                 { public void onClick(DialogInterface dialogo1, int id)
                 {
-                    Log.d("soltar usuario",listacedulas.get(posicion));
-                    soltarusuario(listacedulas.get(posicion));
+
+                    //soltarusuario(listacedulas.get(posicion));
                     contador--;
                     txt_total.setText(""+contador);
                 }
@@ -115,9 +115,9 @@ public class ListadoDiario extends AppCompatActivity {
                 dialogo1.setNegativeButton("IR AL BAÑO", new DialogInterface.OnClickListener()
                 { public void onClick(DialogInterface dialogo1, int id) {
                     boolean bandera;
-
+                    Log.d("soltar usuario",listViewdiaria.getAdapter().getItem(posicion)+"");
                     //banio(listacedulas.get(posicion),7);/*7 BAÑO IN 8 BAÑO OUT 9 CAOMIDA IN*/
-                    subirbase(listacedulas.get(posicion));
+                    //subirbase(listacedulas.get(posicion));
 
                 } });
                 dialogo1.show();
@@ -203,21 +203,23 @@ public class ListadoDiario extends AppCompatActivity {
     }
     public void cargardatos()
     {
-        Log.d("listado",preferences.getString("departamento","mal"));
+        Log.d("cargalistado",preferences.getString("departamento","mal"));
         //AppController.getInstance().getRequestQueue().getCache().get(url).serverDate
         JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_areas +"?v_fecha="+fechadia+"&v_id_usuario="+preferences.getInt("id_usuario",0)+"&v_departamento="+preferences.getString("departamento","mal")+"&bandera=1", null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     JSONArray jsonArray = response.getJSONArray("data");
-
+                    Log.d("revicion",jsonArray.toString());
                     for(int i = 0;i<=jsonArray.length()-1;i++)
                     {
-                        jsonObject = new JSONObject(jsonArray.get(i).toString());//new JSONObject(jsonArray.get(i).toString());
-                        Log.d("lISTADO DIARIO",jsonObject.getString("departamento"));
-                        listanombres.add(jsonObject.getString("nombre")+":"+jsonObject.getString("departamento"));
-                        listacedulas.add(jsonObject.getString("cedula"));
-                        contador ++;
+                        jsonObject = new JSONObject(jsonArray.get(i).toString());
+
+                            jsonObject = new JSONObject(jsonArray.get(i).toString());//new JSONObject(jsonArray.get(i).toString());
+                            Log.d("lISTADO DIARIO",jsonObject.getString("departamento"));
+                            listanombres.add(jsonObject.getString("nombre")+":"+jsonObject.getString("departamento"));
+                            listacedulas.add(jsonObject.getString("cedula"));
+                            contador ++;
                     }
                     adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_dropdown_item_1line,listanombres);
                     listViewdiaria.setAdapter(adapter);
@@ -324,6 +326,7 @@ public class ListadoDiario extends AppCompatActivity {
             public void onResponse(JSONObject response) {
                 try {
                     JSONArray jsonArray = response.getJSONArray("data");
+
 
                 }catch (JSONException e)
                 {
