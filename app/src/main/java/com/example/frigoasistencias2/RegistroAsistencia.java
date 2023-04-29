@@ -32,6 +32,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.frigoasistencias2.bd.Managerbd;
+import com.example.frigoasistencias2.clases.Personas;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -66,12 +67,14 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
     ArrayAdapter adapter;
     Integer turno;
     Boolean bandera1;//true no presento  -- false  presento
+    ArrayList<Personas> persona;
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro_asistencia);
+        persona = new ArrayList<>();
         btn_escanear =  findViewById(R.id.btn_escanear);
         btn_asistencia =  findViewById(R.id.btn_asistencias);
         btn_guardar =  findViewById(R.id.btn_guardarregistroerror);
@@ -239,7 +242,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         else
             finish();
     }
-/*
+    /*
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         AlertDialog.Builder dialogo1 = new AlertDialog.Builder(RegistroAsistencia.this);
@@ -316,7 +319,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 content.put("fechaingreso", fechadia);
                 bdcache.insert("t_registro", null, content);
                 cedulas.add(v_cedula);
-                Toast.makeText(getBaseContext(), "Usuario ingresado: "+cedulas.size(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getBaseContext(), "Usuario ingresado: "+cedulas.size(), Toast.LENGTH_SHORT).show();
                 llenarusuario(v_cedula);
             }
             else
@@ -572,6 +575,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                     Log.d("Lista nombre",jsonObject.getString("nombre"));
                     listanombres.add(cedula +"  :   "+jsonObject.getString("nombre"));
                     Log.d("Lista nombre",cedula +"  :   "+jsonObject.getString("nombre"));
+                    Toast.makeText(RegistroAsistencia.this,cedulas.size()+":"+jsonObject.getString("nombre"),Toast.LENGTH_SHORT).show();
 
                 }catch (JSONException e)
                 {
