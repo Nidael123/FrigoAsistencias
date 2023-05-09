@@ -263,12 +263,10 @@ public class CedulaError extends AppCompatActivity {
                 Log.d("cedulasllenar",cursor.getString(0)+cursor.getString(1));
             }while(cursor.moveToNext());
         }
-        else
-        {
+        else {
             txt_error.setText("Los usuarios con error ya estan registrados");
-            Log.d("no hay datos ","no hay datos ");
+            Log.d("no hay datos ", "no hay datos ");
         }
-
     }
     public void guardar(String cedula)
     {

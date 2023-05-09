@@ -120,7 +120,6 @@ public class Login extends AppCompatActivity {
                             editor.putString("depa"+i,jsonObject.getString("departamento"));
                             editor.putString("nombre_usuario",jsonObject.getString("nombre"));
                             Log.d("login",""+jsonObject.getString("departamento"));
-
                         }
                         editor.putInt("cant_depart", jsonArray.length()-1);
                         editor.commit();

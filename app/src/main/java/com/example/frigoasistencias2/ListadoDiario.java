@@ -233,25 +233,30 @@ public class ListadoDiario extends AppCompatActivity {
                 try {
                     JSONArray jsonArray = response.getJSONArray("data");
                     Log.d("revicion",jsonArray.toString());
-                    for(int i = 0;i<=jsonArray.length()-1;i++)
+                    if(jsonArray.length() -1 > 0)
                     {
-                        jsonObject = new JSONObject(jsonArray.get(i).toString());
-                        Personas help = new Personas();
-                        help.setNombre(jsonObject.getString("nombre"));
-                        help.setCedulas(jsonObject.getString("cedula"));
-                        jsonObject = new JSONObject(jsonArray.get(i).toString());//new JSONObject(jsonArray.get(i).toString());
-                        Log.d("lISTADO DIARIO",jsonObject.getString("departamento"));
-                        listanombres.add(jsonObject.getString("nombre"));
-                        listacedulas.add(jsonObject.getString("cedula"));
-                        contador ++;
-                        personas.add(help);
-                    }
-                    adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_dropdown_item_1line,listanombres);
-                    listViewdiaria.setAdapter(adapter);
-                    txt_total.setText(""+contador);
+                        for(int i = 0;i<=jsonArray.length()-1;i++)
+                        {
+                            jsonObject = new JSONObject(jsonArray.get(i).toString());
+                            Personas help = new Personas();
+                            help.setNombre(jsonObject.getString("nombre"));
+                            help.setCedulas(jsonObject.getString("cedula"));
+
+                            Log.d("lISTADO 123",jsonObject.getString("nombre"));
+                            listanombres.add(jsonObject.getString("nombre"));
+                            listacedulas.add(jsonObject.getString("cedula"));
+                            contador ++;
+                            personas.add(help);
+                        }
+                        adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_dropdown_item_1line,listanombres);
+                        listViewdiaria.setAdapter(adapter);
+                        txt_total.setText(""+contador);
+                    }else
+                        Toast.makeText(ListadoDiario.this,"Listado Vacio",Toast.LENGTH_SHORT).show();
+
                 }catch (JSONException e)
                 {
-                    Log.d("LISTADODIARIO","entro3"+e.toString());
+                    Log.d("123456","entro3"+e.toString());
                     Toast.makeText(ListadoDiario.this,"Error de base consulte con sistemas",Toast.LENGTH_SHORT).show();
                 }
             }

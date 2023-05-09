@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.Nullable;
 
 public class Managerbd extends SQLiteOpenHelper {
-    String t_registro = "Create table t_registro ( cedula varchar(20),fechaingreso varchar(30),estadosubido varchar(2) default 'E')";
+    String t_registro = "Create table t_registro ( cedula varchar(20),fechaingreso varchar(30),estadosubido varchar(2) default 'P')";
     String t_version = "Create table t_version(id_version integer)";
     String t_descansos = "Create table t_descansos(cedula varchar(15),fechaingreso varchar(30),estadobanio varchar(2))";
 

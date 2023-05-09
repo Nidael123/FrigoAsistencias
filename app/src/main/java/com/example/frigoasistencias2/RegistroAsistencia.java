@@ -334,7 +334,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         Date date = new Date();
         fechadia = dateFormat.format(date);
         bdcache = bd.getReadableDatabase();
-        Cursor cursor = bdcache.rawQuery("Select cedula from t_registro where cedula like " + "'%" + v_cedula + "%'" + " and fechaingreso like " + "'%" + fechadia + "%'"+"and  estadosubido in ('E','P')", null);
+        Cursor cursor = bdcache.rawQuery("Select cedula from t_registro where cedula like " + "'%" + v_cedula + "%'" + " and fechaingreso like " + "'%" + fechadia + "%'"+"and  estadosubido in ('S')", null);
         Log.d("estadoeliminar23",cursor.getCount()+"");
         if (cursor.getCount() > 0) {
             ingresar = false;
@@ -486,7 +486,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
 
     public void validarcedula(String cedula,Integer id_cabecera,String fecha)
     {
-        Log.d("",avanzartransaccion+"");
+        Log.d("validar",avanzartransaccion+"");
         final int[] estado = new int[1];
         JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_asistencias +"?v_usuario="+cedula+"&v_fecha="+fechadia+"&v_estado=0", null, new Response.Listener<JSONObject>() {
             @Override
@@ -518,10 +518,8 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                         cedulaserror.add(cedula);
                         btn_asistencia.setEnabled(true);
                     }
-                    if(cedulaserror.size()>= 0)
-                        txt_error.setText("Error en una o varias cedulas por favor verifiqu e en asistencia");
-                    else
-                        txt_error.setText("Todo correcto");
+                    if(cedulaserror.size()> 0)
+                        txt_error.setText("Error en una o varias cedulas por favor verifique en ERRORES");
                 }catch (JSONException e)
                 {
                     Log.d("logeo","entro3"+e.toString());
