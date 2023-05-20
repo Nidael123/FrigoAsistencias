@@ -73,6 +73,12 @@
                 android:layout_height="wrap_content"
                 android:text="Acceder" />
 
+            <TextView
+                android:id="@+id/txt_l_versi"
+                android:layout_width="match_parent"
+                android:layout_height="47dp"
+                android:text="@string/version_android" />
+
         </LinearLayout>
     </ScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

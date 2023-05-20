@@ -45,6 +45,12 @@
                 android:layout_height="wrap_content"
                 android:text="GUARDAR" />
 
+            <Button
+                android:id="@+id/btn_g_registros"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="REGISTROS" />
+
         </LinearLayout>
     </ScrollView>
 

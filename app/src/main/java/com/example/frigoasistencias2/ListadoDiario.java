@@ -5,12 +5,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.telephony.mbms.StreamingServiceInfo;
 import android.text.Editable;
@@ -62,8 +64,9 @@ public class ListadoDiario extends AppCompatActivity {
     RequestQueue n_requerimiento;
     SharedPreferences preferences;
     int contador;
-    Button btn_regresarbanio,btn_ircomer,btn_faltas;
+    Button btn_regresarbanio,btn_ircomer,btn_faltas,btn_ingresomanual;
     EditText edit_buscar;
+    Dialog alerta;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -86,6 +89,7 @@ public class ListadoDiario extends AppCompatActivity {
         btn_regresarbanio = findViewById(R.id.btn_a_regresar);
         btn_ircomer = findViewById(R.id.btn_a_comer);
         btn_faltas = findViewById(R.id.btn_a_falta);
+        btn_ingresomanual = findViewById(R.id.btn_a_manual);
         bd = new Managerbd(this, "Registro", null, R.string.versionbase);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
@@ -201,6 +205,37 @@ public class ListadoDiario extends AppCompatActivity {
 
             }
         });
+
+        btn_ingresomanual.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alerta = new Dialog(ListadoDiario.this);
+                alerta.setContentView(R.layout.alertdialog_cedula_manual);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    alerta.requireViewById(R.id.btn_alert_guardar).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            EditText cedulamanual= alerta.requireViewById(R.id.edittext_alert_cedula);
+                            if(cedulamanual.length() == 10)
+                            {
+                                procesarbanio(cedulamanual.getText().toString());
+                            }
+                            else
+                                Toast.makeText(ListadoDiario.this, "Numeros Incompletos", Toast.LENGTH_LONG).show();
+
+                            //subirbase(cedulamanual.getText().toString());
+                            //Toast.makeText(RegistroAsistencia.this, "probando"+cedulamanual.getText(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+                alerta.show();
+            }
+        });
+    }
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(ListadoDiario.this,RegistroAsistencia.class));
+        finish();
     }
     public void  escanear(){
         IntentIntegrator intentIntegrator = new IntentIntegrator(this);

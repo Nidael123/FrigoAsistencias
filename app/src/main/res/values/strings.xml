@@ -6,4 +6,5 @@
     <string name="versionbase">5</string>
     <string name="api_descansos">http://192.168.0.219:8080/Api_asistencia2/Puente/api_descansos2.php</string>
     <string name="api_faltas">http://192.168.0.219:8080/Api_asistencia2/Puente/api_faltas.php</string>
+    <string name="version_android">Version de la Aplicacion: 1</string>
 </resources>

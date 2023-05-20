@@ -11,14 +11,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -72,7 +69,7 @@ public class CedulaError extends AppCompatActivity {
         lista_nombres = new ArrayList<>();
         txt_error = (TextView) findViewById(R.id.txt_error_cedula2);
 
-        btn_guardar = (Button) findViewById(R.id.btn_guardarregistroerror);
+        btn_guardar = (Button) findViewById(R.id.btn_r_ingresomanual);
         btn_salir = (Button)findViewById(R.id.btn_salir);
         txt_usuario = (EditText)findViewById(R.id.txt_usuario_error);
         txt_pass = (EditText)findViewById(R.id.txt_pass_error);

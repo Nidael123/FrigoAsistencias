@@ -123,10 +123,10 @@
                 android:text="Escanear" />
 
             <Button
-                android:id="@+id/btn_guardarregistroerror"
+                android:id="@+id/btn_r_ingresomanual"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="GUARDAR" />
+                android:text="INGRESO MANUAL" />
 
             <Button
                 android:id="@+id/btn_nuevo"

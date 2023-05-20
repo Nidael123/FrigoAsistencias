@@ -1,23 +1,28 @@
 package com.example.frigoasistencias2;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.WebSettings;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -50,7 +55,7 @@ import java.util.Map;
 
 public class RegistroAsistencia extends AppCompatActivity implements View.OnClickListener {
 
-    Button btn_escanear,btn_asistencia,btn_guardar,btn_nuevo,btn_listado;
+    Button btn_escanear,btn_asistencia,btn_ingresomanual,btn_nuevo,btn_listado;
     TextView txt_fecha,txt_error,txt_turno,txt_cantidad;
     String api_asistencias, fechadia,fechaturno,jornada,api_descanso;
     private SharedPreferences preferences;
@@ -68,6 +73,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
     Integer turno;
     Boolean bandera1;//true no presento  -- false  presento
     ArrayList<Personas> persona;
+    Dialog alerta;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -77,7 +83,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         persona = new ArrayList<>();
         btn_escanear =  findViewById(R.id.btn_escanear);
         btn_asistencia =  findViewById(R.id.btn_asistencias);
-        btn_guardar =  findViewById(R.id.btn_guardarregistroerror);
+        btn_ingresomanual =  findViewById(R.id.btn_r_ingresomanual);
         btn_listado = findViewById(R.id.btn_listado);
         btn_nuevo =  findViewById(R.id.btn_nuevo);
         txt_fecha =  findViewById(R.id.txt_fecha);
@@ -100,6 +106,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         api_descanso = getString(R.string.api_descansos);
         Log.d("registros", "" + preferences.getInt("cant_depart", 0));
         listadepartamentos.add("Escoja una opcion");
+        btn_ingresomanual.setEnabled(false);
         for (int i = 0; i <= preferences.getInt("cant_depart", 0); i++) {
             Log.d("registros", preferences.getString("depa" + i, "mal"));
             listadepartamentos.add(preferences.getString("depa" + i, "mal"));
@@ -169,31 +176,44 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         });
         btn_escanear.setOnClickListener(this);
         btn_asistencia.setOnClickListener(this);
-        btn_guardar.setOnClickListener(this);
+        btn_ingresomanual.setOnClickListener(this);
         btn_nuevo.setOnClickListener(this);
         btn_listado.setOnClickListener(this);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_escanear:
+                guardarcabecera();
+                btn_ingresomanual.setEnabled(true);
                 escanear();
                 break;
             case R.id.btn_asistencias:
                 startActivity(new Intent(RegistroAsistencia.this, CedulaError.class));
                 finish();
                 break;
-            case R.id.btn_guardarregistroerror:
-                if(departamentos.getSelectedItemPosition() != 0) {
-                    btn_guardar.setEnabled(true);
-                    if(cedulas.size() > 0)
-                    {
-                        subirsistema();
+            case R.id.btn_r_ingresomanual:
+                //desplegar el parametro de guardado
+                alerta = new Dialog(RegistroAsistencia.this);
+                alerta.setContentView(R.layout.alertdialog_cedula_manual);
+                alerta.requireViewById(R.id.btn_alert_guardar).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        EditText cedulamanual= alerta.requireViewById(R.id.edittext_alert_cedula);
+
+                        if(cedulamanual.length() == 10)
+                        {
+                            subirbase(cedulamanual.getText().toString());
+                        }
+                        else
+                            Toast.makeText(RegistroAsistencia.this, "Numeros Incompletos", Toast.LENGTH_LONG).show();
+
+                        //Toast.makeText(RegistroAsistencia.this, "probando"+cedulamanual.getText(), Toast.LENGTH_LONG).show();
                     }
-                    else
-                        Log.d("Boton guardar","si termina en le boton: "+cedulas.size() );
-                }
+                });
+                alerta.show();
                 break;
             case R.id.btn_nuevo:
                 startActivity(new Intent(RegistroAsistencia.this,RegistroAsistencia.class));
@@ -205,6 +225,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                         editor.putString("departamento", departamentos.getSelectedItem().toString());
                         editor.commit();
                         startActivity(new Intent(RegistroAsistencia.this, ListadoDiario.class));
+                        finish();
                     } else {
                         AlertDialog.Builder dialogo1 = new AlertDialog.Builder(RegistroAsistencia.this);
                         dialogo1.setTitle("Importante");
@@ -321,6 +342,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 cedulas.add(v_cedula);
                 //Toast.makeText(getBaseContext(), "Usuario ingresado: "+cedulas.size(), Toast.LENGTH_SHORT).show();
                 llenarusuario(v_cedula);
+                validarcedula(v_cedula,preferences.getInt("id_cabecera",0),buscarusuarioxhora(v_cedula));
             }
             else
                 Toast.makeText(getBaseContext(), "Usuario ya ingresado", Toast.LENGTH_SHORT).show();
@@ -362,10 +384,9 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
     }
     public void subirsistema()
     {
-        btn_guardar.setEnabled(false);
         btn_escanear.setEnabled(false);
         btn_nuevo.setEnabled(true);
-        guardarcabecera();
+
         for (int i =0;i<=cedulaserror.size()-1;i++)
         {
             Log.d("cedulas",cedulaserror.get(i));
@@ -428,7 +449,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                         for (int i = 0 ;i<= cedulas.size()-1;i++)
                         {
                             Log.d("guardar detalle","usuario no valido" );
-                            validarcedula(cedulas.get(i),jsonObject.getInt("id_cabecera"),buscarusuarioxhora(cedulas.get(i)));
+                            //validarcedula(cedulas.get(i),jsonObject.getInt("id_cabecera"),buscarusuarioxhora(cedulas.get(i)));
                             Log.d("guardar detalle","numero cedula" );
                         }
                     }
@@ -458,7 +479,6 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             StringRequest requerimiento = new StringRequest(Request.Method.POST, api_asistencias, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Toast.makeText(RegistroAsistencia.this,"Todo bien Todo bonito",Toast.LENGTH_LONG).show();
                     actualizar(cedula1,"S");
                 }
             }, new Response.ErrorListener() {
