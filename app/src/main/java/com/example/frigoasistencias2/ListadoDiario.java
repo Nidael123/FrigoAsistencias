@@ -5,12 +5,14 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.telephony.mbms.StreamingServiceInfo;
 import android.text.Editable;
@@ -34,6 +36,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.frigoasistencias2.bd.Managerbd;
+import com.example.frigoasistencias2.clases.Personas;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -54,14 +57,16 @@ public class ListadoDiario extends AppCompatActivity {
     ListView listViewdiaria;
     TextView txt_fecha,txt_total;
     String api_areas,fechadia,api_descanso,api_faltas;
+    ArrayList<Personas> personas;
     ArrayList <String> listanombres,listacedulas,listacedulasbanio;
     ArrayAdapter adapter;
     JSONObject jsonObject;
     RequestQueue n_requerimiento;
     SharedPreferences preferences;
     int contador;
-    Button btn_regresarbanio,btn_ircomer,btn_faltas;
+    Button btn_regresarbanio,btn_ircomer,btn_faltas,btn_ingresomanual;
     EditText edit_buscar;
+    Dialog alerta;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -70,6 +75,7 @@ public class ListadoDiario extends AppCompatActivity {
         setContentView(R.layout.activity_listado_diario);
 
         preferences = getSharedPreferences("infousuario", MODE_PRIVATE);
+        personas = new ArrayList<>();
         listViewdiaria = findViewById(R.id.list_diaria);
         txt_fecha = findViewById(R.id.txt_fechadiaria);
         api_areas = getString(R.string.api_areas);
@@ -83,6 +89,7 @@ public class ListadoDiario extends AppCompatActivity {
         btn_regresarbanio = findViewById(R.id.btn_a_regresar);
         btn_ircomer = findViewById(R.id.btn_a_comer);
         btn_faltas = findViewById(R.id.btn_a_falta);
+        btn_ingresomanual = findViewById(R.id.btn_a_manual);
         bd = new Managerbd(this, "Registro", null, R.string.versionbase);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
@@ -106,19 +113,38 @@ public class ListadoDiario extends AppCompatActivity {
                 dialogo1.setPositiveButton("SOLTAR", new DialogInterface.OnClickListener()
                 { public void onClick(DialogInterface dialogo1, int id)
                 {
-                    Log.d("soltar usuario",listacedulas.get(posicion));
-                    soltarusuario(listacedulas.get(posicion));
-                    contador--;
-                    txt_total.setText(""+contador);
+                    for(int i =0;i<=listacedulas.size()-1;i++)
+                    {
+                        if(personas.get(i).getNombre().equals(listViewdiaria.getAdapter().getItem(posicion)))
+                        {
+                            Log.d("palabra",listacedulas.get(i));
+                            //banio(personas.get(i).getCedulas(),7);
+                            soltarusuario(personas.get(i).getCedulas());
+                            contador--;
+                            txt_total.setText(""+contador);
+                        }else{
+                            Log.d("palabra2","mal");
+                        }
+                    }
+                    //soltarusuario(listacedulas.get(posicion));
                 }
                 });
                 dialogo1.setNegativeButton("IR AL BAÑO", new DialogInterface.OnClickListener()
                 { public void onClick(DialogInterface dialogo1, int id) {
                     boolean bandera;
-
+                    Log.d("soltar usuario",listViewdiaria.getAdapter().getItem(posicion)+"");
                     //banio(listacedulas.get(posicion),7);/*7 BAÑO IN 8 BAÑO OUT 9 CAOMIDA IN*/
-                    subirbase(listacedulas.get(posicion));
-
+                    //subirbase(listacedulas.get(posicion));
+                    for(int i =0;i<=listacedulas.size()-1;i++)
+                    {
+                        if(personas.get(i).getNombre().equals(listViewdiaria.getAdapter().getItem(posicion)))
+                        {
+                           Log.d("palabra",listacedulas.get(i));
+                           banio(personas.get(i).getCedulas(),7);
+                        }else{
+                            Log.d("palabra2","mal");
+                        }
+                    }
                 } });
                 dialogo1.show();
                 return false;
@@ -179,6 +205,37 @@ public class ListadoDiario extends AppCompatActivity {
 
             }
         });
+
+        btn_ingresomanual.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                alerta = new Dialog(ListadoDiario.this);
+                alerta.setContentView(R.layout.alertdialog_cedula_manual);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    alerta.requireViewById(R.id.btn_alert_guardar).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            EditText cedulamanual= alerta.requireViewById(R.id.edittext_alert_cedula);
+                            if(cedulamanual.length() == 10)
+                            {
+                                procesarbanio(cedulamanual.getText().toString());
+                            }
+                            else
+                                Toast.makeText(ListadoDiario.this, "Numeros Incompletos", Toast.LENGTH_LONG).show();
+
+                            //subirbase(cedulamanual.getText().toString());
+                            //Toast.makeText(RegistroAsistencia.this, "probando"+cedulamanual.getText(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+                alerta.show();
+            }
+        });
+    }
+    @Override
+    public void onBackPressed() {
+        startActivity(new Intent(ListadoDiario.this,RegistroAsistencia.class));
+        finish();
     }
     public void  escanear(){
         IntentIntegrator intentIntegrator = new IntentIntegrator(this);
@@ -203,28 +260,38 @@ public class ListadoDiario extends AppCompatActivity {
     }
     public void cargardatos()
     {
-        Log.d("listado",preferences.getString("departamento","mal"));
+        Log.d("cargalistado",preferences.getString("departamento","mal"));
         //AppController.getInstance().getRequestQueue().getCache().get(url).serverDate
         JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_areas +"?v_fecha="+fechadia+"&v_id_usuario="+preferences.getInt("id_usuario",0)+"&v_departamento="+preferences.getString("departamento","mal")+"&bandera=1", null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     JSONArray jsonArray = response.getJSONArray("data");
-
-                    for(int i = 0;i<=jsonArray.length()-1;i++)
+                    Log.d("revicion",jsonArray.toString());
+                    if(jsonArray.length() -1 > 0)
                     {
-                        jsonObject = new JSONObject(jsonArray.get(i).toString());//new JSONObject(jsonArray.get(i).toString());
-                        Log.d("lISTADO DIARIO",jsonObject.getString("departamento"));
-                        listanombres.add(jsonObject.getString("nombre")+":"+jsonObject.getString("departamento"));
-                        listacedulas.add(jsonObject.getString("cedula"));
-                        contador ++;
-                    }
-                    adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_dropdown_item_1line,listanombres);
-                    listViewdiaria.setAdapter(adapter);
-                    txt_total.setText(""+contador);
+                        for(int i = 0;i<=jsonArray.length()-1;i++)
+                        {
+                            jsonObject = new JSONObject(jsonArray.get(i).toString());
+                            Personas help = new Personas();
+                            help.setNombre(jsonObject.getString("nombre"));
+                            help.setCedulas(jsonObject.getString("cedula"));
+
+                            Log.d("lISTADO 123",jsonObject.getString("nombre"));
+                            listanombres.add(jsonObject.getString("nombre"));
+                            listacedulas.add(jsonObject.getString("cedula"));
+                            contador ++;
+                            personas.add(help);
+                        }
+                        adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_dropdown_item_1line,listanombres);
+                        listViewdiaria.setAdapter(adapter);
+                        txt_total.setText(""+contador);
+                    }else
+                        Toast.makeText(ListadoDiario.this,"Listado Vacio",Toast.LENGTH_SHORT).show();
+
                 }catch (JSONException e)
                 {
-                    Log.d("LISTADODIARIO","entro3"+e.toString());
+                    Log.d("123456","entro3"+e.toString());
                     Toast.makeText(ListadoDiario.this,"Error de base consulte con sistemas",Toast.LENGTH_SHORT).show();
                 }
             }
@@ -312,22 +379,38 @@ public class ListadoDiario extends AppCompatActivity {
         n_requerimiento = Volley.newRequestQueue(this);
         n_requerimiento.add(requerimiento);
     }*/
-    public void banio(String v_cedula , int v_estado)
-    {
+    public void banio(String v_cedula , int v_estado) {
         String fechadiacabe;
+
+        /*if(v_estado == 7 || v_estado == 9 )
+        {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());//seteo la fecha actual
+            Date date = new Date();
+            fechadiacabe = dateFormat.format(date);
+        }
+        else{
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
+            Date date = new Date();
+            fechadiacabe = dateFormat.format(date);
+        }*/
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
         fechadiacabe = dateFormat.format(date);
 
-        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_descanso +"?v_cedula="+v_cedula+"&v_fecha="+fechadiacabe+"&v_estado="+v_estado,null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_descanso +"?v_cedula="+v_cedula+"&v_fecha="+fechadiacabe+"&v_estado="+v_estado+"&v_usuario="+preferences.getInt("id_usuario",0),null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     JSONArray jsonArray = response.getJSONArray("data");
-
+                    for(int i = 0;i<=jsonArray.length()-1;i++)
+                    {
+                        jsonObject = new JSONObject(jsonArray.get(i).toString());
+                        Log.d("123456789","dale"+jsonObject.getString("mensaje"));
+                        Toast.makeText(ListadoDiario.this,jsonObject.getString("mensaje"),Toast.LENGTH_SHORT).show();
+                    }
                 }catch (JSONException e)
                 {
-                    Log.d("LISTADODIARIO","entro3"+e.toString());
+                    Log.d("DANIEL","entro3"+e.toString());
                     Toast.makeText(ListadoDiario.this,"Error de base consulte con sistemas",Toast.LENGTH_SHORT).show();
                 }
             }
@@ -342,7 +425,6 @@ public class ListadoDiario extends AppCompatActivity {
         json.setShouldCache(true);
         n_requerimiento.add(json);
     }
-
     public void entradabanio(String v_cedula){
         Log.d("banio",v_cedula);
         String fechadiacabe;
@@ -385,11 +467,11 @@ public class ListadoDiario extends AppCompatActivity {
         else{
             Toast.makeText(ListadoDiario.this,"Este usuario ya Entro",Toast.LENGTH_LONG).show();
         }
-
     }
     public  void procesarbanio(String v_cedula)
     {
-        ingresarusuariobanio(v_cedula);
+        banio(v_cedula,8);
+        //ingresarusuariobanio(v_cedula);
     }
     public void actualizarbanio(String v_cedula,String estado)
     {
@@ -398,7 +480,6 @@ public class ListadoDiario extends AppCompatActivity {
     }
 
     public boolean buscarusuario(String v_cedula) {
-
         boolean ingresar;
         String fechadia;
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
@@ -438,10 +519,10 @@ public class ListadoDiario extends AppCompatActivity {
                 Toast.makeText(getBaseContext(), "Usuario ya salio", Toast.LENGTH_SHORT).show();
         }
     }
-
     public void ingresarusuariobanio(String v_cedula)
     {
-        boolean ingresar; //true si false no
+
+        /*boolean ingresar; //true si false no
         ContentValues content = new ContentValues();
         if(v_cedula != null)
         {
@@ -459,8 +540,7 @@ public class ListadoDiario extends AppCompatActivity {
             }
             else
                 Toast.makeText(getBaseContext(), "Usuario no ha salido, dar primero permiso al baño", Toast.LENGTH_SHORT).show();
-        }
-
+        }*/
     }
     public void mandar_comer()
     {
@@ -472,5 +552,4 @@ public class ListadoDiario extends AppCompatActivity {
         }
         Toast.makeText(ListadoDiario.this,"USUARIOS ENVIADOS A COMER",Toast.LENGTH_SHORT).show();
     }
-
 }

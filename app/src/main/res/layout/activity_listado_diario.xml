@@ -74,6 +74,12 @@
                 android:layout_height="wrap_content"
                 android:text="ASISTENCIA" />
 
+            <Button
+                android:id="@+id/btn_a_manual"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Ingreso manual" />
+
         </LinearLayout>
     </ScrollView>
 

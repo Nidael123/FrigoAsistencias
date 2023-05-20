@@ -46,16 +46,11 @@
                 android:text="GUARDAR" />
 
             <Button
-                android:id="@+id/button2"
+                android:id="@+id/btn_g_registros"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="SALIR" />
+                android:text="REGISTROS" />
 
-            <Button
-                android:id="@+id/button3"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="SALIR" />
         </LinearLayout>
     </ScrollView>
 

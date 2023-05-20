@@ -19,11 +19,15 @@ import java.util.ArrayList;
 
 public class AdaptadorRecyclerFaltas extends RecyclerView.Adapter<AdaptadorRecyclerFaltas.ViewHolder> {
 
-    ArrayList<String> cedulas,nombres,estados;
-
+    ArrayList<String> cedulas,nombres,estados,listaestdados;
     ArrayList<Personas> persona;
     public AdaptadorRecyclerFaltas(ArrayList<String>v_cedulas,ArrayList<String>v_nombres)
     {
+        listaestdados = new ArrayList<>();
+        listaestdados.add("FALTA");
+        listaestdados.add("LIBRE");
+        listaestdados.add("VACACIONES");
+        listaestdados.add("PERMISO MEDICO");
         persona = new ArrayList<>();
         cedulas = v_cedulas;
         nombres=v_nombres;
@@ -50,6 +54,19 @@ public class AdaptadorRecyclerFaltas extends RecyclerView.Adapter<AdaptadorRecyc
     @Override
     public void onBindViewHolder(@NonNull AdaptadorRecyclerFaltas.ViewHolder holder, int position) {
         holder.asignar_datos(cedulas.get(position));
+        holder.spin_estado.setAdapter(new ArrayAdapter<String>(holder.itemView.getContext(), android.R.layout.simple_spinner_dropdown_item, listaestdados));
+        holder.spin_estado.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                persona.get(holder.getAdapterPosition()).setEstado(holder.spin_estado.getSelectedItem().toString());
+                Log.d("estoy en holder",persona.get(holder.getAdapterPosition()).getCedulas()+""+persona.get(holder.getAdapterPosition()).getEstado());
+            }
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+                Log.d("holder2", adapterView.getSelectedItemPosition()+"");
+            }
+        });
+
     }
     @Override
     public int getItemCount() {
@@ -59,59 +76,27 @@ public class AdaptadorRecyclerFaltas extends RecyclerView.Adapter<AdaptadorRecyc
     public class ViewHolder extends RecyclerView.ViewHolder {
         TextView txt_cedula;
         Spinner spin_estado;
-        ArrayList<String> listaestdados;
+
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             txt_cedula = itemView.findViewById(R.id.txt_if_cedula);
             spin_estado = itemView.findViewById(R.id.sp_estado);
-            listaestdados = new ArrayList<>();
-            listaestdados.add("FALTA");
-            listaestdados.add("LIBRE");
-            listaestdados.add("VACACIONES");
-            listaestdados.add("PERMISO MEDICO");
 
-            spin_estado.setAdapter(new ArrayAdapter<String>(itemView.getContext(), android.R.layout.simple_spinner_dropdown_item, listaestdados));
+
+
             Log.d("recyclerestados",estados.size()+"");
 
             Log.d("estadosrecycler",cedulas.size()+"");
 
-            spin_estado.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                    for (int y = 0; y <= persona.size()-1;y++ )
-                    {
-                        if(persona.get(y).getCedulas() == txt_cedula.getText() );
-                        {
-                            Log.d("saldra?",persona.get(y).getCedulas() + txt_cedula.getText()+spin_estado.getSelectedItem().toString());
-                            estados.set(y,spin_estado.getSelectedItem().toString());
-                        }
-                    }
-                    Log.d("itembueno",txt_cedula.getText()+  spin_estado.getSelectedItem().toString()+estados.size());
-                    //estados.add(spin_estado.getSelectedItem().toString());
-                    //procesarfaltantes(i,spin_estado.getSelectedItem().toString());
-                    //Log.d("itembueno2",estados.get(i));
-                }
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
 
-                }
-            });
         }
         public void asignar_datos(String cedula)
         {
             txt_cedula.setText(cedula);
         }
     }
-    public ArrayList<String> guardarcambios()
+    public ArrayList<Personas>retornarcedulas()
     {
-        for (int i = 0;i<=estados.size()-1;i++)
-        {
-            Log.d("estadofinal",estados.get(i).toString());
-        }
-        return estados;
-    }
-    public ArrayList<String>retornarcedulas()
-    {
-        return nombres;
+        return persona;
     }
 }

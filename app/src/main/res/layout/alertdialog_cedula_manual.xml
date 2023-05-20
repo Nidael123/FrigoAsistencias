@@ -8,29 +8,21 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
+        <EditText
+            android:id="@+id/edittext_alert_cedula"
             android:layout_width="match_parent"
-            android:layout_height="61dp"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:inputType="numberSigned" />
 
-            <TextView
-                android:id="@+id/txt_if_cedula"
-                android:layout_width="248dp"
-                android:layout_height="55dp"
-                android:layout_weight="1"
-                android:text="TextView" />
-
-            <Spinner
-                android:id="@+id/sp_estado"
-                android:layout_width="243dp"
-                android:layout_height="54dp"
-                android:layout_weight="1" />
-        </LinearLayout>
-
+        <Button
+            android:id="@+id/btn_alert_guardar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="guardar" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

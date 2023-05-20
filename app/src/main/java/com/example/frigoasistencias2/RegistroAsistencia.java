@@ -1,23 +1,28 @@
 package com.example.frigoasistencias2;
 
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.app.Dialog;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.webkit.WebSettings;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -32,6 +37,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.frigoasistencias2.bd.Managerbd;
+import com.example.frigoasistencias2.clases.Personas;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
@@ -49,7 +55,7 @@ import java.util.Map;
 
 public class RegistroAsistencia extends AppCompatActivity implements View.OnClickListener {
 
-    Button btn_escanear,btn_asistencia,btn_anadir,btn_guardar,btn_nuevo,btn_listado;
+    Button btn_escanear,btn_asistencia,btn_ingresomanual,btn_nuevo,btn_listado;
     TextView txt_fecha,txt_error,txt_turno,txt_cantidad;
     String api_asistencias, fechadia,fechaturno,jornada,api_descanso;
     private SharedPreferences preferences;
@@ -66,16 +72,18 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
     ArrayAdapter adapter;
     Integer turno;
     Boolean bandera1;//true no presento  -- false  presento
+    ArrayList<Personas> persona;
+    Dialog alerta;
 
     @SuppressLint("MissingInflatedId")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_registro_asistencia);
+        persona = new ArrayList<>();
         btn_escanear =  findViewById(R.id.btn_escanear);
         btn_asistencia =  findViewById(R.id.btn_asistencias);
-        btn_anadir =  findViewById(R.id.btn_salir);
-        btn_guardar =  findViewById(R.id.btn_guardarregistroerror);
+        btn_ingresomanual =  findViewById(R.id.btn_r_ingresomanual);
         btn_listado = findViewById(R.id.btn_listado);
         btn_nuevo =  findViewById(R.id.btn_nuevo);
         txt_fecha =  findViewById(R.id.txt_fecha);
@@ -98,6 +106,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         api_descanso = getString(R.string.api_descansos);
         Log.d("registros", "" + preferences.getInt("cant_depart", 0));
         listadepartamentos.add("Escoja una opcion");
+        btn_ingresomanual.setEnabled(false);
         for (int i = 0; i <= preferences.getInt("cant_depart", 0); i++) {
             Log.d("registros", preferences.getString("depa" + i, "mal"));
             listadepartamentos.add(preferences.getString("depa" + i, "mal"));
@@ -135,7 +144,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         if(now.after(openHour) && now.before(closedHour))
         {
             txt_turno.setText("Turno Dia");
-            Log.d("tturno","dia");
+            Log.d("turno","dia");
             turno = 1;
         }else{
             txt_turno.setText("Turno Noche");
@@ -152,12 +161,11 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener()
                 { public void onClick(DialogInterface dialogo1, int id)
                 {
-
+                    actualizar(cedulas.get(posicion),"C");
                     cedulas.remove(posicion);
                     listanombres.remove(posicion);
                     adapter.notifyDataSetChanged();
                     txt_cantidad.setText(cedulas.size()+"");
-                    actualizar(cedulas.get(posicion),"C");
                 }
                 });
                 dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
@@ -168,56 +176,69 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         });
         btn_escanear.setOnClickListener(this);
         btn_asistencia.setOnClickListener(this);
-        btn_anadir.setOnClickListener(this);
-        btn_guardar.setOnClickListener(this);
+        btn_ingresomanual.setOnClickListener(this);
         btn_nuevo.setOnClickListener(this);
         btn_listado.setOnClickListener(this);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_escanear:
+                guardarcabecera();
+                btn_ingresomanual.setEnabled(true);
                 escanear();
                 break;
             case R.id.btn_asistencias:
                 startActivity(new Intent(RegistroAsistencia.this, CedulaError.class));
                 finish();
                 break;
-            case R.id.btn_salir:
-                escanear();
-                break;
-            case R.id.btn_guardarregistroerror:
-                if(departamentos.getSelectedItemPosition() != 0) {
-                    btn_guardar.setEnabled(true);
-                    if(cedulas.size() > 0)
-                    {
-                        subirsistema();
+            case R.id.btn_r_ingresomanual:
+                //desplegar el parametro de guardado
+                alerta = new Dialog(RegistroAsistencia.this);
+                alerta.setContentView(R.layout.alertdialog_cedula_manual);
+                alerta.requireViewById(R.id.btn_alert_guardar).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        EditText cedulamanual= alerta.requireViewById(R.id.edittext_alert_cedula);
+
+                        if(cedulamanual.length() == 10)
+                        {
+                            subirbase(cedulamanual.getText().toString());
+                        }
+                        else
+                            Toast.makeText(RegistroAsistencia.this, "Numeros Incompletos", Toast.LENGTH_LONG).show();
+
+                        //Toast.makeText(RegistroAsistencia.this, "probando"+cedulamanual.getText(), Toast.LENGTH_LONG).show();
                     }
-                    else
-                        Log.d("Boton guardar","si termina en le boton: "+cedulas.size() );
-                }
+                });
+                alerta.show();
                 break;
             case R.id.btn_nuevo:
                 startActivity(new Intent(RegistroAsistencia.this,RegistroAsistencia.class));
                 finish();
                 break;
             case R.id.btn_listado:
-                if(departamentos.getSelectedItemPosition() != 0)
-                {
-                    editor.putString("departamento",departamentos.getSelectedItem().toString());
-                    editor.commit();
-                    startActivity(new Intent(RegistroAsistencia.this,ListadoDiario.class));
-                }else{
-                    AlertDialog.Builder dialogo1 = new AlertDialog.Builder(RegistroAsistencia.this);
-                    dialogo1.setTitle("Importante"); dialogo1.setMessage("Escoja una opcion primero");
-                    dialogo1.setCancelable(false);
-                    dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener()
-                    { public void onClick(DialogInterface dialogo1, int id)
-                    {  }
-                    });
-                    dialogo1.show();
-                }
+                //if(cedulas.size()-1 >= 0) {
+                    if (departamentos.getSelectedItemPosition() != 0) {
+                        editor.putString("departamento", departamentos.getSelectedItem().toString());
+                        editor.commit();
+                        startActivity(new Intent(RegistroAsistencia.this, ListadoDiario.class));
+                        finish();
+                    } else {
+                        AlertDialog.Builder dialogo1 = new AlertDialog.Builder(RegistroAsistencia.this);
+                        dialogo1.setTitle("Importante");
+                        dialogo1.setMessage("Escoja una opcion primero");
+                        dialogo1.setCancelable(false);
+                        dialogo1.setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialogo1, int id) {
+                            }
+                        });
+                        dialogo1.show();
+                    }
+                /*}else
+                    Toast.makeText(this, "Primero guarde la informacion", Toast.LENGTH_LONG).show();*/
                 break;
         }
     }
@@ -242,7 +263,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         else
             finish();
     }
-/*
+    /*
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         AlertDialog.Builder dialogo1 = new AlertDialog.Builder(RegistroAsistencia.this);
@@ -315,15 +336,13 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
 
             ingresar =buscarusuario(v_cedula);
             if(ingresar) {
-                content.put("id_libro", preferences.getInt("id_libro", 0));
                 content.put("cedula", v_cedula);
                 content.put("fechaingreso", fechadia);
-                content.put("estado", "OK");
                 bdcache.insert("t_registro", null, content);
-                Toast.makeText(getBaseContext(), "Insertado", Toast.LENGTH_SHORT).show();
                 cedulas.add(v_cedula);
-                Toast.makeText(getBaseContext(), "Usuario ingresado", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getBaseContext(), "Usuario ingresado: "+cedulas.size(), Toast.LENGTH_SHORT).show();
                 llenarusuario(v_cedula);
+                validarcedula(v_cedula,preferences.getInt("id_cabecera",0),buscarusuarioxhora(v_cedula));
             }
             else
                 Toast.makeText(getBaseContext(), "Usuario ya ingresado", Toast.LENGTH_SHORT).show();
@@ -337,7 +356,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         Date date = new Date();
         fechadia = dateFormat.format(date);
         bdcache = bd.getReadableDatabase();
-        Cursor cursor = bdcache.rawQuery("Select cedula from t_registro where cedula like " + "'%" + v_cedula + "%'" + " and fechaingreso like " + "'%" + fechadia + "%'"+"and estadoeliminar in ('A') and  estadosubido not in ('E','S')", null);
+        Cursor cursor = bdcache.rawQuery("Select cedula from t_registro where cedula like " + "'%" + v_cedula + "%'" + " and fechaingreso like " + "'%" + fechadia + "%'"+"and  estadosubido in ('S')", null);
         Log.d("estadoeliminar23",cursor.getCount()+"");
         if (cursor.getCount() > 0) {
             ingresar = false;
@@ -365,11 +384,9 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
     }
     public void subirsistema()
     {
-        btn_guardar.setEnabled(false);
         btn_escanear.setEnabled(false);
-        btn_anadir.setEnabled(false);
         btn_nuevo.setEnabled(true);
-        guardarcabecera();
+
         for (int i =0;i<=cedulaserror.size()-1;i++)
         {
             Log.d("cedulas",cedulaserror.get(i));
@@ -432,7 +449,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                         for (int i = 0 ;i<= cedulas.size()-1;i++)
                         {
                             Log.d("guardar detalle","usuario no valido" );
-                            validarcedula(cedulas.get(i),jsonObject.getInt("id_cabecera"),buscarusuarioxhora(cedulas.get(i)));
+                            //validarcedula(cedulas.get(i),jsonObject.getInt("id_cabecera"),buscarusuarioxhora(cedulas.get(i)));
                             Log.d("guardar detalle","numero cedula" );
                         }
                     }
@@ -462,13 +479,12 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             StringRequest requerimiento = new StringRequest(Request.Method.POST, api_asistencias, new Response.Listener<String>() {
                 @Override
                 public void onResponse(String response) {
-                    Toast.makeText(RegistroAsistencia.this,"Todo bien Todo bonito",Toast.LENGTH_LONG).show();
                     actualizar(cedula1,"S");
                 }
             }, new Response.ErrorListener() {
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    Toast.makeText(RegistroAsistencia.this,"error guardado",Toast.LENGTH_LONG).show();
+                    Toast.makeText(RegistroAsistencia.this,"Verifique que este conectado A la red e intente de nuevo",Toast.LENGTH_LONG).show();
                     actualizar(cedula1,"E");
                     Log.d("detalleerror",error.toString());
                 }
@@ -490,7 +506,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
 
     public void validarcedula(String cedula,Integer id_cabecera,String fecha)
     {
-        Log.d("",avanzartransaccion+"");
+        Log.d("validar",avanzartransaccion+"");
         final int[] estado = new int[1];
         JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_asistencias +"?v_usuario="+cedula+"&v_fecha="+fechadia+"&v_estado=0", null, new Response.Listener<JSONObject>() {
             @Override
@@ -520,9 +536,10 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                     }else {
                         guardar_error(cedula);
                         cedulaserror.add(cedula);
-                        txt_error.setText("Error en una o varias cedulas por favor verifiqu e en asistencia");
                         btn_asistencia.setEnabled(true);
                     }
+                    if(cedulaserror.size()> 0)
+                        txt_error.setText("Error en una o varias cedulas por favor verifique en ERRORES");
                 }catch (JSONException e)
                 {
                     Log.d("logeo","entro3"+e.toString());
@@ -576,6 +593,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                     Log.d("Lista nombre",jsonObject.getString("nombre"));
                     listanombres.add(cedula +"  :   "+jsonObject.getString("nombre"));
                     Log.d("Lista nombre",cedula +"  :   "+jsonObject.getString("nombre"));
+                    Toast.makeText(RegistroAsistencia.this,cedulas.size()+":"+jsonObject.getString("nombre"),Toast.LENGTH_SHORT).show();
 
                 }catch (JSONException e)
                 {

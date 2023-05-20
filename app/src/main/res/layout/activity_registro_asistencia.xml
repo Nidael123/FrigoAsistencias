@@ -81,13 +81,6 @@
                 android:orientation="horizontal">
 
                 <Button
-                    android:id="@+id/btn_escanear"
-                    android:layout_width="91dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:text="Escanear" />
-
-                <Button
                     android:id="@+id/btn_asistencias"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -123,16 +116,17 @@
             </LinearLayout>
 
             <Button
-                android:id="@+id/btn_salir"
+                android:id="@+id/btn_escanear"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="AÑADIR" />
+                android:layout_weight="1"
+                android:text="Escanear" />
 
             <Button
-                android:id="@+id/btn_guardarregistroerror"
+                android:id="@+id/btn_r_ingresomanual"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="GUARDAR" />
+                android:text="INGRESO MANUAL" />
 
             <Button
                 android:id="@+id/btn_nuevo"
