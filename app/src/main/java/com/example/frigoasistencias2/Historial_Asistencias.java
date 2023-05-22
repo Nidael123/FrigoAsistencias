@@ -58,8 +58,6 @@ public class Historial_Asistencias extends AppCompatActivity {
             else
                 rutas.add(file.getName());
         }
-        rutas.add("rutas 1");
-        rutas.add("rutas 2");
         adapter =  new AdaptadorListadoPdf(rutas);
         listapdf.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
         listapdf.setAdapter(adapter);

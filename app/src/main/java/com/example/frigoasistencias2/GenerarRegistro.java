@@ -192,6 +192,10 @@ public class GenerarRegistro extends AppCompatActivity {
             case "PERMISO MEDICO":
                 numeroestado = 10;
                 break;
+
+            case "RETIRADO":
+                numeroestado = 11;
+                break;
         }
         int finalNumeroestado = numeroestado;
         StringRequest requerimiento = new StringRequest(Request.Method.POST, api_faltas, new Response.Listener<String>() {
@@ -394,6 +398,7 @@ public class GenerarRegistro extends AppCompatActivity {
             documento.add(tabla);
 
             documento.close();
+            Toast.makeText(GenerarRegistro.this,"Asistencia guardada",Toast.LENGTH_SHORT).show();
 
         } catch (FileNotFoundException e) {
             Log.d("pdferror",e.toString());

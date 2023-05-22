@@ -28,6 +28,7 @@ public class AdaptadorRecyclerFaltas extends RecyclerView.Adapter<AdaptadorRecyc
         listaestdados.add("LIBRE");
         listaestdados.add("VACACIONES");
         listaestdados.add("PERMISO MEDICO");
+        listaestdados.add("RETIRADO");
         persona = new ArrayList<>();
         cedulas = v_cedulas;
         nombres=v_nombres;
