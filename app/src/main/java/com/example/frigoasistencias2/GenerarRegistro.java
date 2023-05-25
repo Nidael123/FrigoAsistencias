@@ -53,9 +53,9 @@ import java.util.Map;
 
 public class GenerarRegistro extends AppCompatActivity {
 
-    ArrayList<Personas> persona;
+    ArrayList<Personas> persona,personacommpleto,personahelp;
     RecyclerView faltantes;
-    ArrayList<String> listadofaltantes,listadofaltantecedulas;
+    //ArrayList<String> listadofaltantes,listadofaltantecedulas;
     String api_faltas,api_areas,api_descanso;
     RequestQueue n_requerimiento;
     SharedPreferences preferences;
@@ -73,10 +73,11 @@ public class GenerarRegistro extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_generar_registro);
 
-        listadofaltantes = new ArrayList<>();
-        listadofaltantecedulas = new ArrayList<>();
+
 
         persona = new ArrayList<>();
+        personacommpleto = new ArrayList<>();
+        personahelp = new ArrayList<>();
         faltantes =findViewById(R.id.recycler_g_cedulas);
         preferences = getSharedPreferences("infousuario", MODE_PRIVATE);
         editor =preferences.edit();
@@ -91,7 +92,7 @@ public class GenerarRegistro extends AppCompatActivity {
 
 
 
-        adapter = new AdaptadorRecyclerFaltas(listadofaltantecedulas,listadofaltantes);
+        //adapter = new AdaptadorRecyclerFaltas(persona);
 
 
 
@@ -106,9 +107,21 @@ public class GenerarRegistro extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //estado = adapter.guardarcambios();
-                persona = adapter.retornarcedulas();
-                //insertar cabecera
-                //guardarfaltascabecera();
+                personahelp = adapter.retornarcedulas();
+
+                for (int i=0;i<=personahelp.size()-1;i++)
+                {
+                    for(int y=0;y<=personacommpleto.size()-1;y++)
+                    {
+                        if(personacommpleto.get(y).getCedulas().equals(personahelp.get(i).getCedulas()))
+                        {
+                            personacommpleto.get(y).setEstado(personahelp.get(i).getEstado()) ;
+                            //Log.d("recargarcambio",personacommpleto.get(y).getNombre()+"");
+                        }
+                    }
+                    Log.d("recargartotal",personacommpleto.get(i).getNombre()+""+personacommpleto.get(i).getEstado());
+                }
+                Log.d("recargartotal",personacommpleto.size()+"");
                 verificarcabecera();
             }
         });
@@ -137,20 +150,33 @@ public class GenerarRegistro extends AppCompatActivity {
 
                     for(int i = 0;i<=jsonArray.length()-1;i++)
                     {
+                        Personas personahelp = new Personas();
                         jsonObject = new JSONObject(jsonArray.get(i).toString());
                         if(jsonObject.getInt("estado") != 0)
                         {
-                            listadofaltantes.add(jsonObject.getString("nombres")+":"+jsonObject.getString("cedula"));
-                            Log.d("generar",jsonObject.getString("nombres"));
-                            listadofaltantecedulas.add(jsonObject.getString("cedula"));
+                            personahelp.setNombre(jsonObject.getString("nombres"));
+                            personahelp.setEstado(jsonObject.getString("estadoasis"));
+                            personahelp.setCedulas(jsonObject.getString("cedula"));
+
+                            if(jsonObject.getString("estadoasis").equals("FALTA"))
+                            {
+                                persona.add(personahelp);
+                                Log.d("12generarestad",personahelp.getNombre());
+
+                            }
+                            personacommpleto.add(personahelp);
                         }
                         else {
                             Toast.makeText(GenerarRegistro.this,"No hay datos",Toast.LENGTH_SHORT).show();
                         }
                     }
-                    adapter = new AdaptadorRecyclerFaltas(listadofaltantes,listadofaltantecedulas);
+                    for(int u =0;u<=personacommpleto.size()-1;u++)
+                    {
+                        Log.d("123revicion",personacommpleto.get(u).getNombre()+personacommpleto.get(u).getEstado());
+                    }
+                    adapter = new AdaptadorRecyclerFaltas(persona);
                     faltantes.setAdapter(adapter);
-                    total.setText(listadofaltantecedulas.size()+"");
+                    total.setText(persona.size()+"");
                 }catch (JSONException e)
                 {
                     Log.d("CARGARDATOS","entro3"+e.toString());
@@ -196,12 +222,16 @@ public class GenerarRegistro extends AppCompatActivity {
             case "RETIRADO":
                 numeroestado = 11;
                 break;
+            case "PRESENTE":
+                numeroestado = 12;
+                break;
         }
         int finalNumeroestado = numeroestado;
         StringRequest requerimiento = new StringRequest(Request.Method.POST, api_faltas, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 //Toast.makeText(GenerarRegistro.this,"Todo bien Todo bonito",Toast.LENGTH_LONG).show();
+                Log.d("string",response);
             }
         }, new Response.ErrorListener() {
             @Override
@@ -262,7 +292,6 @@ public class GenerarRegistro extends AppCompatActivity {
         requerimiento.setShouldCache(true);
         n_requerimiento.add(requerimiento);
     }
-
     public void verificarcabecera()
     {
         String fechadia;
@@ -302,10 +331,8 @@ public class GenerarRegistro extends AppCompatActivity {
         json.setShouldCache(true);
         n_requerimiento.add(json);
     }
-
     public void verificarcabeceraid()
     {
-
         String fechadia;
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
@@ -329,18 +356,18 @@ public class GenerarRegistro extends AppCompatActivity {
                     }
                     else
                     {
-                        if(persona.size() > 0)
+                        if(personacommpleto.size() > 0)
                         {
-                            for (int i = 0;i<= persona.size()-1;i++)
+                            Log.d("botonguardar",personacommpleto.size()+"");
+                            for (int i = 0;i<= personacommpleto.size()-1;i++)
                             {
-                                Log.d("botonguardar",persona.get(i).getNombre()+"-"+persona.get(i).getEstado());
-                                guardarfaltasdetalle(persona.get(i).getEstado(),persona.get(i).getNombre(),id_cabeceraasis);
+                                Log.d("botonguardar",personacommpleto.get(i).getNombre()+"-"+personacommpleto.get(i).getEstado());
+                                guardarfaltasdetalle(personacommpleto.get(i).getEstado(),personacommpleto.get(i).getCedulas(),id_cabeceraasis);
                             }
                             crearPDF();
                             //Toast.makeText(GenerarRegistro.this,"Asistencia guardada",Toast.LENGTH_SHORT).show();
                         }
                     }
-
                 }catch (JSONException e)
                 {
                     Log.d("CABECERAID","entro3"+e.toString());
@@ -358,7 +385,6 @@ public class GenerarRegistro extends AppCompatActivity {
         json.setShouldCache(true);
         n_requerimiento.add(json);
     }
-
     private void crearPDF() {
         try {
             String carpeta = "/Asistencias";
@@ -389,10 +415,10 @@ public class GenerarRegistro extends AppCompatActivity {
             tabla.addCell("CEDULA");
             tabla.addCell("ESTADO");
 
-            for (int i = 0 ; i < persona.size() ; i++) {
-                tabla.addCell(persona.get(i).getCedulas());
-                tabla.addCell(persona.get(i).getNombre());
-                tabla.addCell(persona.get(i).getEstado());
+            for (int i = 0 ; i < personacommpleto.size() ; i++) {
+                tabla.addCell(personacommpleto.get(i).getCedulas());
+                tabla.addCell(personacommpleto.get(i).getNombre());
+                tabla.addCell(personacommpleto.get(i).getEstado());
             }
 
             documento.add(tabla);

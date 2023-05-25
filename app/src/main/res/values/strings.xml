@@ -1,10 +1,10 @@
 <resources>
     <string name="app_name">FrigoAsistencias</string>
-    <string name="api_usuario">http://192.168.0.219:8080/Api_asistencia2/Puente/api_usuarios.php</string>
-    <string name="api_aistencias">http://192.168.0.219:8080/Api_asistencia2/Puente/api_asistencia.php</string>
-    <string name="api_areas">http://192.168.0.219:8080/Api_asistencia2/Puente/api_areas.php</string>
+    <string name="api_usuario">http://192.168.0.219:8080/Api_asistencia3/Puente/api_usuarios.php</string>
+    <string name="api_aistencias">http://192.168.0.219:8080/Api_asistencia3/Puente/api_asistencia.php</string>
+    <string name="api_areas">http://192.168.0.219:8080/Api_asistencia3/Puente/api_areas.php</string>
     <string name="versionbase">5</string>
-    <string name="api_descansos">http://192.168.0.219:8080/Api_asistencia2/Puente/api_descansos2.php</string>
-    <string name="api_faltas">http://192.168.0.219:8080/Api_asistencia2/Puente/api_faltas.php</string>
-    <string name="version_android">Version de la Aplicacion: 1</string>
+    <string name="api_descansos">http://192.168.0.219:8080/Api_asistencia3/Puente/api_descansos2.php</string>
+    <string name="api_faltas">http://192.168.0.219:8080/Api_asistencia3/Puente/api_faltas.php</string>
+    <string name="version_android">Version de la Aplicacion: 2</string>
 </resources>

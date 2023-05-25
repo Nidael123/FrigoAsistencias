@@ -19,9 +19,9 @@ import java.util.ArrayList;
 
 public class AdaptadorRecyclerFaltas extends RecyclerView.Adapter<AdaptadorRecyclerFaltas.ViewHolder> {
 
-    ArrayList<String> cedulas,nombres,estados,listaestdados;
+    ArrayList<String> nombres,listaestdados;
     ArrayList<Personas> persona;
-    public AdaptadorRecyclerFaltas(ArrayList<String>v_cedulas,ArrayList<String>v_nombres)
+    public AdaptadorRecyclerFaltas(ArrayList<Personas> p)
     {
         listaestdados = new ArrayList<>();
         listaestdados.add("FALTA");
@@ -30,18 +30,21 @@ public class AdaptadorRecyclerFaltas extends RecyclerView.Adapter<AdaptadorRecyc
         listaestdados.add("PERMISO MEDICO");
         listaestdados.add("RETIRADO");
         persona = new ArrayList<>();
-        cedulas = v_cedulas;
-        nombres=v_nombres;
-        estados = new ArrayList<>();
-        for (int i = 0;i<=nombres.size()-1;i++)
-        {
-            Personas helppersonas = new Personas();
+        //cedulas = v_cedulas;
+        nombres = new ArrayList<>();
+
+        //estados = new ArrayList<>();
+        persona=p;
+        Log.d("12adaptado", persona.size()+":"+p.size());
+        for (int i = 0;i<=p.size()-1;i++) {
+            /*Personas helppersonas = new Personas();
             helppersonas.setCedulas(v_cedulas.get(i));
             helppersonas.setNombre(v_nombres.get(i));
             helppersonas.setEstado("FALTA");
             persona.add(helppersonas);
-            estados.add("FALTA");
-            Log.d("principal",nombres.get(i));
+            estaddddos.add("FALTA");*/
+            Log.d("12adaptado", p.get(i).getNombre());
+            Log.d("12adaptado", persona.get(i).getNombre());
         }
     }
 
@@ -54,7 +57,7 @@ public class AdaptadorRecyclerFaltas extends RecyclerView.Adapter<AdaptadorRecyc
 
     @Override
     public void onBindViewHolder(@NonNull AdaptadorRecyclerFaltas.ViewHolder holder, int position) {
-        holder.asignar_datos(cedulas.get(position));
+        holder.asignar_datos(persona.get(position).getNombre());
         holder.spin_estado.setAdapter(new ArrayAdapter<String>(holder.itemView.getContext(), android.R.layout.simple_spinner_dropdown_item, listaestdados));
         holder.spin_estado.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -71,7 +74,7 @@ public class AdaptadorRecyclerFaltas extends RecyclerView.Adapter<AdaptadorRecyc
     }
     @Override
     public int getItemCount() {
-        return cedulas.size();
+        return persona.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -85,9 +88,9 @@ public class AdaptadorRecyclerFaltas extends RecyclerView.Adapter<AdaptadorRecyc
 
 
 
-            Log.d("recyclerestados",estados.size()+"");
+            //Log.d("recyclerestados",estados.size()+"");
 
-            Log.d("estadosrecycler",cedulas.size()+"");
+            //Log.d("estadosrecycler",cedulas.size()+"");
 
 
         }
