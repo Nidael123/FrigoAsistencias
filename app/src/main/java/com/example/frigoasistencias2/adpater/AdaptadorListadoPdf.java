@@ -70,9 +70,5 @@ public class AdaptadorListadoPdf  extends RecyclerView.Adapter<AdaptadorListadoP
         {
             ruta.setText(direccion);
         }
-        public void abrirvisor(){
-
-        }
-
     }
 }

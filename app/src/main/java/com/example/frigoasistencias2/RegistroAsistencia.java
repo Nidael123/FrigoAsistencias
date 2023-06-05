@@ -147,9 +147,13 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             txt_turno.setText("Turno Dia");
             Log.d("turno","dia");
             turno = 1;
+            editor.putInt("turno",turno);
+            editor.commit();
         }else{
             txt_turno.setText("Turno Noche");
             turno = 2;
+            editor.putInt("turno",turno);
+            editor.commit();
         }
 
         listacedulas.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -450,7 +454,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                     if(jsonObject.getInt("id_cabecera") != 0)
                     {
                         Log.d("guardar detalle","usuario no valido" );
-                        Log.d("guardar detalle",cedulas.size()-1+"" );
+                        //Log.d("guardar detalle",cedulas.size()-1+"" );
 
                         for (int i = 0 ;i<= cedulas.size()-1;i++)
                         {
@@ -486,7 +490,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 @Override
                 public void onResponse(String response) {
                     actualizar(cedula1,"S");
-                    adapter.notifyDataSetChanged();
+                    //adapter.notifyDataSetChanged();
                 }
             }, new Response.ErrorListener() {
                 @Override

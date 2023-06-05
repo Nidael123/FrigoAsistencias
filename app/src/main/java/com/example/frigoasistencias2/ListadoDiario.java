@@ -163,7 +163,8 @@ public class ListadoDiario extends AppCompatActivity {
         btn_ircomer.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder dialogo1 = new AlertDialog.Builder(ListadoDiario.this);
+                startActivity(new Intent(ListadoDiario.this,Comida.class));
+                /*AlertDialog.Builder dialogo1 = new AlertDialog.Builder(ListadoDiario.this);
                 dialogo1.setTitle("Importante"); dialogo1.setMessage("¿Seguro va a enviar a comer?");
                 dialogo1.setCancelable(false);
                 dialogo1.setNeutralButton("NO", new DialogInterface.OnClickListener() {
@@ -178,7 +179,7 @@ public class ListadoDiario extends AppCompatActivity {
                     mandar_comer();
                 }
                 });
-                dialogo1.show();
+                dialogo1.show();*/
             }
         });
 
@@ -265,7 +266,7 @@ public class ListadoDiario extends AppCompatActivity {
     {
         Log.d("cargalistado",preferences.getString("departamento","mal"));
         //AppController.getInstance().getRequestQueue().getCache().get(url).serverDate
-        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_areas +"?v_fecha="+fechadia+"&v_id_usuario="+preferences.getInt("id_usuario",0)+"&v_departamento="+preferences.getString("departamento","mal")+"&bandera=1", null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_areas +"?v_fecha="+fechadia+"&v_id_usuario="+preferences.getInt("id_usuario",0)+"&v_departamento="+preferences.getString("departamento","mal")+"&bandera=1&v_turno="+preferences.getInt("turno",0), null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
