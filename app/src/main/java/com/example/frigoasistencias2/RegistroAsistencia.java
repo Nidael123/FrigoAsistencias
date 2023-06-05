@@ -70,7 +70,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
     boolean avanzartransaccion = false,bandera = true;  //true avanza  bandera f = hay error en las alguna cedula
     ListView listacedulas;
     ArrayAdapter adapter;
-    Integer turno;
+    Integer turno,id_cabecerabandera;
     Boolean bandera1;//true no presento  -- false  presento
     ArrayList<Personas> persona;
     Dialog alerta;
@@ -90,6 +90,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         txt_error =  findViewById(R.id.txt_error_cedula2);
         txt_turno = findViewById(R.id.txt_turno);
         txt_cantidad = findViewById(R.id.txt_cantidad);
+        id_cabecerabandera = 0;
         preferences = getSharedPreferences("infousuario", MODE_PRIVATE);
         editor = preferences.edit();
         txt_cantidad.setText("0");
@@ -186,7 +187,10 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_escanear:
-                guardarcabecera();
+                if(id_cabecerabandera == 0)
+                {
+                    guardarcabecera();
+                }
                 btn_ingresomanual.setEnabled(true);
                 escanear();
                 break;
@@ -205,7 +209,9 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
 
                         if(cedulamanual.length() == 10)
                         {
+
                             subirbase(cedulamanual.getText().toString());
+
                         }
                         else
                             Toast.makeText(RegistroAsistencia.this, "Numeros Incompletos", Toast.LENGTH_LONG).show();
@@ -253,7 +259,6 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener()
             { public void onClick(DialogInterface dialogo1, int id)
             {
-                cancelar_cedulas();
                 finish();   }
             });
             dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
@@ -440,6 +445,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                     jsonObject = new JSONObject(jsonArray.get(0).toString());
                     Log.d("id_cabecera",""+jsonObject.getInt("id_cabecera"));
                     editor.putInt("id_cabecera",jsonObject.getInt("id_cabecera"));
+                    id_cabecerabandera = jsonObject.getInt("id_cabecera");
                     editor.commit();
                     if(jsonObject.getInt("id_cabecera") != 0)
                     {
@@ -480,6 +486,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 @Override
                 public void onResponse(String response) {
                     actualizar(cedula1,"S");
+                    adapter.notifyDataSetChanged();
                 }
             }, new Response.ErrorListener() {
                 @Override

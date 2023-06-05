@@ -122,6 +122,8 @@ public class ListadoDiario extends AppCompatActivity {
                             soltarusuario(personas.get(i).getCedulas());
                             contador--;
                             txt_total.setText(""+contador);
+                            personas.remove(i);
+                            adapter.notifyDataSetChanged();
                         }else{
                             Log.d("palabra2","mal");
                         }
@@ -197,7 +199,8 @@ public class ListadoDiario extends AppCompatActivity {
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                adapter.getFilter().filter(charSequence);
+                if (charSequence.length()>0)
+                    adapter.getFilter().filter(charSequence);
             }
 
             @Override
@@ -320,6 +323,7 @@ public class ListadoDiario extends AppCompatActivity {
                     if(jsonObject.getString("estado" ) != "bien")
                     {
                         actualizar(cedula,"C");
+
                         Toast.makeText(ListadoDiario.this,"usuario liberado",Toast.LENGTH_SHORT).show();
                     }
                     else

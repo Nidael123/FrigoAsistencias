@@ -10,6 +10,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.Network;
 import android.net.NetworkInfo;
@@ -26,12 +27,16 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.frigoasistencias2.bd.Managerbd;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 public class Login extends AppCompatActivity {
 
@@ -45,6 +50,8 @@ public class Login extends AppCompatActivity {
     ArrayList<String> departamentos;
     boolean isWifiConn = false;
     boolean isMobileConn = false;
+    Managerbd bd;
+    SQLiteDatabase bdcache;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +65,7 @@ public class Login extends AppCompatActivity {
 
         preferences = getSharedPreferences("infousuario", MODE_PRIVATE);
         editor = preferences.edit();
+        bd = new Managerbd(this, "Registro", null, R.string.versionbase);
 
         verificarversion();
 
@@ -80,8 +88,16 @@ public class Login extends AppCompatActivity {
                     if(txt_user.getText().toString() != "" && txt_password.getText().toString() != "" )
                     {
                         Toast.makeText(Login.this, "Ingreso", Toast.LENGTH_LONG);
+                        String fechadia;
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
+                        Date date = new Date();
+                        fechadia = dateFormat.format(date);
+                        if(txt_user.getText().toString() == "aguaman")
+                        {
+                            bdcache = bd.getWritableDatabase();
+                            bdcache.execSQL("delete from t_registro where fechaingreso not like"+"'%"+fechadia+"%'");
+                        }
                         logear(apisusario + "?usuario=" + txt_user.getText().toString()+"&contrasena="+txt_password.getText().toString());
-
                     }
                     else
                         Toast.makeText(Login.this,"No se admiten campos en blanco",Toast.LENGTH_LONG);
@@ -119,7 +135,8 @@ public class Login extends AppCompatActivity {
                             editor.putInt("id_usuario",jsonObject.getInt("id_usuario"));
                             editor.putString("depa"+i,jsonObject.getString("departamento"));
                             editor.putString("nombre_usuario",jsonObject.getString("nombre"));
-                            Log.d("login",""+jsonObject.getString("departamento"));
+                            editor.putString("supervisor",jsonObject.getString("supervisor"));
+                            Log.d("login",""+jsonObject.getString("supervisor"));
                         }
                         editor.putInt("cant_depart", jsonArray.length()-1);
                         editor.commit();

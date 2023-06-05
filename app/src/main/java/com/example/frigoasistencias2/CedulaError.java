@@ -250,7 +250,7 @@ public class CedulaError extends AppCompatActivity {
         fechadia = dateFormat.format(date);
         bdcache = bd.getReadableDatabase();
         Cursor cursor = bdcache.rawQuery("Select cedula,estadosubido from t_registro where fechaingreso like " + "'%" + fechadia + "%' and  estadosubido in('E') ", null);
-        if(cursor.getCount() >=0)
+        if(cursor.getCount() >0)
         {
             cursor.moveToFirst();
             do{

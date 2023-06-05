@@ -106,23 +106,26 @@ public class GenerarRegistro extends AppCompatActivity {
         btn_guardarfaltas.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //estado = adapter.guardarcambios();
-                personahelp = adapter.retornarcedulas();
+                Log.d("supervisor",preferences.getString("supervisor","mal"));
+                if(preferences.getString("supervisor","mal").equals("SI")) {
+                    //estado = adapter.guardarcambios();
+                    personahelp = adapter.retornarcedulas();
 
-                for (int i=0;i<=personahelp.size()-1;i++)
-                {
-                    for(int y=0;y<=personacommpleto.size()-1;y++)
-                    {
-                        if(personacommpleto.get(y).getCedulas().equals(personahelp.get(i).getCedulas()))
-                        {
-                            personacommpleto.get(y).setEstado(personahelp.get(i).getEstado()) ;
-                            //Log.d("recargarcambio",personacommpleto.get(y).getNombre()+"");
+                    for (int i = 0; i <= personahelp.size() - 1; i++) {
+                        for (int y = 0; y <= personacommpleto.size() - 1; y++) {
+                            if (personacommpleto.get(y).getCedulas().equals(personahelp.get(i).getCedulas())) {
+                                personacommpleto.get(y).setEstado(personahelp.get(i).getEstado());
+                                //Log.d("recargarcambio",personacommpleto.get(y).getNombre()+"");
+                            }
                         }
+                        Log.d("recargartotal", personacommpleto.get(i).getNombre() + "" + personacommpleto.get(i).getEstado());
                     }
-                    Log.d("recargartotal",personacommpleto.get(i).getNombre()+""+personacommpleto.get(i).getEstado());
+                    Log.d("recargartotal", personacommpleto.size() + "");
+                    verificarcabecera();
+                }else
+                {
+                    Toast.makeText(GenerarRegistro.this,"SOLO EL SUPERVISOR O DELEGADO PUEDE REGISTRAR",Toast.LENGTH_LONG).show();
                 }
-                Log.d("recargartotal",personacommpleto.size()+"");
-                verificarcabecera();
             }
         });
         btn_historial.setOnClickListener(new View.OnClickListener() {

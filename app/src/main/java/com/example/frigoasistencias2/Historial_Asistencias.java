@@ -11,6 +11,7 @@ import android.util.Log;
 import android.widget.Adapter;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
@@ -43,20 +44,26 @@ public class Historial_Asistencias extends AppCompatActivity {
             }
         };
         arrayfiles = file.listFiles(filtro);
+        try {
 
-        Log.d("ficheros1",Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/Asistencias/");
-        Log.d("ficheros3",file.canRead()+"-:"+arrayfiles.length+file.getName());
-        for (int i = 0; i < arrayfiles.length; i++)
+            Log.d("ficheros1", Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/Asistencias/");
+            Log.d("ficheros3", file.canRead() + "-:" + arrayfiles.length + file.getName());
+            for (int i = 0; i < arrayfiles.length; i++) {
+                //Sacamos del array files un fichero
+                File file = arrayfiles[i];
+                Log.d("ficheros2", file.getName() + "");
+                //Si es directorio...
+                if (file.isDirectory())
+                    rutas.add(file.getName() + "/");
+                    //Si es fichero...
+                else
+                    rutas.add(file.getName());
+            }
+        }
+        catch (Exception e)
         {
-            //Sacamos del array files un fichero
-            File file = arrayfiles[i];
-            Log.d("ficheros2",file.getName()+"");
-            //Si es directorio...
-            if (file.isDirectory())
-                rutas.add(file.getName() + "/");
-                //Si es fichero...
-            else
-                rutas.add(file.getName());
+            Log.d("errorfile",e.toString());
+            Toast.makeText(Historial_Asistencias.this,"NO HAY ARCHIVOS",Toast.LENGTH_SHORT).show();
         }
         adapter =  new AdaptadorListadoPdf(rutas);
         listapdf.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
