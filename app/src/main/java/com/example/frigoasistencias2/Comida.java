@@ -33,7 +33,7 @@ public class Comida extends AppCompatActivity {
 
     RecyclerView recicler;
     AdaptadorComida adapter;
-    String api_areas,fechadia;
+    String api_areas,fechadia,api_descanso;
     RequestQueue n_requerimiento;
     SharedPreferences preferences;
     JSONObject jsonObject;
@@ -47,6 +47,7 @@ public class Comida extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comida);
         api_areas = getString(R.string.api_areas);
+        api_descanso = getString(R.string.api_descansos);
         recicler = findViewById(R.id.recy_comida);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         recicler.setLayoutManager(manager);
@@ -57,20 +58,19 @@ public class Comida extends AppCompatActivity {
         fechadia = dateFormat.format(date);
         personas=new ArrayList<>();
         cargardatos();
-
     }
 
     public void cargardatos()
     {
         Log.d("cargalistado",preferences.getString("departamento","mal"));
         //AppController.getInstance().getRequestQueue().getCache().get(url).serverDate
-        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_areas +"?v_fecha="+fechadia+"&v_id_usuario="+preferences.getInt("id_usuario",0)+"&v_departamento="+preferences.getString("departamento","mal")+"&bandera=1&v_turno="+preferences.getInt("turno",0), null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_descanso +"?v_fecha="+fechadia+"&v_id_usuario="+preferences.getInt("id_usuario",0)+"&v_departamento="+preferences.getString("departamento","mal")+"&v_turno="+preferences.getInt("turno",0)+"&bandera=0", null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     JSONArray jsonArray = response.getJSONArray("data");
                     Log.d("revicion",jsonArray.toString());
-                    if(jsonArray.length() -1 > 0)
+                    if(jsonArray.length() -1 >= 0)
                     {
                         for(int i = 0;i<=jsonArray.length()-1;i++)
                         {
@@ -82,7 +82,7 @@ public class Comida extends AppCompatActivity {
                             Log.d("lISTADO 123",jsonObject.getString("nombre"));
                             personas.add(help);
                         }
-                        adapter = new AdaptadorComida(personas);
+                        adapter = new AdaptadorComida(personas,api_descanso,preferences.getInt("id_usuario",0),+preferences.getInt("turno",0));
                         recicler.setAdapter(adapter);
                     }else
                         Toast.makeText(Comida.this,"Listado Vacio",Toast.LENGTH_SHORT).show();
@@ -90,7 +90,7 @@ public class Comida extends AppCompatActivity {
                 }catch (JSONException e)
                 {
                     Log.d("123456","entro3"+e.toString());
-                    Toast.makeText(Comida.this,"Error de base consulte con sistemas",Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(Comida.this,"Error de base consulte con sistemas",Toast.LENGTH_SHORT).show();
                 }
             }
         }, new Response.ErrorListener() {

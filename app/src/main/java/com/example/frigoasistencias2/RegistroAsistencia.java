@@ -215,7 +215,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                         {
 
                             subirbase(cedulamanual.getText().toString());
-
+                            adapter.notifyDataSetChanged();
                         }
                         else
                             Toast.makeText(RegistroAsistencia.this, "Numeros Incompletos", Toast.LENGTH_LONG).show();
