@@ -408,7 +408,7 @@ public class GenerarRegistro extends AppCompatActivity {
             documento.open();
 
             Paragraph titulo = new Paragraph(
-                    "Asistencia \n\n\n"+fechadia,
+                    "Asistencia \n"+fechadia+"\n",
                     FontFactory.getFont("arial", 22, Font.BOLD, BaseColor.BLUE)
             );
             documento.add(titulo);

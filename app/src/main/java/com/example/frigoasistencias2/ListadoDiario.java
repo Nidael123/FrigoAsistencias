@@ -91,7 +91,7 @@ public class ListadoDiario extends AppCompatActivity {
         btn_faltas = findViewById(R.id.btn_a_falta);
         btn_ingresomanual = findViewById(R.id.btn_a_manual);
         bd = new Managerbd(this, "Registro", null, R.string.versionbase);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
         fechadia = dateFormat.format(date);
         cargardatos();
@@ -118,16 +118,18 @@ public class ListadoDiario extends AppCompatActivity {
                         if(personas.get(i).getNombre().equals(listViewdiaria.getAdapter().getItem(posicion)))
                         {
                             Log.d("palabra",listacedulas.get(i));
-                            //banio(personas.get(i).getCedulas(),7);
+                            Log.d("palabra3",personas.get(i).getNombre());
                             soltarusuario(personas.get(i).getCedulas());
-                            contador--;
-                            txt_total.setText(""+contador);
+                            //contador--;
+                            //txt_total.setText(""+contador);
                             personas.remove(i);
                             adapter.notifyDataSetChanged();
+                            return;
                         }else{
                             Log.d("palabra2","mal");
                         }
                     }
+
                     //soltarusuario(listacedulas.get(posicion));
                 }
                 });
@@ -312,8 +314,11 @@ public class ListadoDiario extends AppCompatActivity {
     }
     public void soltarusuario(String cedula)
     {
-        Log.d("sacar",api_areas +"?fecha="+fechadia+"&cedulas="+cedula+"&bandera=0");
-        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_areas +"?fecha="+fechadia+"&cedula="+cedula+"&bandera=0", null, new Response.Listener<JSONObject>() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
+        Date date = new Date();
+        String fecha = dateFormat.format(date);
+        Log.d("sacar",api_areas +"?fecha="+fecha+"&cedulas="+cedula+"&bandera=0");
+        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_areas +"?fecha="+fecha+"&cedula="+cedula+"&bandera=0", null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
