@@ -29,11 +29,14 @@ import org.json.JSONObject;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
+import java.util.stream.Collectors;
 
 public class AdaptadorComida extends RecyclerView.Adapter<AdaptadorComida.ViewHolder> {
 
         ArrayList<Personas> persona;
+        ArrayList<Personas> personacopia;
         String api_descanso;
         RequestQueue n_requerimiento;
         int id_usuario,turno;
@@ -45,6 +48,30 @@ public class AdaptadorComida extends RecyclerView.Adapter<AdaptadorComida.ViewHo
                 id_usuario = v_id_usuario;
                 turno = v_turno;
                 Log.d("cantidad",api_descanso+id_usuario+turno+"");
+                personacopia = new ArrayList<>();
+                personacopia.addAll(persona);
+        }
+        public void filtrado(final String txtBuscar) {
+                int longitud = txtBuscar.length();
+                if (longitud == 0) {
+                        persona.clear();
+                        persona.addAll(personacopia);
+                } else {
+                        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                                List<Personas> collecion = persona.stream()
+                                        .filter(i -> i.getNombre().toLowerCase().contains(txtBuscar.toLowerCase()))
+                                        .collect(Collectors.toList());
+                                persona.clear();
+                                persona.addAll(collecion);
+                        } else {
+                                for (Personas c : personacopia) {
+                                        if (c.getNombre().toLowerCase().contains(txtBuscar.toLowerCase())) {
+                                                persona.add(c);
+                                        }
+                                }
+                        }
+                }
+                notifyDataSetChanged();
         }
         @NonNull
         @Override
@@ -56,7 +83,6 @@ public class AdaptadorComida extends RecyclerView.Adapter<AdaptadorComida.ViewHo
         public void onBindViewHolder(@NonNull AdaptadorComida.ViewHolder holder, int position) {
                 holder.asignar_datos(persona.get(position));
         }
-
         @Override
         public int getItemCount() {
                 return persona.size();
@@ -107,6 +133,7 @@ public class AdaptadorComida extends RecyclerView.Adapter<AdaptadorComida.ViewHo
                                                         Log.d("123456789","dale"+jsonObject.getString("mensaje"));
                                                         //Toast.makeText(ListadoDiario.this,jsonObject.getString("mensaje"),Toast.LENGTH_SHORT).show();
                                                 }
+                                                Toast.makeText(itemView.getContext(),"Usuario enviado a comer",Toast.LENGTH_LONG).show();
                                         }catch (JSONException e)
                                         {
                                                 Log.d("DANIEL","entro3"+e.toString());
@@ -125,6 +152,4 @@ public class AdaptadorComida extends RecyclerView.Adapter<AdaptadorComida.ViewHo
                         n_requerimiento.add(json);
                 }
         }
-
-
 }

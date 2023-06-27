@@ -1,6 +1,7 @@
 package com.example.frigoasistencias2;
 
 import androidx.appcompat.app.AppCompatActivity;
+import android.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-public class Comida extends AppCompatActivity {
+public class Comida extends AppCompatActivity implements SearchView.OnQueryTextListener{
 
     RecyclerView recicler;
     AdaptadorComida adapter;
@@ -38,6 +39,7 @@ public class Comida extends AppCompatActivity {
     SharedPreferences preferences;
     JSONObject jsonObject;
     ArrayList<Personas> personas;
+    SearchView search_buscar;
 
 
 
@@ -49,6 +51,7 @@ public class Comida extends AppCompatActivity {
         api_areas = getString(R.string.api_areas);
         api_descanso = getString(R.string.api_descansos);
         recicler = findViewById(R.id.recy_comida);
+        search_buscar=findViewById(R.id.search_c_buscar);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         recicler.setLayoutManager(manager);
         recicler.setHasFixedSize(true);
@@ -58,6 +61,7 @@ public class Comida extends AppCompatActivity {
         fechadia = dateFormat.format(date);
         personas=new ArrayList<>();
         cargardatos();
+        search_buscar.setOnQueryTextListener(this);
     }
 
     public void cargardatos()
@@ -83,6 +87,7 @@ public class Comida extends AppCompatActivity {
                             personas.add(help);
                         }
                         adapter = new AdaptadorComida(personas,api_descanso,preferences.getInt("id_usuario",0),+preferences.getInt("turno",0));
+                        recicler.setItemViewCacheSize(personas.size());
                         recicler.setAdapter(adapter);
                     }else
                         Toast.makeText(Comida.this,"Listado Vacio",Toast.LENGTH_SHORT).show();
@@ -103,5 +108,17 @@ public class Comida extends AppCompatActivity {
         n_requerimiento = Volley.newRequestQueue(this);
         json.setShouldCache(true);
         n_requerimiento.add(json);
+    }
+
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        adapter.filtrado(newText);
+        return false;
     }
 }

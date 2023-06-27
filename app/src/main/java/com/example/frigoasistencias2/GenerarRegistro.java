@@ -115,12 +115,12 @@ public class GenerarRegistro extends AppCompatActivity {
                         for (int y = 0; y <= personacommpleto.size() - 1; y++) {
                             if (personacommpleto.get(y).getCedulas().equals(personahelp.get(i).getCedulas())) {
                                 personacommpleto.get(y).setEstado(personahelp.get(i).getEstado());
-                                //Log.d("recargarcambio",personacommpleto.get(y).getNombre()+"");
+                                //Log.d("recargarcambio",personacommpleto.get(y).getNombre()+":"+personacommpleto.get(y).getEstado());
                             }
                         }
                         Log.d("recargartotal", personacommpleto.get(i).getNombre() + "" + personacommpleto.get(i).getEstado());
                     }
-                    Log.d("recargartotal", personacommpleto.size() + "");
+                    //Log.d("recargartotal", personacommpleto.size() + "");
                     verificarcabecera();
                 }else
                 {
@@ -178,6 +178,7 @@ public class GenerarRegistro extends AppCompatActivity {
                         Log.d("123revicion",personacommpleto.get(u).getNombre()+personacommpleto.get(u).getEstado());
                     }
                     adapter = new AdaptadorRecyclerFaltas(persona);
+                    faltantes.setItemViewCacheSize(persona.size());
                     faltantes.setAdapter(adapter);
                     total.setText(persona.size()+"");
                 }catch (JSONException e)
@@ -226,7 +227,7 @@ public class GenerarRegistro extends AppCompatActivity {
                 numeroestado = 11;
                 break;
             case "PRESENTE":
-                numeroestado = 12;
+                numeroestado = 3;
                 break;
         }
         int finalNumeroestado = numeroestado;

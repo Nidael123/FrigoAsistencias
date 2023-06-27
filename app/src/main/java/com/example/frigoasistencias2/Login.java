@@ -92,11 +92,11 @@ public class Login extends AppCompatActivity {
                         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
                         Date date = new Date();
                         fechadia = dateFormat.format(date);
-                        if(txt_user.getText().toString() == "aguaman")
-                        {
-                            bdcache = bd.getWritableDatabase();
-                            bdcache.execSQL("delete from t_registro where fechaingreso not like"+"'%"+fechadia+"%'");
-                        }
+
+
+                        bdcache = bd.getWritableDatabase();
+                        bdcache.execSQL("delete from t_registro where fechaingreso not like"+"'%"+fechadia+"%'");
+
                         logear(apisusario + "?usuario=" + txt_user.getText().toString()+"&contrasena="+txt_password.getText().toString());
                     }
                     else

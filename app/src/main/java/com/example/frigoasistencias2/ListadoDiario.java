@@ -266,7 +266,7 @@ public class ListadoDiario extends AppCompatActivity {
     }
     public void cargardatos()
     {
-        Log.d("cargalistado",preferences.getString("departamento","mal"));
+        Log.d("cargalistado",preferences.getInt("turno",0)+"v");
         //AppController.getInstance().getRequestQueue().getCache().get(url).serverDate
         JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_areas +"?v_fecha="+fechadia+"&v_id_usuario="+preferences.getInt("id_usuario",0)+"&v_departamento="+preferences.getString("departamento","mal")+"&bandera=1&v_turno="+preferences.getInt("turno",0), null, new Response.Listener<JSONObject>() {
             @Override
