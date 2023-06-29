@@ -50,6 +50,10 @@ public class AdaptadorComida extends RecyclerView.Adapter<AdaptadorComida.ViewHo
                 Log.d("cantidad",api_descanso+id_usuario+turno+"");
                 personacopia = new ArrayList<>();
                 personacopia.addAll(persona);
+                for (int i = 0;i<=persona.size()-1;i++) {
+                        Log.d("12adaptado", persona.get(i).getNombre());
+                        Log.d("12adaptado", persona.get(i).getNombre());
+                }
         }
         public void filtrado(final String txtBuscar) {
                 int longitud = txtBuscar.length();

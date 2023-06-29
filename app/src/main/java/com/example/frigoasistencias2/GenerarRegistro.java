@@ -54,17 +54,17 @@ import java.util.Map;
 public class GenerarRegistro extends AppCompatActivity {
 
     ArrayList<Personas> persona,personacommpleto,personahelp;
-    RecyclerView faltantes;
+    //RecyclerView faltantes;
     //ArrayList<String> listadofaltantes,listadofaltantecedulas;
     String api_faltas,api_areas,api_descanso;
     RequestQueue n_requerimiento;
     SharedPreferences preferences;
     SharedPreferences.Editor editor;
-    AdaptadorRecyclerFaltas adapter;
+    //AdaptadorRecyclerFaltas adapter;
     JSONObject jsonObject;
     Button btn_guardarfaltas,btn_historial;
-    TextView total;
-    String fechadia;
+    //TextView total;
+    String fechadia,fechamomento,horamomento;
     int id_cabeceraasis;
 
     @SuppressLint("MissingInflatedId")
@@ -78,7 +78,7 @@ public class GenerarRegistro extends AppCompatActivity {
         persona = new ArrayList<>();
         personacommpleto = new ArrayList<>();
         personahelp = new ArrayList<>();
-        faltantes =findViewById(R.id.recycler_g_cedulas);
+        //faltantes =findViewById(R.id.recycler_g_cedulas);
         preferences = getSharedPreferences("infousuario", MODE_PRIVATE);
         editor =preferences.edit();
         api_faltas = getString(R.string.api_faltas);
@@ -87,8 +87,8 @@ public class GenerarRegistro extends AppCompatActivity {
         btn_guardarfaltas = findViewById(R.id.btn_g_guardar);
         btn_historial = findViewById(R.id.btn_g_registros);
         //btn_guardarfaltas.setEnabled(false);
-        total = findViewById(R.id.txt_g_total);
-        faltantes.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
+        //total = findViewById(R.id.txt_g_total);
+        //faltantes.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
 
 
 
@@ -97,9 +97,13 @@ public class GenerarRegistro extends AppCompatActivity {
 
 
 
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());//seteo la fecha actual
+        SimpleDateFormat dateFormat1 = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());//seteo la fecha actual
+        SimpleDateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
         fechadia = dateFormat.format(date);
+        fechamomento = dateFormat2.format(date);
+        horamomento = dateFormat1.format(date);
 
         cargardatos();
 
@@ -107,9 +111,10 @@ public class GenerarRegistro extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Log.d("supervisor",preferences.getString("supervisor","mal"));
-                if(preferences.getString("supervisor","mal").equals("SI")) {
+                crearPDF();
+                /*if(preferences.getString("supervisor","mal").equals("SI")) {
                     //estado = adapter.guardarcambios();
-                    personahelp = adapter.retornarcedulas();
+                    //personahelp = adapter.retornarcedulas();
 
                     for (int i = 0; i <= personahelp.size() - 1; i++) {
                         for (int y = 0; y <= personacommpleto.size() - 1; y++) {
@@ -121,11 +126,11 @@ public class GenerarRegistro extends AppCompatActivity {
                         Log.d("recargartotal", personacommpleto.get(i).getNombre() + "" + personacommpleto.get(i).getEstado());
                     }
                     //Log.d("recargartotal", personacommpleto.size() + "");
-                    verificarcabecera();
+                    //verificarcabecera();
                 }else
                 {
                     Toast.makeText(GenerarRegistro.this,"SOLO EL SUPERVISOR O DELEGADO PUEDE REGISTRAR",Toast.LENGTH_LONG).show();
-                }
+                }*/
             }
         });
         btn_historial.setOnClickListener(new View.OnClickListener() {
@@ -136,7 +141,7 @@ public class GenerarRegistro extends AppCompatActivity {
         });
     }
 
-    public void cargardatos()
+    /*public void cargardatos()      //guardo los faltantes y los presentes combinados
     {
         String fechadia;
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
@@ -192,6 +197,50 @@ public class GenerarRegistro extends AppCompatActivity {
             public void onErrorResponse(VolleyError error) {
                 Log.d("buscarerror","dd"+error.toString());
                 Toast.makeText(GenerarRegistro.this,"Error de coneccion consulte con sistemas",Toast.LENGTH_SHORT).show();
+            }
+        });
+        n_requerimiento = Volley.newRequestQueue(this);
+        json.setShouldCache(true);
+        n_requerimiento.add(json);
+    }*/
+
+    public void cargardatos()
+    {
+        Log.d("cargalistado",preferences.getInt("turno",0)+"v");
+        //AppController.getInstance().getRequestQueue().getCache().get(url).serverDate
+        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_areas +"?v_fecha="+fechamomento+"&v_id_usuario="+preferences.getInt("id_usuario",0)+"&v_departamento="+preferences.getString("departamento","mal")+"&bandera=1&v_turno="+preferences.getInt("turno",0)+"&v_hora="+horamomento, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONArray jsonArray = response.getJSONArray("data");
+                    Log.d("revicion",jsonArray.toString());
+                    if(jsonArray.length() -1 > 0)
+                    {
+                        for(int i = 0;i<=jsonArray.length()-1;i++)
+                        {
+                            jsonObject = new JSONObject(jsonArray.get(i).toString());
+                            Personas help = new Personas();
+                            help.setNombre(jsonObject.getString("nombre"));
+                            help.setCedulas(jsonObject.getString("cedula"));
+
+                            Log.d("lISTADO",jsonObject.getString("nombre"));
+
+                            personacommpleto.add(help);
+                        }
+                    }else
+                        Toast.makeText(GenerarRegistro.this,"Listado Vacio",Toast.LENGTH_SHORT).show();
+
+                }catch (JSONException e)
+                {
+                    Log.d("123456","entro3"+e.toString());
+                    Toast.makeText(GenerarRegistro.this,"Error de base consulte con sistemas",Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("buscarerrorlistadiario","dd"+error.toString());
+                Toast.makeText(GenerarRegistro.this,"Error de coneccion consulte con sistemas"+error.toString(),Toast.LENGTH_SHORT).show();
             }
         });
         n_requerimiento = Volley.newRequestQueue(this);

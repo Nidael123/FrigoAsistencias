@@ -32,7 +32,19 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recy_comida"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="499dp" />
+
+        <Button
+            android:id="@+id/btn_c_regresar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="REGRESAR DE COMER" />
+
+        <Button
+            android:id="@+id/btn_c_manual"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="INGRESAR MANUAL" />
 
     </LinearLayout>
 

@@ -122,7 +122,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         txt_fecha.setText(preferences.getString("nombre_usuario", "mal"));
 
         final int OPEN_HOUR = 06; /* 0 - 23*/
-        final int OPEN_MINUTE = 0; /* 0 - 59*/
+        final int OPEN_MINUTE = 30; /* 0 - 59*/
         final int OPEN_SECOND = 0; /* 0 - 59*/
 
         /* 07:00 PM */

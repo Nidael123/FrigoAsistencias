@@ -56,7 +56,7 @@ public class ListadoDiario extends AppCompatActivity {
     SQLiteDatabase bdcache;
     ListView listViewdiaria;
     TextView txt_fecha,txt_total;
-    String api_areas,fechadia,api_descanso,api_faltas;
+    String api_areas,fechadia,api_descanso,api_faltas,horamomento,fechamomento;
     ArrayList<Personas> personas;
     ArrayList <String> listanombres,listacedulas,listacedulasbanio;
     ArrayAdapter adapter;
@@ -92,8 +92,13 @@ public class ListadoDiario extends AppCompatActivity {
         btn_ingresomanual = findViewById(R.id.btn_a_manual);
         bd = new Managerbd(this, "Registro", null, R.string.versionbase);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());//seteo la fecha actual
+        SimpleDateFormat dateFormat1 = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());//seteo la fecha actual
+        SimpleDateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
         fechadia = dateFormat.format(date);
+        fechamomento = dateFormat2.format(date);
+        horamomento = dateFormat1.format(date);
+        Log.d("fechahora",fechamomento+":"+horamomento);
         cargardatos();
         txt_fecha.setText(fechadia);
         contador = 0;
@@ -268,7 +273,7 @@ public class ListadoDiario extends AppCompatActivity {
     {
         Log.d("cargalistado",preferences.getInt("turno",0)+"v");
         //AppController.getInstance().getRequestQueue().getCache().get(url).serverDate
-        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_areas +"?v_fecha="+fechadia+"&v_id_usuario="+preferences.getInt("id_usuario",0)+"&v_departamento="+preferences.getString("departamento","mal")+"&bandera=1&v_turno="+preferences.getInt("turno",0), null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_areas +"?v_fecha="+fechamomento+"&v_id_usuario="+preferences.getInt("id_usuario",0)+"&v_departamento="+preferences.getString("departamento","mal")+"&bandera=1&v_turno="+preferences.getInt("turno",0)+"&v_hora="+horamomento, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -283,7 +288,7 @@ public class ListadoDiario extends AppCompatActivity {
                             help.setNombre(jsonObject.getString("nombre"));
                             help.setCedulas(jsonObject.getString("cedula"));
 
-                            Log.d("lISTADO 123",jsonObject.getString("nombre"));
+                            Log.d("lISTADO",jsonObject.getString("nombre"));
                             listanombres.add(jsonObject.getString("nombre"));
                             listacedulas.add(jsonObject.getString("cedula"));
                             contador ++;
@@ -304,7 +309,7 @@ public class ListadoDiario extends AppCompatActivity {
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.d("buscarerror","dd"+error.toString());
+                Log.d("buscarerrorlistadiario","dd"+error.toString());
                 Toast.makeText(ListadoDiario.this,"Error de coneccion consulte con sistemas"+error.toString(),Toast.LENGTH_SHORT).show();
             }
         });
