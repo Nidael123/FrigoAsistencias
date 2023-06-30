@@ -83,7 +83,7 @@ public class CedulaError extends AppCompatActivity {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
         fechadia = dateFormat.format(date);
-        Log.d("Cedula",preferences.getInt("id_cabecera",1)+"");
+        Log.d("horrores1",preferences.getInt("id_cabecera",1)+"");
         btn_salir.setEnabled(false);
         btn_guardar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,10 +91,10 @@ public class CedulaError extends AppCompatActivity {
                 if(txt_usuario.getText().toString() != "" && txt_pass.getText().toString() != "" )
                 {
                     btn_guardar.setEnabled(false);
-                    Log.d("Cedula","Guardando:"+cedulas.size());
+                    Log.d("horrores2","Guardando:"+cedulas.size());
                     for(int i =0;i<=cedulas.size()-1;i++)
                     {
-                        Log.d("Cedula","Guardando");
+                        Log.d("horrores3","Guardando");
                         validar_pass(api_usuario+ "?usuario=" + txt_usuario.getText().toString()+"&contrasena="+txt_pass.getText().toString(),cedulas.get(i));
                     }
                     btn_salir.setEnabled(true);
@@ -257,7 +257,7 @@ public class CedulaError extends AppCompatActivity {
                 cedulas.add(cursor.getString(0));
                 llenarusuario(cursor.getString(0));
                 adapter.notifyDataSetChanged();
-                Log.d("cedulasllenar",cursor.getString(0)+cursor.getString(1));
+                Log.d("horrores4",cursor.getString(0)+cursor.getString(1));
             }while(cursor.moveToNext());
         }
         else {
@@ -267,7 +267,7 @@ public class CedulaError extends AppCompatActivity {
     }
     public void guardar(String cedula)
     {
-        Log.d("Cedula","guardar funcion");
+        Log.d("horrores5","guardar funcion");
         StringRequest requerimiento = new StringRequest(Request.Method.POST, api_asistencias, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -306,7 +306,7 @@ public class CedulaError extends AppCompatActivity {
         fechadia = dateFormat.format(date);
         bdcache = bd.getReadableDatabase();
         Cursor cursor = bdcache.rawQuery("Select fechaingreso from t_registro where cedula like " + "'%" + v_cedula + "%'" + " and fechaingreso like " + "'%" + fechadia + "%'", null);
-        Log.d("buscarusuarioxhora",cursor.getCount()+"");
+        Log.d("horrores6",cursor.getCount()+"");
         if (cursor.moveToFirst()) {
             hora = cursor.getString(0);
         } else {

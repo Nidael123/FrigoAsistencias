@@ -519,6 +519,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
     {
         Log.d("validar",avanzartransaccion+"");
         final int[] estado = new int[1];
+        ContentValues contentValues = new ContentValues();
         JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_asistencias +"?v_usuario="+cedula+"&v_fecha="+fechadia+"&v_estado=0", null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -526,6 +527,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                     JSONArray jsonArray = response.getJSONArray("data");
 
                     jsonObject = new JSONObject(jsonArray.get(0).toString());
+                    Log.d("cedulaerror",jsonArray.get(0).toString());
                     estado[0] = jsonObject.getInt("estado");
                     Log.d("revisar", estado[0]+"dato");
                     if(estado[0] == 1)
@@ -538,6 +540,9 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                         }else{
                             Log.d("VALIDAR USUARIO","no ESTA LIBRE" );
                             cedulaserror.add(cedula);
+                            contentValues.put("area",jsonObject.getString("areatrabajo"));
+                            contentValues.put("nombre",jsonObject.getString("nombre"));
+                            bdcache.insert("t_personaserror", null, contentValues);
                             //Toast.makeText(RegistroAsistencia.this,"Este usuario esta asignado en otra Area",Toast.LENGTH_SHORT).show();
                             //actualizar(cedula,"C");
                             actualizar(cedula,"N");

@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ExpandableListView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,6 +44,7 @@ import org.json.JSONObject;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -222,7 +224,7 @@ public class GenerarRegistro extends AppCompatActivity {
                             Personas help = new Personas();
                             help.setNombre(jsonObject.getString("nombre"));
                             help.setCedulas(jsonObject.getString("cedula"));
-
+                            help.setEstado("PRESENTE");
                             Log.d("lISTADO",jsonObject.getString("nombre"));
 
                             personacommpleto.add(help);
@@ -442,14 +444,14 @@ public class GenerarRegistro extends AppCompatActivity {
         try {
             String carpeta = "/Asistencias";
             String path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + carpeta;
-
+            Log.d("crearpdf",path);
             File dir = new File(path);
             if (!dir.exists()) {
                 dir.mkdirs();
                 Toast.makeText(this, "CARPETA CREADA", Toast.LENGTH_SHORT).show();
             }
 
-            File archivo = new File(dir,   preferences.getString("nombre_usuario","mal")+"_"+fechadia+".pdf");
+            File archivo = new File(dir,   preferences.getString("nombre_usuario","mal")+"_"+fechamomento+".pdf");
             FileOutputStream fos = new FileOutputStream(archivo);
 
             Document documento = new Document();
