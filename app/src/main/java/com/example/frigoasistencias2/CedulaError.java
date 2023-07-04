@@ -4,6 +4,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -49,12 +50,13 @@ public class CedulaError extends AppCompatActivity {
     ListView listacedulas;
     ArrayAdapter adapter;
     Button btn_guardar,btn_salir;
-    String api_asistencias,api_usuario,fechadia;
+    String api_asistencias,api_usuario,fechadia123;
     RequestQueue n_requerimiento;
     SharedPreferences preferences;
     EditText txt_usuario,txt_pass;
     JSONObject jsonObject;
     TextView txt_error;
+    boolean guardarcedulas;
 
 
     @SuppressLint("MissingInflatedId")
@@ -68,6 +70,7 @@ public class CedulaError extends AppCompatActivity {
         listacedulas = (ListView)findViewById(R.id.list_itemcedulaserror);
         lista_nombres = new ArrayList<>();
         txt_error = (TextView) findViewById(R.id.txt_error_cedula2);
+        guardarcedulas = false ;//true las guardo false muestro que no se puede
 
         btn_guardar = (Button) findViewById(R.id.btn_r_ingresomanual);
         btn_salir = (Button)findViewById(R.id.btn_salir);
@@ -82,22 +85,41 @@ public class CedulaError extends AppCompatActivity {
         listacedulas.setAdapter(adapter);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
-        fechadia = dateFormat.format(date);
-        Log.d("horrores1",preferences.getInt("id_cabecera",1)+"");
+        fechadia123 = dateFormat.format(date);
+        Log.d("horrores1",preferences.getInt("id_cabecera",1)+":"+fechadia123);
         btn_salir.setEnabled(false);
         btn_guardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(txt_usuario.getText().toString() != "" && txt_pass.getText().toString() != "" )
                 {
-                    btn_guardar.setEnabled(false);
+                    Log.d("antes",guardarcedulas+"");
                     Log.d("horrores2","Guardando:"+cedulas.size());
-                    for(int i =0;i<=cedulas.size()-1;i++)
+                    for (int y=0; y<=cedulas.size()-1;y++)
                     {
-                        Log.d("horrores3","Guardando");
-                        validar_pass(api_usuario+ "?usuario=" + txt_usuario.getText().toString()+"&contrasena="+txt_pass.getText().toString(),cedulas.get(i));
+                        validarcedula(cedulas.get(y));
                     }
-                    btn_salir.setEnabled(true);
+                    Log.d("despues",guardarcedulas+"");
+                    if(guardarcedulas=false){
+                        for(int i =0;i<=cedulas.size()-1;i++)
+                        {
+                            Log.d("horrorescedula","Guardando");
+                            validar_pass(api_usuario+ "?usuario=" + txt_usuario.getText().toString()+"&contrasena="+txt_pass.getText().toString(),cedulas.get(i));
+                            btn_guardar.setEnabled(false);
+                            btn_salir.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    startActivity(new Intent(CedulaError.this, RegistroAsistencia.class));
+                                    finish();
+                                }
+                            });
+
+                        }
+                    }else
+                    {
+                        txt_error.setText("pida a los usuarios que los suelten de sus areas anteriores para continuar");
+                        btn_salir.setEnabled(true);
+                    }
                 }
                 else
                     Toast.makeText(CedulaError.this,"No se admiten campos en blanco",Toast.LENGTH_LONG);
@@ -249,7 +271,7 @@ public class CedulaError extends AppCompatActivity {
         Date date = new Date();
         fechadia = dateFormat.format(date);
         bdcache = bd.getReadableDatabase();
-        Cursor cursor = bdcache.rawQuery("Select cedula,estadosubido from t_registro where fechaingreso like " + "'%" + fechadia + "%' and  estadosubido in('E') ", null);
+        Cursor cursor = bdcache.rawQuery("Select cedula from t_personaserror where fecha like " + "'%" + fechadia + "%' group by cedula", null);
         if(cursor.getCount() >0)
         {
             cursor.moveToFirst();
@@ -257,7 +279,7 @@ public class CedulaError extends AppCompatActivity {
                 cedulas.add(cursor.getString(0));
                 llenarusuario(cursor.getString(0));
                 adapter.notifyDataSetChanged();
-                Log.d("horrores4",cursor.getString(0)+cursor.getString(1));
+                Log.d("horrores4",cursor.getString(0));
             }while(cursor.moveToNext());
         }
         else {
@@ -354,18 +376,23 @@ public class CedulaError extends AppCompatActivity {
     }
     public void  llenarusuario(String cedula)
     {
+        String fechadia12;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
+        Date date = new Date();
+        fechadia12 = dateFormat.format(date);
         final String[] estado = new String[1];
-        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_asistencias +"?v_usuario="+cedula+"&v_fecha="+fechadia+"&v_estado=0", null, new Response.Listener<JSONObject>() {
+        Log.d("api_asistencia",api_asistencias +"?v_usuario="+cedula+"&v_fecha="+fechadia12+"&v_estado=0");
+        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_asistencias +"?v_usuario="+cedula+"&v_fecha="+fechadia12+"&v_estado=0", null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     JSONArray jsonArray = response.getJSONArray("data");
 
                     jsonObject = new JSONObject(jsonArray.get(0).toString());
-
+                    Log.d("erroren",jsonArray.get(0).toString());
                     estado[0] = jsonObject.getString("nombre");
-                    lista_nombres.add(cedula +"  :   "+jsonObject.getString("nombre"));
-                    Log.d("cedulaerror11",cedula +"  :   "+jsonObject.getString("nombre"));
+                    lista_nombres.add(jsonObject.getString("areatrabajo") +":"+jsonObject.getString("nombre"));
+                    Log.d("cedulaerror11",jsonObject.getString("areatrabajo")+":   "+jsonObject.getString("nombre"));
                     adapter.notifyDataSetChanged();
                 }catch (JSONException e)
                 {
@@ -391,6 +418,48 @@ public class CedulaError extends AppCompatActivity {
             Log.d("cancelar error","cedula:"+cedulas.get(i));
             actualizar(cedulas.get(i),"E");
         }
+    }
+
+    public void validarcedula(String cedula)
+    {
+        String fechadia;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
+        Date date = new Date();
+        fechadia = dateFormat.format(date);
+        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_asistencias +"?v_usuario="+cedula+"&v_fecha="+fechadia+"&v_estado=0", null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONArray jsonArray = response.getJSONArray("data");
+
+                    jsonObject = new JSONObject(jsonArray.get(0).toString());
+                    Log.d("cedulaerror",jsonArray.get(0).toString());
+                    Log.d("VALIDAR USUARIOced","SI MARCO" );
+                    if (jsonObject.getString("areatrabajo").contains("LIBRE"))
+                      {
+                         Log.d("VALIDAR USUARIOced","ESTA LIBRE" );
+
+                      }else{
+                         Log.d("VALIDAR USUARIOced","no ESTA LIBRE" );
+                         guardarcedulas=true;
+                         Log.d("guardar",guardarcedulas+"");
+                    }
+                }catch (JSONException e)
+                {
+                    Log.d("logeo","entro3"+e.toString());
+                    Toast.makeText(CedulaError.this,"Error de base consulte con sistemas",Toast.LENGTH_SHORT).show();
+                }
+                Log.d("antesguardar",guardarcedulas+"");
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("logeo","entro4"+error.toString());
+                Toast.makeText(CedulaError.this,"Error de coneccion consulte con sistemas"+error.toString(),Toast.LENGTH_SHORT);
+            }
+        });
+        n_requerimiento = Volley.newRequestQueue(this);
+        n_requerimiento.add(json);
     }
 
 }

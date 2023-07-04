@@ -149,11 +149,13 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             turno = 1;
             editor.putInt("turno",turno);
             editor.commit();
+            elimiardatabase();
         }else{
             txt_turno.setText("Turno Noche");
             turno = 2;
             editor.putInt("turno",turno);
             editor.commit();
+            elimiardatabase();
         }
 
         listacedulas.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
@@ -514,7 +516,11 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             requerimiento.setShouldCache(true);
             n_requerimiento.add(requerimiento);
     }
-
+    public void elimiardatabase()
+    {
+        bdcache = bd.getWritableDatabase();
+        bdcache.execSQL("delete from t_personaserror");
+    }
     public void validarcedula(String cedula,Integer id_cabecera,String fecha)
     {
         Log.d("validar",avanzartransaccion+"");
@@ -540,8 +546,8 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                         }else{
                             Log.d("VALIDAR USUARIO","no ESTA LIBRE" );
                             cedulaserror.add(cedula);
-                            contentValues.put("area",jsonObject.getString("areatrabajo"));
-                            contentValues.put("nombre",jsonObject.getString("nombre"));
+                            contentValues.put("cedula",cedula);
+                            contentValues.put("fecha",fechadia);
                             bdcache.insert("t_personaserror", null, contentValues);
                             //Toast.makeText(RegistroAsistencia.this,"Este usuario esta asignado en otra Area",Toast.LENGTH_SHORT).show();
                             //actualizar(cedula,"C");
@@ -553,6 +559,9 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                         guardar_error(cedula);
                         cedulaserror.add(cedula);
                         btn_asistencia.setEnabled(true);
+                        contentValues.put("cedula",cedula);
+                        contentValues.put("fecha",fechadia);
+                        bdcache.insert("t_personaserror", null, contentValues);
                     }
                     if(cedulaserror.size()> 0)
                         txt_error.setText("Error en una o varias cedulas por favor verifique en ERRORES");

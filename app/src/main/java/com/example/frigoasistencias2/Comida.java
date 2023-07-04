@@ -3,9 +3,12 @@ package com.example.frigoasistencias2;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Dialog;
 import android.content.Intent;
+import android.os.Build;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.SearchView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -49,6 +52,7 @@ public class Comida extends AppCompatActivity implements SearchView.OnQueryTextL
     SearchView search_buscar;
     Button btn_manual,btn_escanar;
     int id_usuario;
+    Dialog alerta;
 
 
 
@@ -68,8 +72,8 @@ public class Comida extends AppCompatActivity implements SearchView.OnQueryTextL
         recicler.setHasFixedSize(true);
         preferences = getSharedPreferences("infousuario", MODE_PRIVATE);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
-        SimpleDateFormat dateFormat1 = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());//seteo la fecha actual
-        SimpleDateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
+        SimpleDateFormat dateFormat1 = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+        SimpleDateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
         Date date = new Date();
         fechadia = dateFormat.format(date);
         fechamomento = dateFormat2.format(date);
@@ -82,7 +86,27 @@ public class Comida extends AppCompatActivity implements SearchView.OnQueryTextL
         btn_manual.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                alerta = new Dialog(Comida
+                        .this);
+                alerta.setContentView(R.layout.alertdialog_cedula_manual);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    alerta.requireViewById(R.id.btn_alert_guardar).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            EditText cedulamanual= alerta.requireViewById(R.id.edittext_alert_cedula);
+                            if(cedulamanual.length() == 10)
+                            {
+                                subirbase(cedulamanual.getText().toString());
+                            }
+                            else
+                                Toast.makeText(Comida.this, "Numeros Incompletos", Toast.LENGTH_LONG).show();
 
+                            //subirbase(cedulamanual.getText().toString());
+                            //Toast.makeText(RegistroAsistencia.this, "probando"+cedulamanual.getText(), Toast.LENGTH_LONG).show();
+                        }
+                    });
+                }
+                alerta.show();
             }
         });
 
@@ -99,12 +123,13 @@ public class Comida extends AppCompatActivity implements SearchView.OnQueryTextL
         super.onActivityResult(requestCode, resultCode, data);
         IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (intentResult != null) {
+            Log.d("subira base",""+intentResult.getContents());
             subirbase(intentResult.getContents());
             if (intentResult.getContents() == null) {
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
-            } /*else {
+            } else {
                 escanear();
-            }*/
+            }
         } else {
             super.onActivityResult(requestCode, resultCode, data);
         }
@@ -116,23 +141,24 @@ public class Comida extends AppCompatActivity implements SearchView.OnQueryTextL
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
         fechadiacabe = dateFormat.format(date);
-
+        Log.d("subira base",""+api_descanso +"?v_cedula="+v_cedula+"&v_fecha="+fechadiacabe+"&v_estado="+v_estado+"&v_usuario="+id_usuario+"&bandera=1");
         JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_descanso +"?v_cedula="+v_cedula+"&v_fecha="+fechadiacabe+"&v_estado="+v_estado+"&v_usuario="+id_usuario+"&bandera=1",null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
                     JSONArray jsonArray = response.getJSONArray("data");
+                    Log.d("subira base",""+jsonArray.toString());
                     for(int i = 0;i<=jsonArray.length()-1;i++)
                     {
                         jsonObject = new JSONObject(jsonArray.get(i).toString());
                         Log.d("123456789","dale"+jsonObject.toString());
-                        //Toast.makeText(ListadoDiario.this,jsonObject.getString("mensaje"),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(Comida.this,jsonObject.getString("mensaje"),Toast.LENGTH_SHORT).show();
                     }
                     Toast.makeText(Comida.this,"",Toast.LENGTH_LONG).show();
                 }catch (JSONException e)
                 {
                     Log.d("DANIEL","entro3"+e.toString());
-                    //Toast.makeText(ListadoDiario.this,"Error de base consulte con sistemas",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(Comida.this,"Error de base consulte con sistemas",Toast.LENGTH_SHORT).show();
                 }
             }
         }, new Response.ErrorListener() {

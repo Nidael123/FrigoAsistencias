@@ -7,6 +7,9 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -456,15 +459,16 @@ public class GenerarRegistro extends AppCompatActivity {
 
             Document documento = new Document();
             PdfWriter.getInstance(documento, fos);
-
             documento.open();
 
             Paragraph titulo = new Paragraph(
-                    "Asistencia \n"+fechadia+"\n",
-                    FontFactory.getFont("arial", 22, Font.BOLD, BaseColor.BLUE)
+                    "Asistencia \n"+fechadia+"\n\n",
+                    FontFactory.getFont("arial", 22, Font.BOLD, BaseColor.BLACK)
             );
+            Paragraph detalle = new Paragraph("Usuario:"+preferences.getString("nombre_usuario", "mal")+"\n",
+                    FontFactory.getFont("arial", 22, Font.BOLD, BaseColor.BLACK));
             documento.add(titulo);
-
+            documento.add(detalle);
             PdfPTable tabla = new PdfPTable(3);
             tabla.addCell("NOMBRE");
             tabla.addCell("CEDULA");
