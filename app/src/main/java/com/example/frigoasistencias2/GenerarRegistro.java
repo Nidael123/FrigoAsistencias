@@ -67,7 +67,7 @@ public class GenerarRegistro extends AppCompatActivity {
     SharedPreferences.Editor editor;
     //AdaptadorRecyclerFaltas adapter;
     JSONObject jsonObject;
-    Button btn_guardarfaltas,btn_historial;
+    Button btn_guardarfaltas,btn_historial,btn_libre,btn_dm,btn_vacaciones;
     //TextView total;
     String fechadia,fechamomento,horamomento;
     int id_cabeceraasis;
@@ -91,6 +91,9 @@ public class GenerarRegistro extends AppCompatActivity {
         api_areas =getString(R.string.api_areas);
         btn_guardarfaltas = findViewById(R.id.btn_g_guardar);
         btn_historial = findViewById(R.id.btn_g_registros);
+        btn_libre = findViewById(R.id.btn_g_libre);
+        btn_dm = findViewById(R.id.btn_g_dm);
+        btn_vacaciones = findViewById(R.id.btn_g_vacaciones);
         //btn_guardarfaltas.setEnabled(false);
         //total = findViewById(R.id.txt_g_total);
         //faltantes.setLayoutManager(new LinearLayoutManager(this,LinearLayoutManager.VERTICAL,false));
@@ -142,6 +145,24 @@ public class GenerarRegistro extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(GenerarRegistro.this,Historial_Asistencias.class));
+            }
+        });
+        btn_libre.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(GenerarRegistro.this,Libre.class));
+            }
+        });
+        btn_vacaciones.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(GenerarRegistro.this,Vacaciones.class));
+            }
+        });
+        btn_dm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(GenerarRegistro.this,Descanso_Medico.class));
             }
         });
     }

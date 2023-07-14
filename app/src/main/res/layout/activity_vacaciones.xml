@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Vacaciones">
+
+    <ScrollView
+        android:id="@+id/btn"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.0">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="78dp"
+                android:paddingTop="20dp"
+                android:text="VACACIONES"
+                android:textAlignment="center"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="57dp"
+                android:orientation="horizontal">
+
+                <EditText
+                    android:id="@+id/edit_v_cedula"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:ems="10"
+                    android:inputType="number" />
+
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/txt_v_nombre"
+                android:layout_width="match_parent"
+                android:layout_height="62dp"
+                android:text="NOMBRES Y APELLIDOS " />
+
+            <TextView
+                android:id="@+id/txt_v_fechainicio"
+                android:layout_width="match_parent"
+                android:layout_height="62dp"
+                android:text="FECHA INICIO" />
+
+            <TextView
+                android:id="@+id/txt_v_fechafin"
+                android:layout_width="match_parent"
+                android:layout_height="62dp"
+                android:text="FECHA FINAL" />
+
+            <Button
+                android:id="@+id/btn_v_guardar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="GUARDAR" />
+
+            <Button
+                android:id="@+id/btn_v_historial"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="HISTORIAL" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -51,10 +51,21 @@
                 android:ems="10"
                 android:inputType="textPersonName" />
 
-            <ListView
-                android:id="@+id/list_diaria"
+            <ScrollView
                 android:layout_width="match_parent"
-                android:layout_height="501dp" />
+                android:layout_height="match_parent">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" >
+
+                    <ListView
+                        android:id="@+id/list_diaria"
+                        android:layout_width="match_parent"
+                        android:layout_height="250dp" />
+                </LinearLayout>
+            </ScrollView>
 
             <Button
                 android:id="@+id/btn_a_regresar"

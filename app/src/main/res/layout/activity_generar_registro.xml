@@ -8,7 +8,11 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -40,6 +44,24 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="REGISTROS" />
+
+            <Button
+                android:id="@+id/btn_g_libre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="LIBRES" />
+
+            <Button
+                android:id="@+id/btn_g_dm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="DESCANSO MEDICO" />
+
+            <Button
+                android:id="@+id/btn_g_vacaciones"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="VACACIONES " />
 
         </LinearLayout>
     </ScrollView>

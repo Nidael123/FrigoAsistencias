@@ -158,29 +158,6 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             elimiardatabase();
         }
 
-        listacedulas.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int i, long id) {
-                final int posicion=i;
-                AlertDialog.Builder dialogo1 = new AlertDialog.Builder(RegistroAsistencia.this);
-                dialogo1.setTitle("Importante"); dialogo1.setMessage("¿ Elimina este Poducto ?");
-                dialogo1.setCancelable(false);
-                dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener()
-                { public void onClick(DialogInterface dialogo1, int id)
-                {
-                    actualizar(cedulas.get(posicion),"C");
-                    cedulas.remove(posicion);
-                    listanombres.remove(posicion);
-                    adapter.notifyDataSetChanged();
-                    txt_cantidad.setText(cedulas.size()+"");
-                }
-                });
-                dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
-                { public void onClick(DialogInterface dialogo1, int id) { } });
-                dialogo1.show();
-                return false;
-            }
-        });
         btn_escanear.setOnClickListener(this);
         btn_asistencia.setOnClickListener(this);
         btn_ingresomanual.setOnClickListener(this);

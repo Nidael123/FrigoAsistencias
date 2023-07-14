@@ -64,7 +64,7 @@ public class ListadoDiario extends AppCompatActivity {
     RequestQueue n_requerimiento;
     SharedPreferences preferences;
     int contador;
-    Button btn_regresarbanio,btn_ircomer,btn_faltas,btn_ingresomanual;
+    Button btn_regresarbanio,btn_ircomer,btn_faltas,btn_ingresomanual,btn_historial;
     EditText edit_buscar;
     Dialog alerta;
 
@@ -124,11 +124,7 @@ public class ListadoDiario extends AppCompatActivity {
                         {
                             Log.d("palabra",listacedulas.get(i));
                             Log.d("palabra3",personas.get(i).getNombre());
-                            soltarusuario(personas.get(i).getCedulas());
-                            //contador--;
-                            //txt_total.setText(""+contador);
-                            personas.remove(i);
-                            adapter.notifyDataSetChanged();
+                            soltarusuario(personas.get(i).getCedulas(),i);
                             return;
                         }else{
                             Log.d("palabra2","mal");
@@ -279,20 +275,26 @@ public class ListadoDiario extends AppCompatActivity {
                 try {
                     JSONArray jsonArray = response.getJSONArray("data");
                     Log.d("revicion",jsonArray.toString());
-                    if(jsonArray.length() -1 > 0)
+                    if(jsonArray.length() -1 >= 0)
                     {
                         for(int i = 0;i<=jsonArray.length()-1;i++)
                         {
                             jsonObject = new JSONObject(jsonArray.get(i).toString());
-                            Personas help = new Personas();
-                            help.setNombre(jsonObject.getString("nombre"));
-                            help.setCedulas(jsonObject.getString("cedula"));
+                            if(jsonObject.getString("cedula").equals("0"))
+                            {
+                                Toast.makeText(ListadoDiario.this,"Listado Vacio",Toast.LENGTH_SHORT).show();
+                            }
+                            else{
+                                Personas help = new Personas();
+                                help.setNombre(jsonObject.getString("nombre"));
+                                help.setCedulas(jsonObject.getString("cedula"));
 
-                            Log.d("lISTADO",jsonObject.getString("nombre"));
-                            listanombres.add(jsonObject.getString("nombre"));
-                            listacedulas.add(jsonObject.getString("cedula"));
-                            contador ++;
-                            personas.add(help);
+                                Log.d("lISTADO",jsonObject.getString("nombre"));
+                                listanombres.add(jsonObject.getString("nombre"));
+                                listacedulas.add(jsonObject.getString("cedula"));
+                                contador ++;
+                                personas.add(help);
+                            }
                         }
                         adapter = new ArrayAdapter<String>(getApplicationContext(), android.R.layout.simple_dropdown_item_1line,listanombres);
                         listViewdiaria.setAdapter(adapter);
@@ -317,7 +319,7 @@ public class ListadoDiario extends AppCompatActivity {
         json.setShouldCache(true);
         n_requerimiento.add(json);
     }
-    public void soltarusuario(String cedula)
+    public void soltarusuario(String cedula,int posicion)
     {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
@@ -334,7 +336,11 @@ public class ListadoDiario extends AppCompatActivity {
                     if(jsonObject.getString("estado" ) != "bien")
                     {
                         actualizar(cedula,"C");
-
+                        contador--;
+                        txt_total.setText(""+contador);
+                        Log.d("soltando",personas.get(posicion).getCedulas()+"");
+                        listanombres.remove(posicion);
+                        adapter.notifyDataSetChanged();
                         Toast.makeText(ListadoDiario.this,"usuario liberado",Toast.LENGTH_SHORT).show();
                     }
                     else

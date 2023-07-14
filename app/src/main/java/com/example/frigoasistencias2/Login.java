@@ -100,11 +100,11 @@ public class Login extends AppCompatActivity {
                         logear(apisusario + "?usuario=" + txt_user.getText().toString()+"&contrasena="+txt_password.getText().toString());
                     }
                     else
-                        Toast.makeText(Login.this,"No se admiten campos en blanco",Toast.LENGTH_LONG);
+                        Toast.makeText(Login.this,"No se admiten campos en blanco",Toast.LENGTH_LONG).show();
                 }
                 else
                 {
-                    Toast.makeText(Login.this, "Acceda a la red de Frigopesca e Intente de nuevo", Toast.LENGTH_SHORT);
+                    Toast.makeText(Login.this, "Acceda a la red de Frigopesca e Intente de nuevo", Toast.LENGTH_SHORT).show();
                 }
 
                 if(isMobileConn && isWifiConn == false)
@@ -140,7 +140,7 @@ public class Login extends AppCompatActivity {
                         }
                         editor.putInt("cant_depart", jsonArray.length()-1);
                         editor.commit();
-                        Toast.makeText(Login.this,"Ingreso con Exitoso",Toast.LENGTH_SHORT);
+                        Toast.makeText(Login.this,"Ingreso con Exitoso",Toast.LENGTH_SHORT).show();
                         Log.d("logeo",""+help.length);
                         startActivity(new Intent(Login.this,RegistroAsistencia.class));
                     }
