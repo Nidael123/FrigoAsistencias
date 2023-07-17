@@ -113,7 +113,7 @@ public class GenerarRegistro extends AppCompatActivity {
         fechamomento = dateFormat2.format(date);
         horamomento = dateFormat1.format(date);
 
-        cargardatos();
+        //cargardatos();
 
         btn_guardarfaltas.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -51,6 +51,7 @@ public class Libre extends AppCompatActivity {
             ultimoDiaDelMes = diaDelMes;
             String fecha = String.format(Locale.getDefault(), "%04d-%02d-%02d", ultimoAnio, ultimoMes+1, ultimoDiaDelMes);
             txt_fechainicio.setText(fecha);
+            txt_fechafin.setText(fecha);
         }
     };
     public DatePickerDialog.OnDateSetListener listenerDeDatePicker1  = new DatePickerDialog.OnDateSetListener() {
@@ -108,7 +109,19 @@ public class Libre extends AppCompatActivity {
         btn_guardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                buscar_usuario();
+
+                if(txt_fechainicio.getText()== "FECHA INICIO" )
+                {
+                    Toast.makeText(Libre.this, "Debe haber fecha de inicio y fecha final de libre", Toast.LENGTH_LONG).show();
+                }
+                else{
+                    if(edit_cedula.length() == 10)
+                    {
+                        buscar_usuario();
+                    }
+                    else
+                        Toast.makeText(Libre.this, "Deben ser 10 Numeros", Toast.LENGTH_LONG).show();
+                }
             }
         });
         btn_historial.setOnClickListener(new View.OnClickListener() {

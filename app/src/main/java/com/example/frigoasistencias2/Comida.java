@@ -42,6 +42,7 @@ import java.util.Locale;
 
 public class Comida extends AppCompatActivity implements SearchView.OnQueryTextListener{
 
+    boolean estadobuscador;
     RecyclerView recicler;
     AdaptadorComida adapter;
     String api_areas,fechadia,api_descanso,fechamomento,horamomento;
@@ -61,6 +62,7 @@ public class Comida extends AppCompatActivity implements SearchView.OnQueryTextL
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_comida);
+        estadobuscador = false;
         api_areas = getString(R.string.api_areas);
         api_descanso = getString(R.string.api_descansos);
         recicler = findViewById(R.id.recy_comida);
@@ -113,6 +115,8 @@ public class Comida extends AppCompatActivity implements SearchView.OnQueryTextL
         btn_escanar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                estadobuscador = false;
+                Log.d("estadocomer3",estadobuscador+"");
                 escanear();
             }
         });
@@ -137,7 +141,7 @@ public class Comida extends AppCompatActivity implements SearchView.OnQueryTextL
     public void subirbase(String v_cedula ) {
         int v_estado = 12;
         String fechadiacabe;
-
+        Log.d("estadocomer5",estadobuscador+"");
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
         fechadiacabe = dateFormat.format(date);
@@ -154,7 +158,6 @@ public class Comida extends AppCompatActivity implements SearchView.OnQueryTextL
                         Log.d("123456789","dale"+jsonObject.toString());
                         Toast.makeText(Comida.this,jsonObject.getString("mensaje"),Toast.LENGTH_SHORT).show();
                     }
-                    Toast.makeText(Comida.this,"",Toast.LENGTH_LONG).show();
                 }catch (JSONException e)
                 {
                     Log.d("DANIEL","entro3"+e.toString());
@@ -220,6 +223,7 @@ public class Comida extends AppCompatActivity implements SearchView.OnQueryTextL
 
     public void escanear()
     {
+        Log.d("estadocomer4",estadobuscador+"");
         IntentIntegrator intentIntegrator = new IntentIntegrator(this);
         intentIntegrator.setPrompt("Scan a barcode or QR Code");
         intentIntegrator.setOrientationLocked(false);
@@ -229,12 +233,18 @@ public class Comida extends AppCompatActivity implements SearchView.OnQueryTextL
 
     @Override
     public boolean onQueryTextSubmit(String query) {
+        estadobuscador=true;
         return true;
     }
 
     @Override
     public boolean onQueryTextChange(String newText) {
-        adapter.filtrado(newText);
+        Log.d("estadocomer1",estadobuscador+"");
+        if(estadobuscador)
+        {
+            Log.d("estadocomer2",estadobuscador+"");
+            adapter.filtrado(newText);
+        }
         return false;
     }
 }
