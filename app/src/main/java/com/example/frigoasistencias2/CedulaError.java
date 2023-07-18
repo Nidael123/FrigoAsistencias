@@ -202,8 +202,11 @@ public class CedulaError extends AppCompatActivity {
             { public void onClick(DialogInterface dialogo1, int id) { } });
             dialogo1.show();
         }
-        else
+        else{
+            startActivity(new Intent(CedulaError.this, RegistroAsistencia.class));
             finish();
+        }
+
     }
 /*
     @Override

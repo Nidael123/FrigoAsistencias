@@ -113,7 +113,12 @@ public class GenerarRegistro extends AppCompatActivity {
         fechamomento = dateFormat2.format(date);
         horamomento = dateFormat1.format(date);
 
-        //cargardatos();
+        if(!preferences.getString("supervisor","mal").equals("SI")) {
+            btn_libre.setEnabled(false);
+            btn_dm.setEnabled(false);
+            btn_vacaciones.setEnabled(false);
+        }
+        cargardatos();
 
         btn_guardarfaltas.setOnClickListener(new View.OnClickListener() {
             @Override
