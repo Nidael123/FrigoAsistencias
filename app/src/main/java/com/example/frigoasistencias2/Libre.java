@@ -109,19 +109,32 @@ public class Libre extends AppCompatActivity {
         btn_guardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                if(txt_fechainicio.getText()== "FECHA INICIO" )
+                if(ultimoAnio <= ultimoAnio1)
                 {
-                    Toast.makeText(Libre.this, "Debe haber fecha de inicio y fecha final de libre", Toast.LENGTH_LONG).show();
-                }
-                else{
-                    if(edit_cedula.length() == 10)
+                    if(ultimoMes <= ultimoMes1)
                     {
-                        buscar_usuario();
-                    }
-                    else
-                        Toast.makeText(Libre.this, "Deben ser 10 Numeros", Toast.LENGTH_LONG).show();
-                }
+                        if(ultimoDiaDelMes <= ultimoDiaDelMes1)
+                        {
+                            if(txt_fechainicio.getText()== "FECHA INICIO" )
+                            {
+                                Toast.makeText(Libre.this, "Debe haber fecha de inicio y fecha final de libre", Toast.LENGTH_LONG).show();
+                            }
+                            else{
+                                if(edit_cedula.length() == 10)
+                                {
+                                    buscar_usuario();
+                                    Log.d("estoy en buscar","buscar");
+                                }
+                                else
+                                    Toast.makeText(Libre.this, "Deben ser 10 Numeros", Toast.LENGTH_LONG).show();
+                            }
+                        }else
+                            Toast.makeText(Libre.this, "LA FECHA FINAL PUEDE SER IGUAL O MAYOR A LA FECHA INICIO", Toast.LENGTH_LONG).show();
+                    }else
+                        Toast.makeText(Libre.this, "LA FECHA FINAL PUEDE SER IGUAL O MAYOR A LA FECHA INICIO", Toast.LENGTH_LONG).show();
+                } else
+                    Toast.makeText(Libre.this, "LA FECHA FINAL PUEDE SER IGUAL O MAYOR A LA FECHA INICIO", Toast.LENGTH_LONG).show();
+
             }
         });
         btn_historial.setOnClickListener(new View.OnClickListener() {
