@@ -5,6 +5,7 @@
     android:id="@+id/list_errores"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/fondo1"
     tools:context=".CedulaError">
 
     <ScrollView
@@ -61,7 +62,7 @@
                     android:textAlignment="center"
                     android:textColor="@color/red"
                     android:textSize="20sp"
-                    android:textStyle="bold"/>
+                    android:textStyle="bold" />
             </LinearLayout>
 
             <LinearLayout
