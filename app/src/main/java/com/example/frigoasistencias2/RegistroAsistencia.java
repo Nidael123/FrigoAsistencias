@@ -56,7 +56,7 @@ import java.util.Map;
 public class RegistroAsistencia extends AppCompatActivity implements View.OnClickListener {
 
     Button btn_escanear,btn_asistencia,btn_ingresomanual,btn_nuevo,btn_listado;
-    TextView txt_fecha,txt_error,txt_turno,txt_cantidad;
+    TextView txt_fecha,txt_error,txt_turno,txt_cantidad,txt_empresa;
     String api_asistencias, fechadia,fechaturno,jornada,api_descanso;
     private SharedPreferences preferences;
     SharedPreferences.Editor editor;
@@ -70,7 +70,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
     boolean avanzartransaccion = false,bandera = true;  //true avanza  bandera f = hay error en las alguna cedula
     ListView listacedulas;
     ArrayAdapter adapter;
-    Integer turno,id_cabecerabandera;
+    Integer turno,id_cabecerabandera,id_empresa;
     Boolean bandera1;//true no presento  -- false  presento
     ArrayList<Personas> persona;
     Dialog alerta;
@@ -90,6 +90,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         txt_error =  findViewById(R.id.txt_error_cedula2);
         txt_turno = findViewById(R.id.txt_turno);
         txt_cantidad = findViewById(R.id.txt_cantidad);
+        txt_empresa = findViewById(R.id.txt_empresa);
         id_cabecerabandera = 0;
         preferences = getSharedPreferences("infousuario", MODE_PRIVATE);
         editor = preferences.edit();
@@ -108,6 +109,15 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         Log.d("registros", "" + preferences.getInt("cant_depart", 0));
         listadepartamentos.add("Escoja una opcion");
         btn_ingresomanual.setEnabled(false);
+        txt_empresa.setText(getIntent().getStringExtra("empresa"));
+        if(getIntent().getStringExtra("empresa") =="FRIGOPESCA")
+        {
+            id_empresa=1;
+        }
+        else
+        {
+            id_empresa=2;
+        }
         for (int i = 0; i <= preferences.getInt("cant_depart", 0); i++) {
             Log.d("registros", preferences.getString("depa" + i, "mal"));
             listadepartamentos.add(preferences.getString("depa" + i, "mal"));
@@ -115,7 +125,21 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         departamentos.setAdapter(new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_spinner_dropdown_item, listadepartamentos));
         listacedulas = (ListView) findViewById(R.id.list_itemcedulaserror);
 
+        txt_empresa.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(txt_empresa.getText().equals("OCEAN CASTLE"))
+                {
+                    txt_empresa.setText("FRIGOPESCA");
+                    id_empresa=1;
+                }else
+                {
+                    txt_empresa.setText("OCEAN CASTLE");
+                    id_empresa=2;
+                }
 
+            }
+        });
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
         fechadia = dateFormat.format(date);
@@ -157,6 +181,8 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             editor.commit();
             elimiardatabase();
         }
+
+
 
         btn_escanear.setOnClickListener(this);
         btn_asistencia.setOnClickListener(this);
@@ -381,17 +407,46 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         }
         Log.d("bandera",""+bandera);
     }
-
+    public void guardarcabecera1()
+    {
+        int estado = 5;
+        String fechadia;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());//seteo la fecha actual
+        Date date = new Date();
+        fechadia = dateFormat.format(date);
+        Log.d("buscarusuario",api_asistencias+"?v_usuario="+preferences.getInt("id_usuario",0)+"&v_departamento="+departamentos.getSelectedItem().toString()+"&v_fechaingreso="+fechadia+"&v_estado=2&v_turno="+turno+"&v_empresa="+id_empresa);
+        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_asistencias+"?v_usuario="+preferences.getInt("id_usuario",0)+"&v_departamento="+departamentos.getSelectedItem().toString()+"&v_fechaingreso="+fechadia+"&v_estado=2&v_turno="+turno+"&v_empresa="+id_empresa, null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                buscarcabecera();
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("logeo","entro4"+error.toString());
+                Toast.makeText(RegistroAsistencia.this,"Error de coneccion consulte con sistemas"+error.toString(),Toast.LENGTH_SHORT);
+            }
+        });
+        n_requerimiento = Volley.newRequestQueue(this);
+        n_requerimiento.add(json);
+    }
     public void guardarcabecera()
     {
         String fechadiacabe;
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
         fechadiacabe = dateFormat.format(date);
+        Log.d("api_aisistencia",api_asistencias);
         StringRequest requerimiento = new StringRequest(Request.Method.POST, api_asistencias, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
                 //buscar la cabecera
+                Log.d("v_usuario", String.valueOf(preferences.getInt("id_usuario",0)));
+                Log.d("v_departamento",departamentos.getSelectedItem().toString());
+                Log.d("v_fechaingreso", fechadiacabe);
+                Log.d("v_estado", String.valueOf(0));
+                Log.d("v_turno",String.valueOf(turno));
+                Log.d("v_empresa",String.valueOf(id_empresa));
                 buscarcabecera();
             }
         }, new Response.ErrorListener() {
@@ -410,6 +465,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 parametros.put("v_fechaingreso", fechadiacabe);
                 parametros.put("v_estado", String.valueOf(0));
                 parametros.put("v_turno",String.valueOf(turno));
+                parametros.put("v_empresa",String.valueOf(id_empresa));
                 return parametros;
             }
         };
@@ -510,42 +566,39 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                     JSONArray jsonArray = response.getJSONArray("data");
 
                     jsonObject = new JSONObject(jsonArray.get(0).toString());
-                    Log.d("cedulaerror",jsonArray.get(0).toString());
+                    Log.d("cedulaerror", jsonArray.get(0).toString());
                     estado[0] = jsonObject.getInt("estado");
-                    Log.d("revisar", estado[0]+"dato");
-                    if(estado[0] == 1)
-                    {
-                        Log.d("VALIDAR USUARIO","SI MARCO" );
-                        if (jsonObject.getString("areatrabajo").contains("LIBRE"))
-                        {
-                            Log.d("VALIDAR USUARIO","ESTA LIBRE" );
-                            guardardetalle(id_cabecera,cedula,fecha);
-                        }else{
-                            Log.d("VALIDAR USUARIO","no ESTA LIBRE" );
+                    Log.d("revisar", estado[0] + "dato");
+                    if (estado[0] == 1) {
+                        Log.d("VALIDAR USUARIO", "SI MARCO");
+                        if (jsonObject.getString("areatrabajo").contains("LIBRE")) {
+                            Log.d("VALIDAR USUARIO", "ESTA LIBRE");
+                            guardardetalle(id_cabecera, cedula, fecha);
+                        } else {
+                            Log.d("VALIDAR USUARIO", "no ESTA LIBRE");
                             cedulaserror.add(cedula);
-                            contentValues.put("cedula",cedula);
-                            contentValues.put("fecha",fechadia);
+                            contentValues.put("cedula", cedula);
+                            contentValues.put("fecha", fechadia);
                             bdcache.insert("t_personaserror", null, contentValues);
                             //Toast.makeText(RegistroAsistencia.this,"Este usuario esta asignado en otra Area",Toast.LENGTH_SHORT).show();
                             //actualizar(cedula,"C");
-                            actualizar(cedula,"N");
+                            actualizar(cedula, "N");
                             //eliminarcedula(cedula);
                             btn_asistencia.setEnabled(true);
                         }
-                    }else {
+                    } else {
                         guardar_error(cedula);
                         cedulaserror.add(cedula);
                         btn_asistencia.setEnabled(true);
-                        contentValues.put("cedula",cedula);
-                        contentValues.put("fecha",fechadia);
+                        contentValues.put("cedula", cedula);
+                        contentValues.put("fecha", fechadia);
                         bdcache.insert("t_personaserror", null, contentValues);
                     }
-                    if(cedulaserror.size()> 0)
+                    if (cedulaserror.size() > 0)
                         txt_error.setText("Error en una o varias cedulas por favor verifique en ERRORES");
-                }catch (JSONException e)
-                {
-                    Log.d("logeo","entro3"+e.toString());
-                    Toast.makeText(RegistroAsistencia.this,"Error de base consulte con sistemas",Toast.LENGTH_SHORT).show();
+                } catch (JSONException e) {
+                    Log.d("logeo", "entro3" + e.toString());
+                    Toast.makeText(RegistroAsistencia.this, "Error de base consulte con sistemas", Toast.LENGTH_SHORT).show();
                 }
             }
         }, new Response.ErrorListener() {

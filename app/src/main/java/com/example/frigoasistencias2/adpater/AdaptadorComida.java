@@ -40,13 +40,15 @@ public class AdaptadorComida extends RecyclerView.Adapter<AdaptadorComida.ViewHo
         String api_descanso;
         RequestQueue n_requerimiento;
         int id_usuario,turno;
+        SharedPreferences preferences;
 
-        public AdaptadorComida (ArrayList<Personas> v_persona,String v_api_descanso,int v_id_usuario,int v_turno)
+        public AdaptadorComida (ArrayList<Personas> v_persona,String v_api_descanso,int v_id_usuario,int v_turno,SharedPreferences prefere)
         {
                 persona = v_persona;
                 api_descanso = v_api_descanso;
                 id_usuario = v_id_usuario;
                 turno = v_turno;
+                preferences= prefere;
                 Log.d("cantidad",api_descanso+id_usuario+turno+"");
                 personacopia = new ArrayList<>();
                 personacopia.addAll(persona);
@@ -102,7 +104,6 @@ public class AdaptadorComida extends RecyclerView.Adapter<AdaptadorComida.ViewHo
                         super(itemView);
                         txt_persona = itemView.findViewById(R.id.item_c_usuario);
                         btn_comer = itemView.findViewById(R.id.item_c_btncomer);
-
                         btn_comer.setOnClickListener(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
@@ -119,13 +120,15 @@ public class AdaptadorComida extends RecyclerView.Adapter<AdaptadorComida.ViewHo
                 }
 
                 public void banio(String v_cedula , int v_estado) {
-                        String fechadiacabe;
+                        String fechadiacabe,horamomento;
 
                         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());//seteo la fecha actual
+                        SimpleDateFormat dateFormat1 = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
+
                         Date date = new Date();
                         fechadiacabe = dateFormat.format(date);
-
-                        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_descanso +"?v_cedula="+v_cedula+"&v_fecha="+fechadiacabe+"&v_estado="+v_estado+"&v_usuario="+id_usuario+"&bandera=1",null, new Response.Listener<JSONObject>() {
+                        horamomento =dateFormat1.format(date);
+                        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_descanso +"?v_cedula="+v_cedula+"&v_fecha="+fechadiacabe+"&v_estado="+v_estado+"&v_usuario="+id_usuario+"&bandera=1&v_turno="+preferences.getInt("turno",0)+"&v_hora="+horamomento,null, new Response.Listener<JSONObject>() {
                                 @Override
                                 public void onResponse(JSONObject response) {
                                         try {

@@ -418,7 +418,7 @@ public class ListadoDiario extends AppCompatActivity {
         Date date = new Date();
         fechadiacabe = dateFormat.format(date);
 
-        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_descanso +"?v_cedula="+v_cedula+"&v_fecha="+fechadiacabe+"&v_estado="+v_estado+"&v_usuario="+preferences.getInt("id_usuario",0)+"&bandera=1",null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_descanso +"?v_cedula="+v_cedula+"&v_fecha="+fechadiacabe+"&v_estado="+v_estado+"&v_usuario="+preferences.getInt("id_usuario",0)+"&bandera=1&v_turno="+preferences.getInt("turno",0)+"&v_hora="+horamomento,null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {

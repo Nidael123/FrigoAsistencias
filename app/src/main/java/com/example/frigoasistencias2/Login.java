@@ -117,6 +117,8 @@ public class Login extends AppCompatActivity {
     public void logear(String url)
     {
         final int[] help = {-1};
+        Intent intent;
+        intent = new Intent(new Intent(Login.this,RegistroAsistencia.class));
         JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
@@ -137,12 +139,13 @@ public class Login extends AppCompatActivity {
                             editor.putString("nombre_usuario",jsonObject.getString("nombre"));
                             editor.putString("supervisor",jsonObject.getString("supervisor"));
                             Log.d("login",""+jsonObject.getString("supervisor"));
+                            intent.putExtra("empresa",jsonObject.getString("empresa"));
                         }
                         editor.putInt("cant_depart", jsonArray.length()-1);
                         editor.commit();
                         Toast.makeText(Login.this,"Ingreso con Exitoso",Toast.LENGTH_SHORT).show();
                         Log.d("logeo",""+help.length);
-                        startActivity(new Intent(Login.this,RegistroAsistencia.class));
+                        startActivity(intent);
                     }
                 }catch (JSONException e)
                 {

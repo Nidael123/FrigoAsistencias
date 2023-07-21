@@ -140,13 +140,15 @@ public class Comida extends AppCompatActivity implements SearchView.OnQueryTextL
     }
     public void subirbase(String v_cedula ) {
         int v_estado = 12;
-        String fechadiacabe;
+        String fechadiacabe,horamomento;
         Log.d("estadocomer5",estadobuscador+"");
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());//seteo la fecha actual
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
+        SimpleDateFormat dateFormat1 = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
         fechadiacabe = dateFormat.format(date);
-        Log.d("subira base",""+api_descanso +"?v_cedula="+v_cedula+"&v_fecha="+fechadiacabe+"&v_estado="+v_estado+"&v_usuario="+id_usuario+"&bandera=1");
-        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_descanso +"?v_cedula="+v_cedula+"&v_fecha="+fechadiacabe+"&v_estado="+v_estado+"&v_usuario="+id_usuario+"&bandera=1",null, new Response.Listener<JSONObject>() {
+        horamomento =dateFormat1.format(date);
+        Log.d("subira base",""+api_descanso +"?v_cedula="+v_cedula+"&v_fecha="+fechadiacabe+"&v_estado="+v_estado+"&v_usuario="+id_usuario+"&bandera=1&v_turno="+preferences.getInt("turno",0)+"&v_hora="+horamomento);
+        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_descanso +"?v_cedula="+v_cedula+"&v_fecha="+fechadiacabe+"&v_estado="+v_estado+"&v_usuario="+id_usuario+"&bandera=1&v_turno="+preferences.getInt("turno",0)+"&v_hora="+horamomento,null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {
@@ -185,7 +187,7 @@ public class Comida extends AppCompatActivity implements SearchView.OnQueryTextL
                 try {
                     JSONArray jsonArray = response.getJSONArray("data");
                     Log.d("revicioncomida",jsonArray.toString());
-                    if(jsonArray.length() -1 > 0)
+                    if(jsonArray.length() -1 >= 0)
                     {
                         for(int i = 0;i<=jsonArray.length()-1;i++)
                         {
@@ -198,7 +200,7 @@ public class Comida extends AppCompatActivity implements SearchView.OnQueryTextL
                             Log.d("lISTADO 12",personas.get(i).getCedulas());
                         }
                         Log.d("lISTADO 1",personas.get(0).getCedulas());
-                        adapter = new AdaptadorComida(personas,api_descanso,preferences.getInt("id_usuario",0),preferences.getInt("turno",0));
+                        adapter = new AdaptadorComida(personas,api_descanso,preferences.getInt("id_usuario",0),preferences.getInt("turno",0),preferences);
                         recicler.setAdapter(adapter);
                     }else
                         Toast.makeText(Comida.this,"Listado Vacio",Toast.LENGTH_SHORT).show();
