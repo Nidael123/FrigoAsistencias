@@ -64,7 +64,7 @@ public class ListadoDiario extends AppCompatActivity {
     RequestQueue n_requerimiento;
     SharedPreferences preferences;
     int contador;
-    Button btn_regresarbanio,btn_ircomer,btn_faltas,btn_ingresomanual,btn_historial;
+    Button btn_regresarbanio,btn_ircomer,btn_faltas,btn_ingresomanual,btn_salida;
     EditText edit_buscar;
     Dialog alerta;
 
@@ -90,6 +90,7 @@ public class ListadoDiario extends AppCompatActivity {
         btn_ircomer = findViewById(R.id.btn_a_comer);
         btn_faltas = findViewById(R.id.btn_a_falta);
         btn_ingresomanual = findViewById(R.id.btn_a_manual);
+        btn_salida = findViewById(R.id.btn_a_salir);
         bd = new Managerbd(this, "Registro", null, R.string.versionbase);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());//seteo la fecha actual
         SimpleDateFormat dateFormat1 = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());//seteo la fecha actual
@@ -156,6 +157,12 @@ public class ListadoDiario extends AppCompatActivity {
             }
         });
 
+        btn_salida.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(ListadoDiario.this,DejarSalir.class));
+            }
+        });
         btn_regresarbanio.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

@@ -4,7 +4,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -72,7 +71,7 @@ public class CedulaError extends AppCompatActivity {
         txt_error = (TextView) findViewById(R.id.txt_error_cedula2);
         guardarcedulas = false ;//true las guardo false muestro que no se puede
 
-        btn_guardar = (Button) findViewById(R.id.btn_r_ingresomanual);
+        btn_guardar = (Button) findViewById(R.id.btn_s_ingresomanual);
         btn_salir = (Button)findViewById(R.id.btn_salir);
         txt_usuario = (EditText)findViewById(R.id.txt_usuario_error);
         txt_pass = (EditText)findViewById(R.id.txt_pass_error);
