@@ -427,7 +427,38 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         n_requerimiento = Volley.newRequestQueue(this);
         n_requerimiento.add(json);
     }
-    public void guardarcabecera()
+    public void guardarcabecera() {
+        String fechadiacabe;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());//seteo la fecha actual
+        Date date = new Date();
+        fechadiacabe = dateFormat.format(date);
+        Log.d("buscarerror",api_asistencias +"?v_usuario="+preferences.getInt("id_usuario",0)+"&v_departamento="+departamentos.getSelectedItem().toString()+"&v_fechaingreso="+fechadiacabe+"&v_estado=2&v_turno="+turno+"&v_empresa="+id_empresa);
+        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_asistencias +"?v_usuario="+preferences.getInt("id_usuario",0)+"&v_departamento="+departamentos.getSelectedItem().toString()+"&v_fechaingreso="+fechadiacabe+"&v_estado=2&v_turno="+turno+"&v_empresa="+id_empresa,null, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                try {
+                    JSONArray jsonArray = response.getJSONArray("data");
+                    jsonObject = new JSONObject(jsonArray.get(0).toString());
+                    Log.d("verguardar",jsonObject.getString("estado"));
+                    buscarcabecera();
+                }catch (JSONException e)
+                {
+                    Log.d("DANIEL","entro3"+e.toString());
+                    Toast.makeText(RegistroAsistencia.this,"Error de base consulte con sistemas",Toast.LENGTH_SHORT).show();
+                }
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("buscarerror","dd"+error.toString());
+                Toast.makeText(RegistroAsistencia.this,"Error de coneccion consulte con sistemas"+error.toString(),Toast.LENGTH_SHORT).show();
+            }
+        });
+        n_requerimiento = Volley.newRequestQueue(this);
+        json.setShouldCache(true);
+        n_requerimiento.add(json);
+    }
+    /*public void guardarcabecera1()
     {
         String fechadiacabe;
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());//seteo la fecha actual
@@ -468,7 +499,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         };
         n_requerimiento = Volley.newRequestQueue(this);
         n_requerimiento.add(requerimiento);
-    }
+    }*/
     public void buscarcabecera()
     {
         //AppController.getInstance().getRequestQueue().getCache().get(url).serverDate
