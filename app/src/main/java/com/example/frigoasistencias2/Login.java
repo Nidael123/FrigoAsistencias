@@ -139,7 +139,7 @@ public class Login extends AppCompatActivity {
                             editor.putString("nombre_usuario",jsonObject.getString("nombre"));
                             editor.putString("supervisor",jsonObject.getString("supervisor"));
                             Log.d("login",""+jsonObject.getString("supervisor"));
-                            intent.putExtra("empresa",jsonObject.getString("empresa"));
+                            editor.putString("empresa",jsonObject.getString("empresa"));
                         }
                         editor.putInt("cant_depart", jsonArray.length()-1);
                         editor.commit();

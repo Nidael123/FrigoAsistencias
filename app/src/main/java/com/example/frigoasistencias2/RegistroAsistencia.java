@@ -106,7 +106,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         Log.d("registros", "" + preferences.getInt("cant_depart", 0));
         listadepartamentos.add("Escoja una opcion");
         btn_ingresomanual.setEnabled(false);
-        txt_empresa.setText(getIntent().getStringExtra("empresa"));
+        txt_empresa.setText(preferences.getString("empresa","mal"));
         if(getIntent().getStringExtra("empresa") =="FRIGOPESCA")
         {
             id_empresa=1;

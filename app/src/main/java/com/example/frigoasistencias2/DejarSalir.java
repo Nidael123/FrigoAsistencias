@@ -206,6 +206,19 @@ public class DejarSalir extends AppCompatActivity {
                         jsonObject = new JSONObject(jsonArray.get(i).toString());
                         Log.d("123456789","dale"+jsonObject.toString());
                         Toast.makeText(DejarSalir.this,jsonObject.getString("mensaje"),Toast.LENGTH_SHORT).show();
+                        for (int x = 0;x<=listanombres.size()-1;x++)
+                        {
+                            Log.d("eliminar","dale"+listacedulas.get(x));
+                            if(listacedulas.contains(v_cedula))
+                            {
+                                Log.d("elimino","dale"+listanombres.get(x));
+                                listanombres.remove(x);
+                                listacedulas.remove(x);
+                                adapter.notifyDataSetChanged();
+                                contador--;
+                                txt_cantidad.setText(contador);
+                            }
+                        }
                     }
                 }catch (JSONException e)
                 {

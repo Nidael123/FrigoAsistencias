@@ -14,15 +14,42 @@ import com.example.frigoasistencias2.clases.Personas;
 import org.w3c.dom.Text;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class AdapterLibres extends RecyclerView.Adapter<AdapterLibres.ViewHolder> {
 
-    ArrayList<Personas> listadoperosnas;
+    ArrayList<Personas> listadoperosnas,listadopersonascopia;
 
     public AdapterLibres (ArrayList<Personas> P)
     {
         listadoperosnas = new ArrayList<>();
         listadoperosnas = P;
+        listadopersonascopia = new ArrayList<>();
+        listadopersonascopia.addAll(listadoperosnas);
+    }
+
+    public void filtrado(final String txtBuscar) {
+        int longitud = txtBuscar.length();
+        if (longitud == 0) {
+            listadoperosnas.clear();
+            listadoperosnas.addAll(listadopersonascopia);
+        } else {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                List<Personas> collecion = listadoperosnas.stream()
+                        .filter(i -> i.getNombre().toLowerCase().contains(txtBuscar.toLowerCase()))
+                        .collect(Collectors.toList());
+                listadoperosnas.clear();
+                listadoperosnas.addAll(collecion);
+            } else {
+                for (Personas c : listadopersonascopia) {
+                    if (c.getNombre().toLowerCase().contains(txtBuscar.toLowerCase())) {
+                        listadoperosnas.add(c);
+                    }
+                }
+            }
+        }
+        notifyDataSetChanged();
     }
     @NonNull
     @Override

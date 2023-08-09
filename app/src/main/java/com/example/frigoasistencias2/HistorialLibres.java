@@ -9,6 +9,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ArrayAdapter;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -29,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-public class HistorialLibres extends AppCompatActivity {
+public class HistorialLibres extends AppCompatActivity implements  SearchView.OnQueryTextListener{
 
     RecyclerView recicler;
     String api_libres,estado;
@@ -38,6 +39,8 @@ public class HistorialLibres extends AppCompatActivity {
     RequestQueue n_requerimiento;
     ArrayList<Personas> personas;
     AdapterLibres adapter;
+    SearchView buscar_libre;
+    boolean estadobuscador;
 
     @SuppressLint("MissingInflatedId")
     @Override
@@ -53,9 +56,11 @@ public class HistorialLibres extends AppCompatActivity {
         preferences = getSharedPreferences("infousuario", MODE_PRIVATE);
         estado = String.valueOf(getIntent().getIntExtra("estado",0));
         personas=new ArrayList<>();
+        buscar_libre = findViewById(R.id.search_hl_libre);
+        estadobuscador = false;
+        buscar_libre.setOnQueryTextListener(this);
         cargardatos();
     }
-
     public void cargardatos()
     {
         String fechadia;
@@ -110,6 +115,19 @@ public class HistorialLibres extends AppCompatActivity {
         json.setShouldCache(true);
         n_requerimiento.add(json);
     }
-
-
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        estadobuscador=true;
+        return true;
+    }
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        Log.d("estadocomer1",estadobuscador+"");
+        if(estadobuscador)
+        {
+            Log.d("estadocomer2",estadobuscador+"");
+            adapter.filtrado(newText);
+        }
+        return false;
+    }
 }
