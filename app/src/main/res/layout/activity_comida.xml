@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/fondo_3"
     tools:context=".Comida">
 
     <ScrollView
@@ -23,6 +24,7 @@
                 android:id="@+id/textView10"
                 android:layout_width="match_parent"
                 android:layout_height="52dp"
+                android:fontFamily="@font/fuentes"
                 android:text="HORA DE COMER"
                 android:textAlignment="center"
                 android:textSize="20sp"
@@ -31,23 +33,26 @@
             <SearchView
                 android:id="@+id/search_c_buscar"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                android:layout_height="78dp"
+                android:background="@drawable/barra" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/recy_comida"
                 android:layout_width="match_parent"
-                android:layout_height="499dp" />
+                android:layout_height="359dp" />
 
             <Button
                 android:id="@+id/btn_c_regresar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/fuentes"
                 android:text="REGRESAR DE COMER" />
 
             <Button
                 android:id="@+id/btn_c_manual"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/fuentes"
                 android:text="INGRESAR MANUAL" />
 
         </LinearLayout>

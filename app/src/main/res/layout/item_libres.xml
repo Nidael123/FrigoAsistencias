@@ -28,13 +28,15 @@
                     android:id="@+id/txt_ifal_cedula"
                     android:layout_width="match_parent"
                     android:layout_height="43dp"
-                    android:text="TextView" />
+                    android:text="TextView"
+                    android:textColor="@color/black" />
 
                 <TextView
                     android:id="@+id/txt_ifal_nombre"
                     android:layout_width="match_parent"
                     android:layout_height="43dp"
-                    android:text="TextView" />
+                    android:text="TextView"
+                    android:textColor="@color/black" />
             </LinearLayout>
 
             <LinearLayout
@@ -46,13 +48,15 @@
                     android:id="@+id/txt_ifal_fechainicio"
                     android:layout_width="197dp"
                     android:layout_height="43dp"
-                    android:text="TextView" />
+                    android:text="TextView"
+                    android:textColor="@color/black" />
 
                 <TextView
                     android:id="@+id/txt_ifal_fechafin"
                     android:layout_width="194dp"
                     android:layout_height="43dp"
-                    android:text="TextView" />
+                    android:text="TextView"
+                    android:textColor="@color/black" />
             </LinearLayout>
         </LinearLayout>
     </LinearLayout>

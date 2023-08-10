@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/fondo_3"
     tools:context=".ListadoDiario">
 
     <ScrollView
@@ -29,25 +30,29 @@
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:layout_weight="1"
+                    android:fontFamily="@font/fuentes"
+                    android:paddingTop="10dp"
                     android:text="FECHA"
                     android:textAlignment="center"
-                    android:textColor="@color/purple_700" />
+                    android:textColor="@color/black" />
 
                 <TextView
                     android:id="@+id/txt_l_total"
                     android:layout_width="wrap_content"
                     android:layout_height="40dp"
                     android:layout_weight="1"
+                    android:fontFamily="@font/fuentes"
                     android:text="0"
                     android:textAlignment="center"
-                    android:textColor="@color/purple_700" />
+                    android:textColor="@color/black" />
 
             </LinearLayout>
 
             <EditText
                 android:id="@+id/edit_l_ingresos"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="56dp"
+                android:fontFamily="@font/fuentes"
                 android:ems="10"
                 android:inputType="textPersonName" />
 
@@ -58,12 +63,13 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical" >
+                    android:orientation="vertical">
 
                     <ListView
                         android:id="@+id/list_diaria"
                         android:layout_width="match_parent"
-                        android:layout_height="250dp" />
+                        android:layout_height="250dp"
+                        android:divider="@color/purple_500" />
                 </LinearLayout>
             </ScrollView>
 
@@ -71,24 +77,28 @@
                 android:id="@+id/btn_a_regresar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/fuentes"
                 android:text="REGRESAR DE BAÑO" />
-
-            <Button
-                android:id="@+id/btn_a_comer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="SALIR A COMER" />
 
             <Button
                 android:id="@+id/btn_a_manual"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/fuentes"
                 android:text="Ingreso manual" />
+
+            <Button
+                android:id="@+id/btn_a_comer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/fuentes"
+                android:text="SALIR A COMER" />
 
             <Button
                 android:id="@+id/btn_a_falta"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/fuentes"
                 android:enabled="true"
                 android:text="ASISTENCIA" />
 
@@ -96,6 +106,7 @@
                 android:id="@+id/btn_a_salir"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/fuentes"
                 android:enabled="true"
                 android:text="SALIDA" />
 

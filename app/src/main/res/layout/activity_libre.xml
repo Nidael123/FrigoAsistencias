@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/fondo_2"
     tools:context=".Libre">
 
     <ScrollView
@@ -25,6 +26,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="78dp"
+                android:fontFamily="@font/fuentes"
                 android:paddingTop="20dp"
                 android:text="LIBRES"
                 android:textAlignment="center"
@@ -42,6 +44,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:ems="10"
+                    android:fontFamily="@font/fuentes"
                     android:inputType="number" />
 
             </LinearLayout>
@@ -50,30 +53,38 @@
                 android:id="@+id/txt_l_nombre"
                 android:layout_width="match_parent"
                 android:layout_height="62dp"
-                android:text="NOMBRES Y APELLIDOS " />
+                android:fontFamily="@font/fuentes"
+                android:text="NOMBRES Y APELLIDOS "
+                android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/txt_l_fechainicio"
                 android:layout_width="match_parent"
                 android:layout_height="62dp"
-                android:text="FECHA INICIO" />
+                android:fontFamily="@font/fuentes"
+                android:text="FECHA INICIO"
+                android:textColor="@color/black" />
 
             <TextView
                 android:id="@+id/txt_l_fechafin"
                 android:layout_width="match_parent"
                 android:layout_height="62dp"
-                android:text="FECHA FINAL" />
+                android:fontFamily="@font/fuentes"
+                android:text="FECHA FINAL"
+                android:textColor="@color/black" />
 
             <Button
                 android:id="@+id/btn_l_guardar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/fuentes"
                 android:text="GUARDAR" />
 
             <Button
                 android:id="@+id/btn_l_historial"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/fuentes"
                 android:text="HISTORIAL" />
 
         </LinearLayout>

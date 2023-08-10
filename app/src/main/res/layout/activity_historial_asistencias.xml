@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/fondo_2"
     tools:context=".Historial_Asistencias">
 
     <LinearLayout
@@ -18,6 +19,6 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_h_listadopdf"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="541dp" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

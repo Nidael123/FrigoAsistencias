@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/fondo_3"
     tools:context=".HistorialLibres">
 
     <LinearLayout
@@ -21,7 +22,10 @@
             android:id="@+id/textView9"
             android:layout_width="match_parent"
             android:layout_height="46dp"
-            android:text="HISTORIAL" />
+            android:paddingTop="15dp"
+            android:text="HISTORIAL"
+            android:textAlignment="center"
+            android:textColor="@color/black" />
 
         <SearchView
             android:id="@+id/search_hl_libre"
@@ -31,7 +35,7 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recycler_hl_personas"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="552dp" />
 
     </LinearLayout>
 

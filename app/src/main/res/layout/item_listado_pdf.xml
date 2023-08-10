@@ -16,6 +16,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:background="@color/azul2"
             android:orientation="horizontal">
 
             <TextView
@@ -24,8 +25,11 @@
                 android:layout_height="36dp"
                 android:layout_marginStart="2dp"
                 android:layout_weight="1"
+                android:fontFamily="@font/fuentes"
                 android:paddingTop="10dp"
-                android:text="Archivo" />
+                android:text="Archivo"
+                android:textAlignment="center"
+                android:textColor="@color/black" />
 
             <Button
                 android:id="@+id/btn_il_ver"
