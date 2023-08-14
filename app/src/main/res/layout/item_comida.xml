@@ -25,26 +25,40 @@
 
                 <TextView
                     android:id="@+id/item_c_usuario"
-                    android:layout_width="251dp"
-                    android:layout_height="33dp"
+                    android:layout_width="593dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:fontFamily="@font/fuentes"
                     android:text="TextView"
                     android:textAlignment="center"
                     android:textColor="@color/black" />
 
-                <Button
-                    android:id="@+id/item_c_btncomer"
-                    android:layout_width="53dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:fontFamily="@font/fuentes"
-                    android:text="comer" />
-
-                <Space
-                    android:layout_width="16dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_weight="1" />
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+
+                    <Button
+                        android:id="@+id/item_c_btncomer"
+                        android:layout_width="114dp"
+                        android:layout_height="40dp"
+                        android:layout_weight="1"
+                        android:background="@drawable/salir_a_comer"
+                        android:fontFamily="@font/fuentes"
+                        android:text="comer" />
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1" />
+                </LinearLayout>
+
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>

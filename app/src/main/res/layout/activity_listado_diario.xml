@@ -73,42 +73,152 @@
                 </LinearLayout>
             </ScrollView>
 
-            <Button
-                android:id="@+id/btn_a_regresar"
+            <Space
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/fuentes"
-                android:text="REGRESAR DE BAÑO" />
+                android:layout_height="5dp" />
 
-            <Button
-                android:id="@+id/btn_a_manual"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/fuentes"
-                android:text="Ingreso manual" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btn_a_comer"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/fuentes"
-                android:text="SALIR A COMER" />
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
 
-            <Button
-                android:id="@+id/btn_a_falta"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/fuentes"
-                android:enabled="true"
-                android:text="ASISTENCIA" />
+                <Button
+                    android:id="@+id/btn_a_regresar"
+                    android:layout_width="298dp"
+                    android:layout_height="46dp"
+                    android:background="@drawable/regresar_del_ba_o"
+                    android:fontFamily="@font/fuentes"
+                    android:text="REGRESAR DE BAÑO" />
 
-            <Button
-                android:id="@+id/btn_a_salir"
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+            <Space
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/fuentes"
-                android:enabled="true"
-                android:text="SALIDA" />
+                android:layout_height="5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/btn_a_manual"
+                    android:layout_width="307dp"
+                    android:layout_height="46dp"
+                    android:background="@drawable/ingreso_manual"
+                    android:fontFamily="@font/fuentes"
+                    android:text="Ingreso manual" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/btn_a_comer"
+                    android:layout_width="307dp"
+                    android:layout_height="46dp"
+                    android:background="@drawable/salir_a_comer"
+                    android:fontFamily="@font/fuentes"
+                    android:text="SALIR A COMER" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="5dp"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/btn_a_falta"
+                    android:layout_width="307dp"
+                    android:layout_height="46dp"
+                    android:background="@drawable/asistencia"
+                    android:enabled="true"
+                    android:fontFamily="@font/fuentes"
+                    android:text="ASISTENCIA" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/btn_a_salir"
+                    android:layout_width="307dp"
+                    android:layout_height="46dp"
+                    android:background="@drawable/salir"
+                    android:enabled="true"
+                    android:fontFamily="@font/fuentes"
+                    android:text="SALIDA" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

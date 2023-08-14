@@ -116,7 +116,7 @@
                 <Button
                     android:id="@+id/btn_login1"
                     android:layout_width="303dp"
-                    android:layout_height="75dp"
+                    android:layout_height="58dp"
                     android:background="@drawable/acceder"
                     android:text="Acceder"
                     android:textColor="@color/white" />

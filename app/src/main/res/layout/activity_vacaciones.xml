@@ -71,17 +71,59 @@
                 android:text="FECHA FINAL"
                 android:textColor="@color/black" />
 
-            <Button
-                android:id="@+id/btn_v_guardar"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="GUARDAR" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btn_v_historial"
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/btn_v_guardar"
+                    android:layout_width="320dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/ingreso_manual"
+                    android:text="GUARDAR"
+                    android:fontFamily="@font/fuentes"
+                    android:textColor="@color/white"/>
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <Space
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="HISTORIAL" />
+                android:layout_height="5dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/btn_v_historial"
+                    android:layout_width="320dp"
+                    android:layout_height="55dp"
+                    android:background="@drawable/historial"
+                    android:text="HISTORIAL"
+                    android:fontFamily="@font/fuentes"
+                    android:textColor="@color/white"/>
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

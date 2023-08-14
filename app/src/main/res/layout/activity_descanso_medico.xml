@@ -26,10 +26,10 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="78dp"
+                android:fontFamily="@font/fuentes"
                 android:paddingTop="20dp"
                 android:text="DESCANSO MEDICO"
                 android:textAlignment="center"
-                android:fontFamily="@font/fuentes"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 
@@ -73,19 +73,62 @@
                 android:text="FECHA FINAL"
                 android:textColor="@color/black" />
 
-            <Button
-                android:id="@+id/btn_dm_guardar"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:fontFamily="@font/fuentes"
-                android:layout_height="wrap_content"
-                android:text="GUARDAR" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btn_dm_historial"
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/btn_dm_guardar"
+                    android:layout_width="314dp"
+                    android:layout_height="50dp"
+                    android:background="@drawable/ingreso_manual"
+                    android:fontFamily="@font/fuentes"
+                    android:text="GUARDAR"
+                    android:textColor="@color/white" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+            <Space
                 android:layout_width="match_parent"
-                android:fontFamily="@font/fuentes"
-                android:layout_height="wrap_content"
-                android:text="HISTORIAL" />
+                android:layout_height="10dp"
+                android:layout_weight="1" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/btn_dm_historial"
+                    android:layout_width="311dp"
+                    android:layout_height="48dp"
+                    android:background="@drawable/historial"
+                    android:fontFamily="@font/fuentes"
+                    android:text="HISTORIAL"
+                    android:textColor="@color/white" />
+
+                <Space
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>

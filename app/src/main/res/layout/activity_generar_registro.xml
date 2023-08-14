@@ -34,40 +34,147 @@
                 android:layout_width="match_parent"
                 android:layout_height="112dp" />
 
-            <Button
-                android:id="@+id/btn_g_guardar"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/fuentes"
-                android:text="GUARDAR LISTADO" />
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
 
-            <Button
-                android:id="@+id/btn_g_registros"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/fuentes"
-                android:text="REGISTROS" />
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="28dp"
+                    android:layout_weight="1" />
 
-            <Button
-                android:id="@+id/btn_g_libre"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/fuentes"
-                android:text="LIBRES" />
+                <Button
+                    android:id="@+id/btn_g_vacaciones"
+                    android:layout_width="272dp"
+                    android:layout_height="57dp"
+                    android:background="@drawable/vacaciones"
+                    android:fontFamily="@font/fuentes"
+                    android:text="VACACIONES "
+                    android:textColor="@color/white" />
 
-            <Button
-                android:id="@+id/btn_g_dm"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/fuentes"
-                android:text="DESCANSO MEDICO" />
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="28dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
 
-            <Button
-                android:id="@+id/btn_g_vacaciones"
+            <Space
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/fuentes"
-                android:text="VACACIONES " />
+                android:layout_height="16dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="28dp"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/btn_g_dm"
+                    android:layout_width="275dp"
+                    android:layout_height="57dp"
+                    android:background="@drawable/permiso_m_dico"
+                    android:fontFamily="@font/fuentes"
+                    android:textColor="@color/white"
+                    android:text="DESCANSO MEDICO" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="28dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="28dp"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/btn_g_libre"
+                    android:layout_width="275dp"
+                    android:layout_height="58dp"
+                    android:background="@drawable/libres"
+                    android:fontFamily="@font/fuentes"
+                    android:textColor="@color/white"
+                    android:text="LIBRES" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="28dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:textColor="@color/white"
+                android:orientation="horizontal">
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="28dp"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/btn_g_registros"
+                    android:layout_width="278dp"
+                    android:layout_height="54dp"
+                    android:background="@drawable/registrar"
+                    android:fontFamily="@font/fuentes"
+                    android:textColor="@color/white"
+                    android:text="REGISTROS" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="28dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="16dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="28dp"
+                    android:layout_weight="1" />
+
+                <Button
+                    android:id="@+id/btn_g_guardar"
+                    android:layout_width="279dp"
+                    android:layout_height="60dp"
+                    android:background="@drawable/historial"
+                    android:fontFamily="@font/fuentes"
+                    android:textColor="@color/white"
+                    android:text="GUARDAR LISTADO" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="28dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
 
         </LinearLayout>
     </ScrollView>
