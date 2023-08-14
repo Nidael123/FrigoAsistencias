@@ -176,7 +176,11 @@ public class DejarSalir extends AppCompatActivity {
         IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
         if (intentResult != null) {
             Log.d("subira base",""+intentResult.getContents());
-            subirbase(intentResult.getContents());
+            if(intentResult.getContents() != null)
+            {
+                subirbase(intentResult.getContents());
+            }
+
             if (intentResult.getContents() == null) {
                 Toast.makeText(this, "Cancelled", Toast.LENGTH_LONG).show();
             } else {
@@ -209,14 +213,13 @@ public class DejarSalir extends AppCompatActivity {
                         for (int x = 0;x<=listanombres.size()-1;x++)
                         {
                             Log.d("eliminar","dale"+listacedulas.get(x));
-                            if(listacedulas.contains(v_cedula))
+                            if(listacedulas.get(x).contains(v_cedula))
                             {
                                 Log.d("elimino","dale"+listanombres.get(x));
                                 listanombres.remove(x);
                                 listacedulas.remove(x);
                                 adapter.notifyDataSetChanged();
                                 contador--;
-                                txt_cantidad.setText(contador);
                             }
                         }
                     }
