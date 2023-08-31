@@ -272,7 +272,7 @@ public class ListadoDiario extends AppCompatActivity {
             super.onActivityResult(requestCode, resultCode, data);
         }
     }
-    public void cargardatos()
+    public void  cargardatos()
     {
         Log.d("cargalistado",preferences.getInt("turno",0)+"v");
         //AppController.getInstance().getRequestQueue().getCache().get(url).serverDate

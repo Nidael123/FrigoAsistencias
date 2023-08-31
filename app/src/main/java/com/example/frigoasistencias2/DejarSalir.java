@@ -197,7 +197,7 @@ public class DejarSalir extends AppCompatActivity {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
         fechadiacabe = dateFormat.format(date);
-
+        Log.d("subira base",""+v_cedula);
         Log.d("subira base",""+api_descanso +"?v_cedula="+v_cedula+"&v_fecha="+fechadiacabe+"&v_estado="+v_estado+"&v_usuario="+id_usuario+"&bandera=1&v_turno="+preferences.getInt("turno",0)+"&v_hora="+horamomento);
         JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_descanso +"?v_cedula="+v_cedula+"&v_fecha="+fechadiacabe+"&v_estado="+v_estado+"&v_usuario="+id_usuario+"&bandera=1&v_turno="+preferences.getInt("turno",0)+"&v_hora="+horamomento,null, new Response.Listener<JSONObject>() {
             @Override
@@ -220,6 +220,7 @@ public class DejarSalir extends AppCompatActivity {
                                 listacedulas.remove(x);
                                 adapter.notifyDataSetChanged();
                                 contador--;
+                                txt_cantidad.setText(""+contador);
                             }
                         }
                     }

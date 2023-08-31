@@ -27,6 +27,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -109,7 +110,27 @@ public class Libre extends AppCompatActivity {
         btn_guardar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(ultimoAnio <= ultimoAnio1)
+                SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
+                Date dateOjb ;
+                Date dateOjb2;
+                try {
+                    dateOjb = format1.parse(txt_fechainicio.getText().toString());
+                    dateOjb2 = format1.parse(txt_fechafin.getText().toString());
+                    if (dateOjb2.after(dateOjb) || dateOjb2.equals(dateOjb) )
+                    {
+                        if(edit_cedula.length() == 10)
+                        {
+                            buscar_usuario();
+                        }
+                    }
+                    else
+                    {
+                        Toast.makeText(Libre.this, "Fecha final debe ser mayor a fecha inicial", Toast.LENGTH_LONG).show();
+                    }
+                } catch (ParseException e) {
+                    throw new RuntimeException(e);
+                }
+                /*if(ultimoAnio <= ultimoAnio1)
                 {
                     if(ultimoMes <= ultimoMes1)
                     {
@@ -134,7 +155,7 @@ public class Libre extends AppCompatActivity {
                         Toast.makeText(Libre.this, "LA FECHA FINAL PUEDE SER IGUAL O MAYOR A LA FECHA INICIO", Toast.LENGTH_LONG).show();
                 } else
                     Toast.makeText(Libre.this, "LA FECHA FINAL PUEDE SER IGUAL O MAYOR A LA FECHA INICIO", Toast.LENGTH_LONG).show();
-
+*/
             }
         });
         btn_historial.setOnClickListener(new View.OnClickListener() {

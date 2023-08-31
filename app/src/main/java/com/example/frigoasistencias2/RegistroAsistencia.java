@@ -98,7 +98,6 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         cedulaserror = new ArrayList<String>();
         departamentos = findViewById(R.id.spi_departamentos);
         btn_asistencia.setEnabled(false);
-        btn_nuevo.setEnabled(false);
         bandera1 = false;
         bd = new Managerbd(this, "Registro", null, R.string.versionbase);
         api_asistencias = getString(R.string.api_aistencias);
@@ -170,13 +169,13 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             turno = 1;
             editor.putInt("turno",turno);
             editor.commit();
-            elimiardatabase();
+            //elimiardatabase();
         }else{
             txt_turno.setText("Turno Noche");
             turno = 2;
             editor.putInt("turno",turno);
             editor.commit();
-            elimiardatabase();
+            //elimiardatabase();
         }
 
 
@@ -577,11 +576,11 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             requerimiento.setShouldCache(true);
             n_requerimiento.add(requerimiento);
     }
-    public void elimiardatabase()
+    /*public void elimiardatabase()
     {
         bdcache = bd.getWritableDatabase();
         bdcache.execSQL("delete from t_personaserror");
-    }
+    }*/
     public void validarcedula(String cedula,Integer id_cabecera,String fecha)
     {
         Log.d("validar",avanzartransaccion+"");

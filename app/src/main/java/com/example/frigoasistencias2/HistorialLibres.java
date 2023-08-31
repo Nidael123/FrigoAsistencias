@@ -64,7 +64,7 @@ public class HistorialLibres extends AppCompatActivity implements  SearchView.On
     public void cargardatos()
     {
         String fechadia;
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());//seteo la fecha actual
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
         fechadia = dateFormat.format(date);
         Log.d("Antes de revicion",api_libres +"?v_fecha_ingreso="+fechadia+"&v_id_supervisor="+preferences.getInt("id_usuario",0)+"&v_estado="+estado+"&bandera=1");
