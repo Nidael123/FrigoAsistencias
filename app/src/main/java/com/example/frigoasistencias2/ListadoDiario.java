@@ -329,10 +329,12 @@ public class ListadoDiario extends AppCompatActivity {
     public void soltarusuario(String cedula,int posicion)
     {
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
+        SimpleDateFormat dateFormat2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
         String fecha = dateFormat.format(date);
+        String fecha2 = dateFormat2.format(date);
         Log.d("sacar",api_areas +"?fecha="+fecha+"&cedulas="+cedula+"&bandera=0");
-        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_areas +"?fecha="+fecha+"&cedula="+cedula+"&bandera=0", null, new Response.Listener<JSONObject>() {
+        JsonObjectRequest json = new JsonObjectRequest(Request.Method.GET, api_areas +"?fecha="+fecha+"&cedula="+cedula+"&bandera=0&fechaingreso="+fecha2+"&usuario="+preferences.getInt("id_usuario",0), null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
                 try {

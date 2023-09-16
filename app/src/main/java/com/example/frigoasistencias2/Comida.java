@@ -71,7 +71,7 @@ public class Comida extends AppCompatActivity implements SearchView.OnQueryTextL
         btn_manual = findViewById(R.id.btn_c_manual);
         LinearLayoutManager manager = new LinearLayoutManager(this);
         recicler.setLayoutManager(manager);
-        recicler.setHasFixedSize(true);
+
         preferences = getSharedPreferences("infousuario", MODE_PRIVATE);
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
         SimpleDateFormat dateFormat1 = new SimpleDateFormat("HH:mm:ss", Locale.getDefault());
@@ -84,7 +84,7 @@ public class Comida extends AppCompatActivity implements SearchView.OnQueryTextL
         cargardatos();
         search_buscar.setOnQueryTextListener(this);
         id_usuario = preferences.getInt("id_usuario",0);
-
+        recicler.setHasFixedSize(true);
         btn_manual.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

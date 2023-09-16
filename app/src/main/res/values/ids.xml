@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="btn_g_vacaciones" type="id" />
+    <item name="btn_g_dm" type="id" />
+    <item name="btn_g_libre" type="id" />
+</resources>

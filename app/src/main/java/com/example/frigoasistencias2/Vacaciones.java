@@ -1,9 +1,11 @@
 package com.example.frigoasistencias2;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -121,7 +123,7 @@ public class Vacaciones extends AppCompatActivity {
                     {
                         if(edit_cedula.length() == 10)
                         {
-                            buscar_usuario();
+                            desplegar_alerta();
                         }
                     }
                     else
@@ -129,7 +131,7 @@ public class Vacaciones extends AppCompatActivity {
                         Toast.makeText(Vacaciones.this, "Fecha final debe ser mayor a fecha inicial", Toast.LENGTH_LONG).show();
                     }
                 } catch (ParseException e) {
-                    throw new RuntimeException(e);
+                    Toast.makeText(Vacaciones.this, "No deje valores en blanco", Toast.LENGTH_LONG).show();
                 }
                 /*
 
@@ -171,6 +173,22 @@ public class Vacaciones extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+    public void desplegar_alerta()
+    {
+        AlertDialog.Builder dialogo1 = new AlertDialog.Builder(Vacaciones.this);
+        dialogo1.setTitle("Importante"); dialogo1.setMessage("¿ Desea guardar el Vacaciones de:"+edit_cedula.getText()+" desde la Fecha:  "+txt_fechainicio.getText().toString()+"\n"+
+            "hasta la fecha: "+txt_fechafin.getText().toString()+"?");
+        dialogo1.setCancelable(false);
+        dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener()
+        { public void onClick(DialogInterface dialogo1, int id)
+        {
+            buscar_usuario();
+        }
+        });
+        dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
+        { public void onClick(DialogInterface dialogo1, int id) { } });
+        dialogo1.show();
     }
 
     public void buscar_usuario()

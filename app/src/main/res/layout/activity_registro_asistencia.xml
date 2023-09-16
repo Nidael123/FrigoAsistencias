@@ -106,7 +106,7 @@
                     android:layout_width="339dp"
                     android:layout_height="51dp"
                     android:layout_weight="1"
-                    android:background="@drawable/acceder"
+                    android:background="@drawable/errores"
                     android:fontFamily="@font/fuentes"
                     android:text="ERRORES"
                     android:textColor="@color/white" />
@@ -188,7 +188,7 @@
                     android:id="@+id/btn_r_ingresomanual"
                     android:layout_width="288dp"
                     android:layout_height="49dp"
-                    android:background="@drawable/acceder"
+                    android:background="@drawable/errores"
                     android:fontFamily="@font/fuentes"
                     android:text="INGRESO MANUAL"
                     android:textColor="@color/white" />

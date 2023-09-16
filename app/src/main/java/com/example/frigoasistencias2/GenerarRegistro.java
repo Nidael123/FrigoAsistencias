@@ -117,16 +117,19 @@ public class GenerarRegistro extends AppCompatActivity {
             btn_libre.setEnabled(false);
             btn_dm.setEnabled(false);
             btn_vacaciones.setEnabled(false);
+            btn_libre.setBackgroundResource(R.drawable.libres_inhabilitado);
+            btn_dm.setBackgroundResource(R.drawable.permiso_m_dico_inhabilitado);
+            btn_vacaciones.setBackgroundResource(R.drawable.vacaviones_inhabilitado);
         }
         cargardatos();
 
         btn_guardarfaltas.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.d("supervisor",preferences.getString("supervisor","mal"));
-                crearPDF();
-                /*if(preferences.getString("supervisor","mal").equals("SI")) {
-                    //estado = adapter.guardarcambios();
+
+
+
+               //estado = adapter.guardarcambios();
                     //personahelp = adapter.retornarcedulas();
 
                     for (int i = 0; i <= personahelp.size() - 1; i++) {
@@ -140,10 +143,7 @@ public class GenerarRegistro extends AppCompatActivity {
                     }
                     //Log.d("recargartotal", personacommpleto.size() + "");
                     //verificarcabecera();
-                }else
-                {
-                    Toast.makeText(GenerarRegistro.this,"SOLO EL SUPERVISOR O DELEGADO PUEDE REGISTRAR",Toast.LENGTH_LONG).show();
-                }*/
+                crearPDF();
             }
         });
         btn_historial.setOnClickListener(new View.OnClickListener() {

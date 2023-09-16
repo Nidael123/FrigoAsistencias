@@ -8,11 +8,14 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -54,7 +57,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
 
     Button btn_escanear,btn_asistencia,btn_ingresomanual,btn_nuevo,btn_listado;
     TextView txt_fecha,txt_error,txt_turno,txt_cantidad,txt_empresa;
-    String api_asistencias, fechadia,fechaturno,jornada,api_descanso;
+    String api_asistencias, fechadia,fechaturno,jornada,api_descanso,ip;
     private SharedPreferences preferences;
     SharedPreferences.Editor editor;
     Spinner departamentos;
@@ -105,13 +108,32 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         Log.d("registros", "" + preferences.getInt("cant_depart", 0));
         listadepartamentos.add("Escoja una opcion");
         btn_ingresomanual.setEnabled(false);
-        txt_empresa.setText(preferences.getString("empresa","mal"));
-        if(getIntent().getStringExtra("empresa") =="FRIGOPESCA")
+
+
+        WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+
+        if (wifiManager.isWifiEnabled()) {
+            // Obtener la información de la conexión WiFi actual
+            WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+
+            // Obtener la dirección IP en formato entero
+            int ipAddress = wifiInfo.getIpAddress();
+
+            // Convertir la dirección IP a formato legible
+            ip = intToIp(ipAddress);
+
+            // Mostrar la dirección IP en un TextView o donde desees
+            //Toast.makeText(RegistroAsistencia.this, "IP:"+ip, Toast.LENGTH_LONG).show();
+        }
+
+        if(ip.contains("10.25"))
         {
+            txt_empresa.setText("FRIGOPESCA");
             id_empresa=1;
         }
-        else
+        else if(ip.contains("10.35"))
         {
+            txt_empresa.setText("OCEAN CASTLE");
             id_empresa=2;
         }
         for (int i = 0; i <= preferences.getInt("cant_depart", 0); i++) {
@@ -121,7 +143,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         departamentos.setAdapter(new ArrayAdapter<String>(getBaseContext(), android.R.layout.simple_spinner_dropdown_item, listadepartamentos));
         listacedulas = (ListView) findViewById(R.id.list_itemcedulaserror);
 
-        txt_empresa.setOnClickListener(new View.OnClickListener() {
+        /*txt_empresa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(txt_empresa.getText().equals("OCEAN CASTLE"))
@@ -135,7 +157,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 }
 
             }
-        });
+        });*/
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());//seteo la fecha actual
         Date date = new Date();
         fechadia = dateFormat.format(date);
@@ -187,6 +209,12 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         btn_listado.setOnClickListener(this);
     }
 
+    private String intToIp(int ipAddress) {
+        return (ipAddress & 0xFF) + "." +
+                ((ipAddress >> 8) & 0xFF) + "." +
+                ((ipAddress >> 16) & 0xFF) + "." +
+                ((ipAddress >> 24) & 0xFF);
+    }
     @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
     public void onClick(View v) {
@@ -197,6 +225,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                     guardarcabecera();
                 }
                 btn_ingresomanual.setEnabled(true);
+                btn_ingresomanual.setBackgroundResource(R.drawable.botones_medianos);
                 escanear();
                 break;
             case R.id.btn_asistencias:
@@ -352,7 +381,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                 cedulas.add(v_cedula);
                 //Toast.makeText(getBaseContext(), "Usuario ingresado: "+cedulas.size(), Toast.LENGTH_SHORT).show();
                 llenarusuario(v_cedula);
-                validarcedula(v_cedula,preferences.getInt("id_cabecera",0),buscarusuarioxhora(v_cedula));
+                validarcedula(v_cedula, preferences.getInt("id_cabecera", 0), buscarusuarioxhora(v_cedula));
             }
             else
                 Toast.makeText(getBaseContext(), "Usuario ya ingresado", Toast.LENGTH_SHORT).show();
@@ -515,9 +544,6 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                     editor.commit();
                     if(jsonObject.getInt("id_cabecera") != 0)
                     {
-                        Log.d("guardar detalle","usuario no valido" );
-                        //Log.d("guardar detalle",cedulas.size()-1+"" );
-
                         for (int i = 0 ;i<= cedulas.size()-1;i++)
                         {
                             Log.d("guardar detalle","usuario no valido" );
@@ -612,6 +638,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                             actualizar(cedula, "N");
                             //eliminarcedula(cedula);
                             btn_asistencia.setEnabled(true);
+                            btn_asistencia.setBackgroundResource(R.drawable.botones_medianos);
                         }
                     } else {
                         guardar_error(cedula);
@@ -676,7 +703,6 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
                     listanombres.add(cedula +"  :   "+jsonObject.getString("nombre"));
                     Log.d("Lista nombre",cedula +"  :   "+jsonObject.getString("nombre"));
                     Toast.makeText(RegistroAsistencia.this,cedulas.size()+":"+jsonObject.getString("nombre"),Toast.LENGTH_SHORT).show();
-
                 }catch (JSONException e)
                 {
                     Log.d("logeo","entro3"+e.toString());

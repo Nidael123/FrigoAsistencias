@@ -1,9 +1,11 @@
 package com.example.frigoasistencias2;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -113,23 +115,21 @@ public class Libre extends AppCompatActivity {
                 SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd");
                 Date dateOjb ;
                 Date dateOjb2;
-                try {
-                    dateOjb = format1.parse(txt_fechainicio.getText().toString());
-                    dateOjb2 = format1.parse(txt_fechafin.getText().toString());
-                    if (dateOjb2.after(dateOjb) || dateOjb2.equals(dateOjb) )
-                    {
-                        if(edit_cedula.length() == 10)
-                        {
-                            buscar_usuario();
+
+                    try {
+                        dateOjb = format1.parse(txt_fechainicio.getText().toString());
+                        dateOjb2 = format1.parse(txt_fechafin.getText().toString());
+                        if (dateOjb2.after(dateOjb) || dateOjb2.equals(dateOjb)) {
+                            if (edit_cedula.length() == 10) {
+                                desplegar_alerta();
+                            }
+                        } else {
+                            Toast.makeText(Libre.this, "Fecha final debe ser mayor a fecha inicial", Toast.LENGTH_LONG).show();
                         }
+                    } catch (ParseException e) {
+                        Toast.makeText(Libre.this, "No deje valores en blanco", Toast.LENGTH_LONG).show();
                     }
-                    else
-                    {
-                        Toast.makeText(Libre.this, "Fecha final debe ser mayor a fecha inicial", Toast.LENGTH_LONG).show();
-                    }
-                } catch (ParseException e) {
-                    throw new RuntimeException(e);
-                }
+
                 /*if(ultimoAnio <= ultimoAnio1)
                 {
                     if(ultimoMes <= ultimoMes1)
@@ -166,6 +166,22 @@ public class Libre extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+    public void desplegar_alerta()
+    {
+        AlertDialog.Builder dialogo1 = new AlertDialog.Builder(Libre.this);
+        dialogo1.setTitle("Importante"); dialogo1.setMessage("¿ Desea guardar el libre de:"+edit_cedula.getText()+" desde la Fecha:  "+txt_fechainicio.getText().toString()+"\n"+
+            "hasta la fecha: "+txt_fechafin.getText().toString()+"?");
+        dialogo1.setCancelable(false);
+        dialogo1.setPositiveButton("Confirmar", new DialogInterface.OnClickListener()
+        { public void onClick(DialogInterface dialogo1, int id)
+        {
+            buscar_usuario();
+        }
+        });
+        dialogo1.setNegativeButton("Cancelar", new DialogInterface.OnClickListener()
+        { public void onClick(DialogInterface dialogo1, int id) { } });
+        dialogo1.show();
     }
 
     public void buscar_usuario()
