@@ -168,7 +168,7 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
         final int OPEN_SECOND = 0; /* 0 - 59*/
 
         /* 07:00 PM */
-        final int CLOSED_HOUR = 19;
+        final int CLOSED_HOUR = 18;
         final int CLOSED_MINUTE = 0;
         final int CLOSED_SECOND = 0;
 
@@ -200,7 +200,44 @@ public class RegistroAsistencia extends AppCompatActivity implements View.OnClic
             //elimiardatabase();
         }
 
+        final int HORAVACIA = 17; /* 0 - 23*/
+        final int MINUTOVACIO = 30; /* 0 - 59*/
+        final int SEGUNDOVACIO = 0; /* 0 - 59*/
 
+        /* 07:00 PM */
+        final int HORAVACIAFIN = 19;
+        final int MINUTOVACIOFIN = 00;
+        final int SEGUNDOVACIOFIN= 0;
+
+        Calendar ABRIRVACIO = Calendar.getInstance();
+        ABRIRVACIO.set(Calendar.HOUR_OF_DAY, HORAVACIA);
+        ABRIRVACIO.set(Calendar.MINUTE, MINUTOVACIO);
+        ABRIRVACIO.set(Calendar.SECOND, SEGUNDOVACIO);
+
+        Calendar CERRARVACIO = Calendar.getInstance();
+        CERRARVACIO.set(Calendar.HOUR_OF_DAY, HORAVACIAFIN);
+        CERRARVACIO.set(Calendar.MINUTE, MINUTOVACIOFIN);
+        CERRARVACIO.set(Calendar.SECOND, SEGUNDOVACIOFIN);
+
+        Calendar nowvacio = Calendar.getInstance();
+
+        if(nowvacio.after(ABRIRVACIO) && nowvacio.before(CERRARVACIO))
+        {
+            txt_turno.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if(txt_turno.getText() == "Turno Dia")
+                    {
+                        txt_turno.setText("Turno Noche");
+                        turno = 2;
+                    }else
+                    {
+                        txt_turno.setText("Turno Dia");
+                        turno = 1;
+                    }
+                }
+            });
+        }
 
         btn_escanear.setOnClickListener(this);
         btn_asistencia.setOnClickListener(this);
